@@ -11,7 +11,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # disable raylib examples
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-add_compile_options(-Wno-unused-result -Wmissing-field-initializers) # raylib has these off
+# suppress unused result warning; enable missing field initializers warning
+add_compile_options(-Wno-unused-result -Wmissing-field-initializers)
 
 # go to cmakelists in subdirectories
 add_subdirectory(lib/raylib)
