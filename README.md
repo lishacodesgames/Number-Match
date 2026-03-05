@@ -1,11 +1,15 @@
-# Raylib Modular Template
-Modular game template using raylib as a git submodule and CMake. <br>
-This repository is intended to be used as a starting point for a new raylib project.
+# Number Match
+![Latest Tag](https://img.shields.io/github/v/tag/lishacodesgames/Number-Match?color=%237DBA84)
+![Status Badge](https://img.shields.io/badge/Status-In_Development-yellow)
 
-This library-based system is for those who want a distinct separation between the core app, external libraries, and gui code. <br>
-This can be used as-is (like I do) or any subdirectories can be added or removed as needed
+### Overview
+The origin Number match is a fun mobile game where you match up pairs of numbers that are the same or that add up to 10. Clearing rows and levels, and winning points and money. There's also tournaments you can participate in, though the game is entirely singleplayer.
 
-*I also have a simpler, non-lib-based, template: ![check it out](https://github.com/lishacodesgames/Raylib-Template)*
+My version is desktop-friendly, has no ads, and is just as addicting.
+
+### Tech Stack
+![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white) 
+![RayLib](https://img.shields.io/badge/RAYLIB-FFFFFF?style=for-the-badge&logo=raylib&logoColor=black)
 
 ## How to Clone
 `git clone --recursive` to get the raylib submodule local
@@ -14,47 +18,14 @@ This can be used as-is (like I do) or any subdirectories can be added or removed
 **If you forgot, do:** <br>
 `git submodule update --init --recursive` after regular `git clone`
 
-## Project Structure
-What your project architecture should ideally look like for the CMakeLists.txt I've included (Can change accordingly, otherwise)
-```
-‖
-‖——.git*
-‖——CMakeLists.txt
-‖——CMakePresets.json
-‖——App/
-‖  ‖——CMakeLists.txt
-‖  ‖——include/
-‖  ‖  ‖——*.h or *.hpp → all *your* header files
-‖  ‖——src/
-‖  ‖  ‖——main.cpp
-‖  ‖  ‖——*.c or *.cpp → all *your* source files
-‖——lib/
-‖  ‖——raylib/   → raylib submodule
-‖  ‖——GUI/      → raylib GUI stuff that's not native to your app
-‖  ‖——Layers/   → Layering system similar to the Hazel Game engine (wayyy simpler, but a good starting point for transitions)
-```
-
-Note: if you are using C, the repository might show C++ because I've excluded C in .gitattributes. <br>
-Just remove this from `.gitattrbites`
-
-```
-**/*.h linguist-vendored
-**/*.c linguist-vendored
-```
-
-Now your repository will show C
-
 ## Build
-`mkdir build`
-`cd build` <br>
-`cmake --preset Debug` OR `cmake --preset Release` -- (configuration of cmake) <br>
-`cmake --build --preset Debug` OR `cmake --build --preset Release` -- (compilation + build of your files, only what has changed since last build)
-<br>
-
-*Check out ![CMakePresets.json](CMakePresets.json) if you're confused* <br>
-
+```bash
+mkdir build
+cd build
+cmake --preset Release
+cmake --build --preset Release
+```
 Executable will appear in `build/` under preset name
-<br>
 
 ### Linux Dependencies
 Raylib requires a lot of libraries that are built-in on Mac and Windows. <br>
@@ -72,29 +43,7 @@ sudo apt install \
     libxkbcommon-dev
 ```
 
-## Add New Source Files
-Put any new `.cpp` or `.c` files in `src/` <br>
-Update App/CMakeLists.txt as needed, example:
-```cmake
-add_executable(YourProjectName
-  src/main.cpp
-  src/other_file.cpp
-)
-```
-
-**Note:** I've made it so that you don't need to touch any CMakeLists.txt other than App/ as you will add your source files there. <br>
-If any issues arise, lmk :)
-
-## Updating raylib (the submodule)
-```bash
-cd lib/raylib
-git pull
-cd ../..
-git add lib/raylib
-git commit -m "Updated raylib submodule"
-```
-
 ## Requirements
 * CMake 3.20+
-* C++ compiler: GCC / Clang
+* C++ compiler: GCC 13.3 / Clang
 * Ninja (not *required*, but it's what the presets use)
