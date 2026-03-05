@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(MyGame LANGUAGES C CXX) # EDIT your project name and languages 
+project(NumberMatch LANGUAGES C CXX) # EDIT your project name and languages 
 # (DO NOT REMOVE C. RAYLIB IS IN C)
 
 # Raylib uses C99, can update to any version after that
@@ -10,6 +10,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # disable raylib examples
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+add_compile_options(-Wno-unused-result -Wmissing-field-initializers) # raylib has these off
 
 # go to cmakelists in subdirectories
 add_subdirectory(lib/raylib)

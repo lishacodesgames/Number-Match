@@ -70,7 +70,7 @@ void Game::Run() {
       
       // 4. render: bottom layer -> top layer, so that top layers render on top of lower layers
       BeginDrawing();
-      ClearBackground(Color{213, 255, 255, 255});
+      ClearBackground(RAYWHITE);
 
       for(Layer* layer : m_layerStack)
          layer->OnRender();

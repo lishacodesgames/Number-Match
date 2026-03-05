@@ -16,5 +16,9 @@ public:
 
 private:
    Texture2D m_backgroundTexture;
+   
    Button m_startButton;
+   Button m_Home;
+   Button m_Daily;
+   Button m_Me;
 };
