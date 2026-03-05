@@ -1,0 +1,7 @@
+* text=auto eol=lf
+**/Makefile linguist-vendored
+**/*.html linguist-vendored
+**/*.cmake linguist-vendored
+
+**/*.h linguist-vendored
+**/*.c linguist-vendored
