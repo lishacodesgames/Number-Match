@@ -3,7 +3,7 @@
 
 struct MenuPanel {
    MenuPanel();
-   void Update();
+   void Update(Button* focusedButton);
    void Draw();
    
    static constexpr float HEIGHT = 50.0f;
@@ -14,5 +14,4 @@ struct MenuPanel {
 
    Button* findHoveredButton();
    Button* findActiveButton();
-   void clearAllFocus();
 };

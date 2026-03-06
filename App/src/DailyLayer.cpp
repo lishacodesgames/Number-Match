@@ -31,19 +31,7 @@ void DailyLayer::OnEvent(Event& e) {
    }
 }
 
-void DailyLayer::OnUpdate() {
-   m_panel.Update();
-   
-   m_panel.clearAllFocus();
-   m_panel.dailyButton.setFocus(true, BLANK, BLUE);
-
-   Button* hoveredButton = m_panel.findHoveredButton();
-   if(hoveredButton) {
-      hoveredButton->textColor = DARKBLUE;
-      SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-   } else
-      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-}
+void DailyLayer::OnUpdate() { m_panel.Update(&m_panel.dailyButton); }
 
 void DailyLayer::OnRender() {
    DrawText("Coming soon...", GetScreenWidth()/2-150, GetScreenHeight()/2-100, 35, DARKGRAY);

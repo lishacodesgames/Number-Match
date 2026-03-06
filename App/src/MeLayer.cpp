@@ -31,19 +31,7 @@ void MeLayer::OnEvent(Event& e) {
    }
 }
 
-void MeLayer::OnUpdate() {
-   m_panel.Update();
-   
-   m_panel.clearAllFocus();
-   m_panel.meButton.setFocus(true, BLANK, BLUE);
-
-   Button* hoveredButton = m_panel.findHoveredButton();
-   if(hoveredButton) {
-      hoveredButton->textColor = DARKBLUE;
-      SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-   } else
-      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-}
+void MeLayer::OnUpdate() { m_panel.Update(&m_panel.meButton); }
 
 void MeLayer::OnRender() {
    DrawText("Coming soon...", GetScreenWidth()/2-150, GetScreenHeight()/2-100, 35, DARKGRAY);

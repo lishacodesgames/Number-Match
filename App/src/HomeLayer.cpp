@@ -47,22 +47,11 @@ void HomeLayer::OnEvent(Event &e) {
 }
 
 void HomeLayer::OnUpdate() {
-   // start of frame: update
-   m_panel.Update();
+   m_panel.Update(&m_panel.homeButton);
    m_startButton.Update();
-   
-   // panel focus
-   m_panel.clearAllFocus();
-   m_focusedPanelButton->setFocus(true, BLANK, BLUE);
 
-   // hover state of all Menu buttons
-   Button* hoveredButton = findHoveredButton();
-   if(hoveredButton) {
-      if(hoveredButton != &m_startButton)
-         hoveredButton->textColor = DARKBLUE;
+   if(m_startButton.isHovered)
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-   } else 
-      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
 void HomeLayer::OnRender() {

@@ -16,10 +16,23 @@ MenuPanel::MenuPanel() {
    meButton = Button( panelButtonsOrigin + Vector2{BUTTON_SPACING*2.7f, 0}, {0, 0}, "Me", BLANK, GRAY);
 }
 
-void MenuPanel::Update() {
+void MenuPanel::Update(Button* focusedButton) {
    homeButton.Update();
    dailyButton.Update();
    meButton.Update();
+
+   homeButton.setFocus(false, BLANK, GRAY);
+   dailyButton.setFocus(false, BLANK, GRAY);
+   meButton.setFocus(false, BLANK, GRAY);
+   
+   focusedButton->setFocus(true, BLANK, BLUE);
+
+   Button* hoveredButton = findHoveredButton();
+   if(hoveredButton) {
+      hoveredButton->textColor = DARKBLUE;
+      SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+   } else
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
 void MenuPanel::Draw() {
@@ -54,10 +67,4 @@ Button* MenuPanel::findActiveButton() {
       return &meButton;
    else  
       return nullptr;
-}
-
-void MenuPanel::clearAllFocus() {
-   homeButton.setFocus(true, BLANK, GRAY);
-   dailyButton.setFocus(true, BLANK, GRAY);
-   meButton.setFocus(true, BLANK, GRAY);
 }
