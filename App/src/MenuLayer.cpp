@@ -10,17 +10,18 @@
 /// @bug if clicked super quick, start button will not be active & layer will not transition
 /// @bug Active buttons not rendering
 
+static constexpr float PANEL_HEIGHT = 50.0f;
 MenuLayer::MenuLayer() : Layer("MenuLayer") {
+
    Image bg = LoadImage("assets/background.jpg");
    if(bg.data != nullptr) {
-      ImageResize(&bg, GetScreenWidth(), GetScreenHeight());
+      ImageResize(&bg, GetScreenWidth(), GetScreenHeight() - PANEL_HEIGHT);
       m_backgroundTexture = LoadTextureFromImage(bg);
       UnloadImage(bg);
    }
 
    m_startButton = Button({ 320, 250 }, { 22, 14 }, "Start the Game", 22, PINK, DARKGRAY);
 
-   constexpr float PANEL_HEIGHT = 50.0f;
    constexpr float BUTTON_SPACING = 192.0f;
    Vector2 panelButtonsOrigin = { 
       (float)(GetScreenWidth()) / 3 - 150, (float)(GetScreenHeight()) - PANEL_HEIGHT + 15
@@ -78,12 +79,14 @@ void MenuLayer::OnEvent(Event &e) {
 }
 
 void MenuLayer::OnRender() {
-   DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 150}); // background
+   // background
+   DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 60});
    
    // panel
-   DrawLine(0, GetScreenHeight() - 50, GetScreenWidth(), GetScreenHeight() - 50, DARKGRAY);
+   DrawLine(0, GetScreenHeight() - PANEL_HEIGHT, GetScreenWidth(), GetScreenHeight() - PANEL_HEIGHT, DARKGRAY);
    DrawRectangleV(
-      {0, (float)(GetScreenHeight() - 50)}, {(float)GetScreenWidth(), 50}, WHITE
+      {0.0f, (float)(GetScreenHeight() - PANEL_HEIGHT)}, 
+      {(float)GetScreenWidth(), PANEL_HEIGHT}, WHITE
    );
    m_homeButton.Draw();
    m_dailyButton.Draw();
