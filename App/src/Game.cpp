@@ -62,7 +62,7 @@ void Game::Run() {
 
       // mouse event
       if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-         MouseClickedEvent e(MOUSE_LEFT_BUTTON);
+         MouseClickedEvent e(true);
          OnEvent(e);
       }
 
