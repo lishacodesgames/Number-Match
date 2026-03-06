@@ -9,6 +9,7 @@
 GameLayer::GameLayer() : Layer("GameLayer") {}
 
 void GameLayer::OnAttach() {
+   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
    printf("Game Layer attached\n");
 }
 
