@@ -19,6 +19,7 @@ MenuLayer::MenuLayer() : Layer("MenuLayer") {
    }
 
    m_startButton = Button({ 320, 250 }, { 22, 14 }, "Start the Game", 22, PINK, DARKGRAY);
+   m_focusedPanelButton = &m_panel.homeButton;
 }
 
 MenuLayer::~MenuLayer() {
@@ -35,6 +36,7 @@ void MenuLayer::OnDetach() {
 }
 
 void MenuLayer::OnUpdate() {
+   // panel
    m_panel.homeButton.Update();
    m_panel.dailyButton.Update();
    m_panel.meButton.Update();
@@ -43,11 +45,11 @@ void MenuLayer::OnUpdate() {
    m_panel.dailyButton.setFocus(false, BLANK, GRAY);
    m_panel.meButton.setFocus(false, BLANK, GRAY);
 
-   Button* activeButton = m_panel.findActiveButton();
-   if(activeButton)
-      (*activeButton).setFocus(true, BLANK, BLUE);
-   else
-      m_panel.homeButton.setFocus(true, BLANK, BLUE);
+   Button* activePanelButton = m_panel.findActiveButton();
+   if(activePanelButton != m_focusedPanelButton && activePanelButton != nullptr)
+      m_focusedPanelButton = activePanelButton;
+
+   (*m_focusedPanelButton).setFocus(true, BLANK, BLUE);
 
    Button* hoveredButton = m_panel.findHoveredButton();
    if(hoveredButton) {
