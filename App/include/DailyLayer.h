@@ -1,5 +1,4 @@
 #pragma once
-#include <raylib.h>
 #include <Layer.h>
 #include <Event.h>
 #include "MenuPanel.h"
@@ -15,8 +14,6 @@ public:
    void OnRender() override;
 
 private:
-   Texture2D m_trophyTexture;
    MenuPanel m_panel;
-
    Button* m_focusedPanelButton;
 };

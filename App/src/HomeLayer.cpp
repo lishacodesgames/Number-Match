@@ -22,10 +22,7 @@ HomeLayer::HomeLayer() : Layer("HomeLayer") {
    m_startButton = Button({ 320, 250 }, { 22, 14 }, "Start the Game", 22, PINK, DARKGRAY);
    m_focusedPanelButton = &m_panel.homeButton;
 }
-void HomeLayer::OnAttach() {
-   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   printf("Menu Layer attached\n");
-}
+void HomeLayer::OnAttach() { printf("Menu Layer attached\n"); }
 
 void HomeLayer::OnDetach() { printf("Menu Layer detached\n"); }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }

@@ -8,26 +8,11 @@
 #include "HomeLayer.h"
 #include "Game.h"
 
-/// @bug Trophy texture not loading
-
-DailyLayer::DailyLayer() : Layer("DailyLayer") {
-   TraceLog(LOG_INFO, "Working Directory: %s", GetWorkingDirectory());
-   Image bg = LoadImage("assets/daily_trophy.jpeg");
-   if(bg.data != nullptr) {
-      ImageResize(&bg, GetScreenWidth(), GetScreenHeight());
-      m_trophyTexture = LoadTextureFromImage(bg);
-      UnloadImage(bg);
-   }
-
-   m_focusedPanelButton = &m_panel.dailyButton;
-}
-void DailyLayer::OnAttach() { 
-   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   printf("DailyLayer attached\n"); 
-}
+DailyLayer::DailyLayer() : Layer("DailyLayer") { m_focusedPanelButton = &m_panel.dailyButton; }
+void DailyLayer::OnAttach() { printf("DailyLayer attached\n"); }
 
 void DailyLayer::OnDetach() { printf("DailyLayer detached\n"); }
-DailyLayer::~DailyLayer() { UnloadTexture(m_trophyTexture); }
+DailyLayer::~DailyLayer() = default;
 
 void DailyLayer::OnEvent(Event& e) {
    if(e.GetEventType() == EventType::MouseClicked) {
@@ -38,6 +23,8 @@ void DailyLayer::OnEvent(Event& e) {
       }
       else if(activeButton == &m_panel.homeButton)
          Game::Get().QueueLayerSwap(this, new HomeLayer());
+      else if(activeButton != m_focusedPanelButton)
+         m_focusedPanelButton = activeButton;
       
       e.Handled = true;
    }
@@ -58,7 +45,6 @@ void DailyLayer::OnUpdate() {
 }
 
 void DailyLayer::OnRender() {
-   DrawTexture(m_trophyTexture, 0, 0, {255, 255, 255, 150});
    DrawText("Coming soon...", GetScreenWidth()/2-150, GetScreenHeight()/2-100, 35, DARKGRAY);
    m_panel.Draw();
 }
