@@ -7,8 +7,7 @@
 #include "GameLayer.h"
 #include "Game.h"
 
-/// @bug Texture not getting destroyed properly (segmentation fault)
-/// @bug Start button not changing to GameLayer
+/// @bug if clicked super quick, start button will not be active & layer will not transition
 /// @bug Active buttons not rendering
 
 MenuLayer::MenuLayer() : Layer("MenuLayer") {
@@ -54,13 +53,13 @@ void MenuLayer::OnUpdate() {
    m_dailyButton.setFocus(false, BLANK, GRAY);
    m_meButton.setFocus(false, BLANK, GRAY);
 
-   Button* activeButton = m_isAnyButtonActive();
-   if(activeButton && *activeButton != m_startButton)
+   Button* activeButton = m_findActiveButton();
+   if(activeButton && activeButton != &m_startButton)
       (*activeButton).setFocus(true, BLANK, BLUE);
-   else
+   else if(!activeButton)
       m_homeButton.setFocus(true, BLANK, BLUE);
 
-   Button* hoveredButton = m_isAnyButtonHovered();
+   Button* hoveredButton = m_findHoveredButton();
    if(hoveredButton) {
       if(*hoveredButton != m_startButton)
          (*hoveredButton).textColor = DARKBLUE;
@@ -71,7 +70,7 @@ void MenuLayer::OnUpdate() {
 
 void MenuLayer::OnEvent(Event &e) {
    if(e.GetEventType() == EventType::MouseClicked) {
-      if(m_startButton.isActive) {
+      if(m_startButton.isClicked()) {
          Game::Get().QueueLayerSwap(this, new GameLayer());
          e.Handled = true;
       }
@@ -95,7 +94,7 @@ void MenuLayer::OnRender() {
    m_startButton.Draw();
 }
 
-Button* MenuLayer::m_isAnyButtonHovered() {
+Button* MenuLayer::m_findHoveredButton() {
    if(m_startButton.isHovered)
       return &m_startButton;
    else if(m_homeButton.isHovered)
@@ -108,7 +107,7 @@ Button* MenuLayer::m_isAnyButtonHovered() {
       return nullptr;
 }
 
-Button* MenuLayer::m_isAnyButtonActive() {
+Button* MenuLayer::m_findActiveButton() {
    if(m_startButton.isActive)
       return &m_startButton;
    else if(m_homeButton.isActive)

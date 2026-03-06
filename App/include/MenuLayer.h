@@ -22,6 +22,6 @@ private:
    Button m_dailyButton;
    Button m_meButton;
 
-   Button* m_isAnyButtonHovered();
-   Button* m_isAnyButtonActive();
+   Button* m_findHoveredButton();
+   Button* m_findActiveButton();
 };

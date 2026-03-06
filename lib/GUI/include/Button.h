@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include <string>
 
 class Button {
 public:
@@ -41,7 +42,7 @@ public:
    // ------------------------
 
    Vector2 origin = {0, 0};
-   const char* text;
+   std::string text;
    int fontSize = 20;
    Color buttonColor = BLACK, textColor = WHITE;
 
@@ -57,6 +58,7 @@ public:
    // ---- METHODS ----
    // ----------------
 
+   bool isClicked() const; /// explicitly check at this moment is button being clicked
    void setFocus(bool isFocused, Color buttonColor, Color textColor);
    void Update();
    void Draw();
