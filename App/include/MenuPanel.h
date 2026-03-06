@@ -14,4 +14,5 @@ struct MenuPanel {
 
    Button* findHoveredButton();
    Button* findActiveButton();
+   void clearAllFocus();
 };

@@ -55,3 +55,9 @@ Button* MenuPanel::findActiveButton() {
    else  
       return nullptr;
 }
+
+void MenuPanel::clearAllFocus() {
+   homeButton.setFocus(true, BLANK, GRAY);
+   dailyButton.setFocus(true, BLANK, GRAY);
+   meButton.setFocus(true, BLANK, GRAY);
+}

@@ -1,6 +1,6 @@
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
-   # list .cpp files here as they are added
+   src/DailyLayer.cpp
    src/Game.cpp
    src/GameLayer.cpp
    src/HomeLayer.cpp

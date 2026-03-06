@@ -4,8 +4,9 @@
 #include <raymath.h>
 #include <raylib.h>
 #include <cstdio>
-#include "MenuPanel.h"
+#include "DailyLayer.h"
 #include "GameLayer.h"
+#include "MenuPanel.h"
 #include "Game.h"
 
 /// @bug if clicked super quick, start button will not be active & layer will not transition
@@ -38,6 +39,8 @@ void HomeLayer::OnEvent(Event &e) {
       }
       else if(activeButton == &m_startButton)
          Game::Get().QueueLayerSwap(this, new GameLayer());
+      else if(activeButton == &m_panel.dailyButton)
+         Game::Get().QueueLayerSwap(this, new DailyLayer());
       else if(activeButton != m_focusedPanelButton)
          m_focusedPanelButton = activeButton;
 
@@ -51,10 +54,7 @@ void HomeLayer::OnUpdate() {
    m_startButton.Update();
    
    // panel: active & focus
-   m_panel.homeButton.setFocus(false, BLANK, GRAY);
-   m_panel.dailyButton.setFocus(false, BLANK, GRAY);
-   m_panel.meButton.setFocus(false, BLANK, GRAY);
-
+   m_panel.clearAllFocus();
    m_focusedPanelButton->setFocus(true, BLANK, BLUE);
 
    // hover state of all Menu buttons
