@@ -8,9 +8,10 @@ Button::Button(Rectangle exactBounds, const char* text, Color buttonColor,Color 
 {
    origin = { m_bounds.x, m_bounds.y };
 
-   float x = m_bounds.width / 2 - MeasureTextEx(GetFontDefault(), text, 20, 1).x / 2;
-   float y = m_bounds.height / 2 - MeasureTextEx(GetFontDefault(), text, 20, 1).y / 2;
-
+   Vector2 textSize = MeasureTextEx(GetFontDefault(), text, 20, 1);
+   float x = m_bounds.width / 2 - textSize.x / 2;
+   float y = m_bounds.height / 2 - textSize.y / 2;
+   
    m_horizontalPadding = { x, x };
    m_verticalPadding = { y,  y };
 }
