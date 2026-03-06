@@ -1,19 +1,24 @@
 #pragma once
 #include <raylib.h>
 
-struct Button {
+class Button {
+public:
+   // ----------------------
+   // ---- CONSTRUCTORS ----
+   // ----------------------
+
    Button() = default; // if user wants to set values manually
 
    /// Manual bounds settings, regargless of text size
    Button(Rectangle exactBounds, const char* text, Color buttonColor, Color textColor);
 
-   /// Origin and padding settings, bounds are calculated based on text size (default text size is 20)
+   /// Origin and padding settings, bounds are calculated based on default text size (20)
    Button(Vector2 origin, Vector2 padding, const char* text, Color buttonColor, Color textColor);
 
-   /// Origin and padding settings, bounds are calculated based on text size, with custom text size
+   /// Origin and padding settings, bounds are calculated based on custom text size
    Button(Vector2 origin, Vector2 padding, const char* text, int fontSize, Color buttonColor, Color textColor);
 
-   /// More custom padding (default text size = 20)
+   /// Elaborate custom padding default text size (20)
    Button(
       Vector2 origin, 
       float paddingLeft, float paddingRight, 
@@ -22,7 +27,7 @@ struct Button {
       Color buttonColor, Color textColor
    );
 
-   /// More custom padding (custom text size)
+   /// Elaborate custom padding custom text size
    Button(
       Vector2 origin, 
       float paddingLeft, float paddingRight, 
@@ -30,18 +35,43 @@ struct Button {
       const char* text, int fontSize, 
       Color buttonColor, Color textColor
    );
+   
+   // ------------------------
+   // ---- PUBLIC MEMBERS ----
+   // ------------------------
 
    Vector2 origin;
    const char* text;
    int fontSize = 20;
    Color buttonColor, textColor;
-   
-   bool isHovering();
-   bool isClicked();
+
+   // ---------------
+   // ---- FLAGS ----
+   // ---------------
+
+   bool isHovered = false; // is button being hovered
+   bool isActive = false; // is button being clicked
+   bool isFocused = false; // set by user. Has button been clicked?
+
+   // ----------------
+   // ---- METHODS ----
+   // ----------------
+
+   void setFocus(bool isFocused, Color buttonColor, Color textColor);
+   void Update();
    void Draw();
    
-private:
+private: 
+   // -------------------------
+   // ---- PRIVATE MEMBERS ----
+   // -------------------------
+
    Rectangle m_bounds;
    Vector2 m_horizontalPadding; // {left, right}
    Vector2 m_verticalPadding;   // {top, bottom}
+
+   // -------------------
+   // ---- OPERATORS ----
+   // -------------------
+   friend bool operator==(const Button& first, const Button& second);
 };

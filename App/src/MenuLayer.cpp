@@ -7,11 +7,17 @@
 #include "GameLayer.h"
 #include "Game.h"
 
+/// @bug Texture not getting destroyed properly (segmentation fault)
+/// @bug Start button not changing to GameLayer
+/// @bug Active buttons not rendering
+
 MenuLayer::MenuLayer() : Layer("MenuLayer") {
    Image bg = LoadImage("assets/background.jpg");
-   ImageResize(&bg, GetScreenWidth(), GetScreenHeight());
-   m_backgroundTexture = LoadTextureFromImage(bg);
-   UnloadImage(bg);
+   if(bg.data != nullptr) {
+      ImageResize(&bg, GetScreenWidth(), GetScreenHeight());
+      m_backgroundTexture = LoadTextureFromImage(bg);
+      UnloadImage(bg);
+   }
 
    m_startButton = Button({ 320, 250 }, { 22, 14 }, "Start the Game", 22, PINK, DARKGRAY);
 
@@ -26,7 +32,8 @@ MenuLayer::MenuLayer() : Layer("MenuLayer") {
 }
 
 MenuLayer::~MenuLayer() {
-   UnloadTexture(m_backgroundTexture);
+   if(IsTextureValid(m_backgroundTexture))
+      UnloadTexture(m_backgroundTexture);
 }
 
 void MenuLayer::OnAttach() {
@@ -38,15 +45,33 @@ void MenuLayer::OnDetach() {
 }
 
 void MenuLayer::OnUpdate() {
-   if(m_startButton.isHovering()) {
+   m_startButton.Update();
+   m_homeButton.Update();
+   m_dailyButton.Update();
+   m_meButton.Update();
+
+   m_homeButton.setFocus(false, BLANK, GRAY);
+   m_dailyButton.setFocus(false, BLANK, GRAY);
+   m_meButton.setFocus(false, BLANK, GRAY);
+
+   Button* activeButton = m_isAnyButtonActive();
+   if(activeButton && *activeButton != m_startButton)
+      (*activeButton).setFocus(true, BLANK, BLUE);
+   else
+      m_homeButton.setFocus(true, BLANK, BLUE);
+
+   Button* hoveredButton = m_isAnyButtonHovered();
+   if(hoveredButton) {
+      if(*hoveredButton != m_startButton)
+         (*hoveredButton).textColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-   }
-   else SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+   } else 
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
 void MenuLayer::OnEvent(Event &e) {
    if(e.GetEventType() == EventType::MouseClicked) {
-      if(m_startButton.isClicked()) {
+      if(m_startButton.isActive) {
          Game::Get().QueueLayerSwap(this, new GameLayer());
          e.Handled = true;
       }
@@ -68,4 +93,30 @@ void MenuLayer::OnRender() {
    DrawText("Welcome to the Game!", 172, 152, 45, BLACK); // outline
    DrawText("Welcome to the Game!", 170, 150, 45, DARKBLUE);
    m_startButton.Draw();
+}
+
+Button* MenuLayer::m_isAnyButtonHovered() {
+   if(m_startButton.isHovered)
+      return &m_startButton;
+   else if(m_homeButton.isHovered)
+      return &m_homeButton;
+   else if(m_dailyButton.isHovered)
+      return &m_dailyButton;
+   else if(m_meButton.isHovered)
+      return &m_meButton;
+   else  
+      return nullptr;
+}
+
+Button* MenuLayer::m_isAnyButtonActive() {
+   if(m_startButton.isActive)
+      return &m_startButton;
+   else if(m_homeButton.isActive)
+      return &m_homeButton;
+   else if(m_dailyButton.isActive)
+      return &m_dailyButton;
+   else if(m_meButton.isActive)
+      return &m_meButton;
+   else  
+      return nullptr;
 }

@@ -1,4 +1,6 @@
 #include <Precompiled.h>
+#include <raylib.h>
+#include <raymath.h>
 #include <Button.h>
 
 Button::Button(Rectangle exactBounds, const char* text, Color buttonColor,Color textColor) 
@@ -66,37 +68,69 @@ Button::Button
    m_bounds.height = MeasureTextEx(GetFontDefault(), text, fontSize, 1).y + paddingTop + paddingBottom;
 }
 
-bool Button::isHovering() {
-  Vector2 mousePos = GetMousePosition();
-
-  return CheckCollisionPointRec(mousePos, m_bounds);
+void Button::setFocus(bool isFocused, Color buttonColor, Color textColor) {
+   this->isFocused = isFocused;
+   this->buttonColor = buttonColor;
+   this->textColor = textColor;
 }
 
-bool Button::isClicked() {
-  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    Vector2 mousePos = GetMousePosition();
+void Button::Update() {
+  // update hover flag
+  if (CheckCollisionPointRec(GetMousePosition(), m_bounds))
+    isHovered = true;
+  else
+    isHovered = false;
 
-    if (CheckCollisionPointRec(mousePos, m_bounds)) return true;
-  }
-  return false;
+  // update active flag
+  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isHovered)
+    isActive = true;
+  else
+    isActive = false;
 }
 
-void Button::Draw()  {
-   if(isHovering()) {
+void Button::Draw() {
+   if (isHovered) {
       DrawRectangleRounded(m_bounds, 0.8f, 10, ColorBrightness(buttonColor, 0.169f));
       DrawRectangleRoundedLinesEx(m_bounds, 0.8f, 10, 2, ColorBrightness(buttonColor, -0.1f));
-   }
-   else
+   } else
       DrawRectangleRounded(m_bounds, 0.8f, 10, buttonColor);
-
 
    // make padding left be only on left and right only on right etc
    Vector2 textSize = MeasureTextEx(GetFontDefault(), text, fontSize, 1);
-   Vector2 textPos = { 
-      m_bounds.x + m_horizontalPadding.x + 
-         (m_bounds.width - m_horizontalPadding.x - m_horizontalPadding.y - textSize.x) / 2, 
-      m_bounds.y + m_verticalPadding.x + (m_bounds.height - m_verticalPadding.x - m_verticalPadding.y - textSize.y) / 2 
-   };
+   Vector2 textOrigin;
+   textOrigin.x = m_bounds.x + m_horizontalPadding.x + (m_bounds.width - m_horizontalPadding.x - m_horizontalPadding.y - textSize.x) / 2;
+   textOrigin.y = m_bounds.y + m_verticalPadding.x + (m_bounds.height - m_verticalPadding.x -   m_verticalPadding.y - textSize.y) / 2;
 
-   DrawTextEx(GetFontDefault(), text, textPos, fontSize, 1, textColor);
+  DrawTextEx(GetFontDefault(), text, textOrigin, fontSize, 1, textColor);
+}
+
+bool operator==(const Color& first, const Color& second) {
+   return (
+      first.r == second.r &&
+      first.g == second.g &&
+      first.b == second.b &&
+      first.a == second.a
+   );
+}
+
+bool operator==(const Rectangle& first, const Rectangle& second) {
+   return (
+      first.x == second.x &&
+      first.y == second.y &&
+      first.width == second.width &&
+      first.height == second.height
+   );
+}
+
+bool operator==(const Button& first, const Button& second) {
+   return (
+      first.origin == second.origin &&
+      first.text == second.text &&
+      first.fontSize == second.fontSize &&
+      first.buttonColor  == second.buttonColor &&
+      first.textColor == second.textColor &&
+      first.m_bounds == second.m_bounds &&
+      first.m_horizontalPadding == second.m_horizontalPadding &&
+      first.m_verticalPadding == second.m_verticalPadding
+   );
 }
