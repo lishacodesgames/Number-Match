@@ -9,7 +9,7 @@
 #include "MeLayer.h"
 #include "Game.h"
 
-DailyLayer::DailyLayer() : Layer("DailyLayer") { m_focusedPanelButton = &m_panel.dailyButton; }
+DailyLayer::DailyLayer() : Layer("DailyLayer") { m_panel.dailyButton.setFocus(true, BLANK, BLUE); }
 void DailyLayer::OnAttach() { printf("Daily Layer attached\n"); }
 
 void DailyLayer::OnDetach() { printf("Daily Layer detached\n"); }
@@ -35,11 +35,11 @@ void DailyLayer::OnUpdate() {
    m_panel.Update();
    
    m_panel.clearAllFocus();
-   m_focusedPanelButton->setFocus(true, BLANK, BLUE);
+   m_panel.dailyButton.setFocus(true, BLANK, BLUE);
 
    Button* hoveredButton = m_panel.findHoveredButton();
    if(hoveredButton) {
-      hoveredButton->textColor = BLUE;
+      hoveredButton->textColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);

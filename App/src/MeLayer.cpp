@@ -8,7 +8,7 @@
 #include "HomeLayer.h"
 #include "Game.h"
 
-MeLayer::MeLayer() : Layer("MeLayer") { m_focusedPanelButton = &m_panel.meButton; }
+MeLayer::MeLayer() : Layer("MeLayer") { m_panel.meButton.setFocus(true, BLANK, BLUE); }
 void MeLayer::OnAttach() { printf("Me Layer attached\n"); }
 
 
@@ -35,11 +35,11 @@ void MeLayer::OnUpdate() {
    m_panel.Update();
    
    m_panel.clearAllFocus();
-   m_focusedPanelButton->setFocus(true, BLANK, BLUE);
+   m_panel.meButton.setFocus(true, BLANK, BLUE);
 
    Button* hoveredButton = m_panel.findHoveredButton();
    if(hoveredButton) {
-      hoveredButton->textColor = BLUE;
+      hoveredButton->textColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);

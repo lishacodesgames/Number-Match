@@ -15,5 +15,4 @@ public:
 
 private:
    MenuPanel m_panel;
-   Button* m_focusedPanelButton;
 };
