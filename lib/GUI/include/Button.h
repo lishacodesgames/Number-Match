@@ -40,10 +40,10 @@ public:
    // ---- PUBLIC MEMBERS ----
    // ------------------------
 
-   Vector2 origin;
+   Vector2 origin = {0, 0};
    const char* text;
    int fontSize = 20;
-   Color buttonColor, textColor;
+   Color buttonColor = BLACK, textColor = WHITE;
 
    // ---------------
    // ---- FLAGS ----
@@ -75,3 +75,6 @@ private:
    // -------------------
    friend bool operator==(const Button& first, const Button& second);
 };
+
+bool operator==(const Color& first, const Color& second);
+bool operator==(const Rectangle& first, const Rectangle& second);

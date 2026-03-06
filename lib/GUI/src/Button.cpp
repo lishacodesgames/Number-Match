@@ -104,6 +104,19 @@ void Button::Draw() {
   DrawTextEx(GetFontDefault(), text, textOrigin, fontSize, 1, textColor);
 }
 
+bool operator==(const Button& first, const Button& second) {
+   return (
+      first.origin == second.origin &&
+      first.text == second.text &&
+      first.fontSize == second.fontSize &&
+      first.buttonColor  == second.buttonColor &&
+      first.textColor == second.textColor &&
+      first.m_bounds == second.m_bounds &&
+      first.m_horizontalPadding == second.m_horizontalPadding &&
+      first.m_verticalPadding == second.m_verticalPadding
+   );
+}
+
 bool operator==(const Color& first, const Color& second) {
    return (
       first.r == second.r &&
@@ -119,18 +132,5 @@ bool operator==(const Rectangle& first, const Rectangle& second) {
       first.y == second.y &&
       first.width == second.width &&
       first.height == second.height
-   );
-}
-
-bool operator==(const Button& first, const Button& second) {
-   return (
-      first.origin == second.origin &&
-      first.text == second.text &&
-      first.fontSize == second.fontSize &&
-      first.buttonColor  == second.buttonColor &&
-      first.textColor == second.textColor &&
-      first.m_bounds == second.m_bounds &&
-      first.m_horizontalPadding == second.m_horizontalPadding &&
-      first.m_verticalPadding == second.m_verticalPadding
    );
 }
