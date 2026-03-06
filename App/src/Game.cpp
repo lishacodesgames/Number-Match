@@ -14,7 +14,10 @@ Game::Game() {
    PushLayer(new MenuLayer());
 }
 
-Game::~Game() { CloseWindow(); }
+Game::~Game() { 
+   m_layerStack.Delete(); /// Must be done before CloseWindow()
+   CloseWindow(); 
+}
 
 Game& Game::Get() { return *s_instance; }
 

@@ -5,12 +5,6 @@
 #include <Layer.h>
 #include <vector>
 
-LayerStack::~LayerStack() {
-   for(int i = 0; i < m_Layers.size(); i++) {
-      delete m_Layers[i];
-   }
-}
-
 void LayerStack::PushLayer(Layer* layer) {
    m_Layers.emplace(begin() + m_layerInsertIndex, layer);
    m_layerInsertIndex++;
@@ -38,3 +32,9 @@ std::vector<Layer*>::iterator LayerStack::begin() { return m_Layers.begin(); }
 std::vector<Layer*>::iterator LayerStack::end() { return m_Layers.end(); }
 std::vector<Layer*>::reverse_iterator LayerStack::rbegin() { return m_Layers.rbegin(); }
 std::vector<Layer*>::reverse_iterator LayerStack::rend() { return m_Layers.rend(); }
+
+void LayerStack::Delete() {
+   for(int i = 0; i < m_Layers.size(); i++) {
+      delete m_Layers[i];
+   }
+}
