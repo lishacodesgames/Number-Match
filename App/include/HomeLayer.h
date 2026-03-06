@@ -14,10 +14,10 @@ struct MenuPanel {
    Button* findActiveButton();
 };
 
-class MenuLayer : public Layer {
+class HomeLayer : public Layer {
 public:
-   MenuLayer();
-   ~MenuLayer() override;
+   HomeLayer();
+   ~HomeLayer() override;
 
    void OnAttach() override;
    void OnDetach() override;

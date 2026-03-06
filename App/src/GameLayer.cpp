@@ -3,7 +3,7 @@
 
 #include <Layer.h>
 #include <cstdio>
-#include "MenuLayer.h"
+#include "HomeLayer.h"
 #include "Game.h"
 
 GameLayer::GameLayer() : Layer("GameLayer") {}
@@ -27,7 +27,7 @@ void GameLayer::OnEvent(Event& e) {
    if(e.GetEventType() == EventType::KeyPressed) {
       char key = static_cast<KeyPressedEvent&>(e).key;
       if(key == 'q' || key == 'Q') {
-         Game::Get().QueueLayerSwap(this, new MenuLayer());
+         Game::Get().QueueLayerSwap(this, new HomeLayer());
          e.Handled = true;
       }
    }

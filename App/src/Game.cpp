@@ -2,7 +2,7 @@
 #include "Game.h"
 
 #include <raylib.h>
-#include "MenuLayer.h"
+#include "HomeLayer.h"
 
 Game* Game::s_instance = nullptr; // assign memory before assigning "this" ptr to it
 Game::Game() {
@@ -11,7 +11,7 @@ Game::Game() {
    InitWindow(800, 600, "Architectured Raylib Template");
    SetTargetFPS(60);
 
-   PushLayer(new MenuLayer());
+   PushLayer(new HomeLayer());
 }
 
 Game::~Game() { 

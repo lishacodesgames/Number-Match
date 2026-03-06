@@ -1,5 +1,5 @@
 #include <Precompiled.h>
-#include "MenuLayer.h"
+#include "HomeLayer.h"
 
 #include <raymath.h>
 #include <raylib.h>
@@ -9,7 +9,7 @@
 
 /// @bug if clicked super quick, start button will not be active & layer will not transition
 
-MenuLayer::MenuLayer() : Layer("MenuLayer") {
+HomeLayer::HomeLayer() : Layer("HomeLayer") {
    Image bg = LoadImage("assets/background.jpg");
    if(bg.data != nullptr) {
       ImageResize(&bg, GetScreenWidth(), GetScreenHeight() - MenuPanel::HEIGHT);
@@ -21,20 +21,20 @@ MenuLayer::MenuLayer() : Layer("MenuLayer") {
    m_focusedPanelButton = &m_panel.homeButton;
 }
 
-MenuLayer::~MenuLayer() {
+HomeLayer::~HomeLayer() {
    if(IsTextureValid(m_backgroundTexture))
       UnloadTexture(m_backgroundTexture);
 }
 
-void MenuLayer::OnAttach() {
+void HomeLayer::OnAttach() {
    printf("Menu Layer attached\n");
 }
 
-void MenuLayer::OnDetach() {
+void HomeLayer::OnDetach() {
    printf("Menu Layer detached\n");
 }
 
-void MenuLayer::OnUpdate() {
+void HomeLayer::OnUpdate() {
    // start of frame: update
    m_panel.homeButton.Update();
    m_panel.dailyButton.Update();
@@ -62,7 +62,7 @@ void MenuLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
-void MenuLayer::OnEvent(Event &e) {
+void HomeLayer::OnEvent(Event &e) {
    if(e.GetEventType() == EventType::MouseClicked) {
       if(m_startButton.isClicked()) {
          Game::Get().QueueLayerSwap(this, new GameLayer());
@@ -71,7 +71,7 @@ void MenuLayer::OnEvent(Event &e) {
    }
 }
 
-void MenuLayer::OnRender() {
+void HomeLayer::OnRender() {
    // background
    DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 60});
    
@@ -90,7 +90,7 @@ void MenuLayer::OnRender() {
    m_startButton.Draw();
 }
 
-Button* MenuLayer::findHoveredButton() {
+Button* HomeLayer::findHoveredButton() {
    if(m_startButton.isHovered)
       return &m_startButton;
    else if(m_panel.homeButton.isHovered)
