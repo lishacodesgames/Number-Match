@@ -8,7 +8,7 @@ Game* Game::s_instance = nullptr; // assign memory before assigning "this" ptr t
 Game::Game() {
    s_instance = this;
 
-   InitWindow(800, 600, "Architectured Raylib Template");
+   InitWindow(800, 600, "Number Match");
    SetTargetFPS(60);
 
    PushLayer(new HomeLayer());

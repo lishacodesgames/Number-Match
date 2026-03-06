@@ -4,6 +4,7 @@
 #include <raymath.h>
 #include <raylib.h>
 #include <cstdio>
+#include "MenuPanel.h"
 #include "GameLayer.h"
 #include "Game.h"
 
@@ -73,22 +74,13 @@ void HomeLayer::OnUpdate() {
 }
 
 void HomeLayer::OnRender() {
-   // background
    DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 60});
-   
-   // panel
-   DrawLine(0, GetScreenHeight() - MenuPanel::HEIGHT, GetScreenWidth(), GetScreenHeight() - MenuPanel::HEIGHT, DARKGRAY);
-   DrawRectangleV(
-      {0.0f, (float)(GetScreenHeight() - MenuPanel::HEIGHT)}, 
-      {(float)GetScreenWidth(), MenuPanel::HEIGHT}, WHITE
-   );
-   m_panel.homeButton.Draw();
-   m_panel.dailyButton.Draw();
-   m_panel.meButton.Draw();
 
    DrawText("Welcome to the Game!", 172, 152, 45, BLACK); // outline
    DrawText("Welcome to the Game!", 170, 150, 45, DARKBLUE);
    m_startButton.Draw();
+
+   m_panel.Draw();
 }
 
 Button* HomeLayer::findHoveredButton() {
@@ -102,26 +94,4 @@ Button* HomeLayer::findHoveredButton() {
       return &m_panel.meButton;
    else  
       return nullptr;
-}
-
-Button* MenuPanel::findActiveButton() {
-   if(homeButton.isActive)
-      return &homeButton;
-   else if(dailyButton.isActive)
-      return &dailyButton;
-   else if(meButton.isActive)
-      return &meButton;
-   else  
-      return nullptr;
-}
-
-MenuPanel::MenuPanel() {
-   constexpr float BUTTON_SPACING = 192.0f;
-   Vector2 panelButtonsOrigin = { 
-      (float)(GetScreenWidth()) / 3 - 150, (float)(GetScreenHeight()) - MenuPanel::HEIGHT + 15
-   };
-
-   homeButton = Button( panelButtonsOrigin, {0, 0}, "Main", BLANK, BLUE);
-   dailyButton = Button( panelButtonsOrigin + Vector2{BUTTON_SPACING, 0}, {0, 0}, "Daily Challenges", BLANK, GRAY);
-   meButton = Button( panelButtonsOrigin + Vector2{BUTTON_SPACING*2.7f, 0}, {0, 0}, "Me", BLANK, GRAY);
 }

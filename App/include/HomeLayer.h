@@ -2,17 +2,7 @@
 #include <raylib.h>
 #include <Button.h>
 #include <Layer.h>
-
-struct MenuPanel {
-   MenuPanel();
-   static constexpr float HEIGHT = 50.0f;
-
-   Button homeButton;
-   Button dailyButton;
-   Button meButton;
-
-   Button* findActiveButton();
-};
+#include "MenuPanel.h"
 
 class HomeLayer : public Layer {
 public:
