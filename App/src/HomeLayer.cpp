@@ -21,20 +21,13 @@ HomeLayer::HomeLayer() : Layer("HomeLayer") {
    m_startButton = Button({ 320, 250 }, { 22, 14 }, "Start the Game", 22, PINK, DARKGRAY);
    m_focusedPanelButton = &m_panel.homeButton;
 }
-
-HomeLayer::~HomeLayer() {
-   if(IsTextureValid(m_backgroundTexture))
-      UnloadTexture(m_backgroundTexture);
-}
-
 void HomeLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
    printf("Menu Layer attached\n");
 }
 
-void HomeLayer::OnDetach() {
-   printf("Menu Layer detached\n");
-}
+void HomeLayer::OnDetach() { printf("Menu Layer detached\n"); }
+HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 
 void HomeLayer::OnEvent(Event &e) {
    if(e.GetEventType() == EventType::MouseClicked) {
@@ -54,9 +47,7 @@ void HomeLayer::OnEvent(Event &e) {
 
 void HomeLayer::OnUpdate() {
    // start of frame: update
-   m_panel.homeButton.Update();
-   m_panel.dailyButton.Update();
-   m_panel.meButton.Update();
+   m_panel.Update();
    m_startButton.Update();
    
    // panel: active & focus
@@ -89,12 +80,6 @@ void HomeLayer::OnRender() {
 Button* HomeLayer::findHoveredButton() {
    if(m_startButton.isHovered)
       return &m_startButton;
-   else if(m_panel.homeButton.isHovered)
-      return &m_panel.homeButton;
-   else if(m_panel.dailyButton.isHovered)
-      return &m_panel.dailyButton;
-   else if(m_panel.meButton.isHovered)
-      return &m_panel.meButton;
-   else  
-      return nullptr;
+   else 
+      return m_panel.findHoveredButton();
 }

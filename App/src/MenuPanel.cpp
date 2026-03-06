@@ -16,6 +16,12 @@ MenuPanel::MenuPanel() {
    meButton = Button( panelButtonsOrigin + Vector2{BUTTON_SPACING*2.7f, 0}, {0, 0}, "Me", BLANK, GRAY);
 }
 
+void MenuPanel::Update() {
+   homeButton.Update();
+   dailyButton.Update();
+   meButton.Update();
+}
+
 void MenuPanel::Draw() {
    DrawLine(0, GetScreenHeight() - MenuPanel::HEIGHT, GetScreenWidth(), GetScreenHeight() - MenuPanel::HEIGHT, DARKGRAY);
    DrawRectangleV(
@@ -26,6 +32,17 @@ void MenuPanel::Draw() {
    homeButton.Draw();
    dailyButton.Draw();
    meButton.Draw();
+}
+
+Button* MenuPanel::findHoveredButton() {
+  if (homeButton.isHovered)
+    return &homeButton;
+  else if (dailyButton.isHovered)
+    return &dailyButton;
+  else if (meButton.isHovered)
+    return &meButton;
+  else
+    return nullptr;
 }
 
 Button* MenuPanel::findActiveButton() {
