@@ -8,7 +8,6 @@
 #include "Game.h"
 
 /// @bug if clicked super quick, start button will not be active & layer will not transition
-/// @bug Active buttons not rendering
 
 MenuLayer::MenuLayer() : Layer("MenuLayer") {
    Image bg = LoadImage("assets/background.jpg");
@@ -46,14 +45,14 @@ void MenuLayer::OnUpdate() {
    m_panel.meButton.setFocus(false, BLANK, GRAY);
 
    Button* activePanelButton = m_panel.findActiveButton();
-   if(activePanelButton != m_focusedPanelButton && activePanelButton != nullptr)
+   if(activePanelButton != nullptr && activePanelButton != m_focusedPanelButton)
       m_focusedPanelButton = activePanelButton;
 
-   (*m_focusedPanelButton).setFocus(true, BLANK, BLUE);
+   m_focusedPanelButton->setFocus(true, BLANK, BLUE);
 
    Button* hoveredButton = m_panel.findHoveredButton();
    if(hoveredButton) {
-      (*hoveredButton).textColor = DARKBLUE;
+      hoveredButton->textColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } else 
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
