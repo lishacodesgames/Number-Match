@@ -11,7 +11,7 @@
 /// @bug if clicked super quick, start button will not be active & layer will not transition
 
 HomeLayer::HomeLayer() : Layer("HomeLayer") {
-   Image bg = LoadImage("assets/background.jpg");
+   Image bg = LoadImage("assets/home_background.jpg");
    if(bg.data != nullptr) {
       ImageResize(&bg, GetScreenWidth(), GetScreenHeight() - MenuPanel::HEIGHT);
       m_backgroundTexture = LoadTextureFromImage(bg);
