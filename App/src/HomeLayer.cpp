@@ -27,11 +27,21 @@ HomeLayer::~HomeLayer() {
 }
 
 void HomeLayer::OnAttach() {
+   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
    printf("Menu Layer attached\n");
 }
 
 void HomeLayer::OnDetach() {
    printf("Menu Layer detached\n");
+}
+
+void HomeLayer::OnEvent(Event &e) {
+   if(e.GetEventType() == EventType::MouseClicked) {
+      if(m_startButton.isClicked()) {
+         Game::Get().QueueLayerSwap(this, new GameLayer());
+         e.Handled = true;
+      }
+   }
 }
 
 void HomeLayer::OnUpdate() {
@@ -60,15 +70,6 @@ void HomeLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } else 
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-}
-
-void HomeLayer::OnEvent(Event &e) {
-   if(e.GetEventType() == EventType::MouseClicked) {
-      if(m_startButton.isClicked()) {
-         Game::Get().QueueLayerSwap(this, new GameLayer());
-         e.Handled = true;
-      }
-   }
 }
 
 void HomeLayer::OnRender() {
