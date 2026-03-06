@@ -38,10 +38,17 @@ void HomeLayer::OnDetach() {
 
 void HomeLayer::OnEvent(Event &e) {
    if(e.GetEventType() == EventType::MouseClicked) {
-      if(m_startButton.isClicked()) {
-         Game::Get().QueueLayerSwap(this, new GameLayer());
-         e.Handled = true;
+      Button* activeButton = findHoveredButton();
+      if(!activeButton) {
+         e.Handled = false;
+         return;
       }
+      else if(activeButton == &m_startButton)
+         Game::Get().QueueLayerSwap(this, new GameLayer());
+      else if(activeButton != m_focusedPanelButton)
+         m_focusedPanelButton = activeButton;
+
+      e.Handled = true;
    }
 }
 
@@ -56,10 +63,6 @@ void HomeLayer::OnUpdate() {
    m_panel.homeButton.setFocus(false, BLANK, GRAY);
    m_panel.dailyButton.setFocus(false, BLANK, GRAY);
    m_panel.meButton.setFocus(false, BLANK, GRAY);
-
-   Button* activePanelButton = m_panel.findActiveButton();
-   if(activePanelButton != nullptr && activePanelButton != m_focusedPanelButton)
-      m_focusedPanelButton = activePanelButton;
 
    m_focusedPanelButton->setFocus(true, BLANK, BLUE);
 
