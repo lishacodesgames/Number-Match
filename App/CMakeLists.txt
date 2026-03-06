@@ -5,6 +5,7 @@ target_sources(${PROJECT_NAME} PRIVATE
    src/GameLayer.cpp
    src/HomeLayer.cpp
    src/main.cpp
+   src/MeLayer.cpp
    src/MenuPanel.cpp
 )
 

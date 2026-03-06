@@ -7,6 +7,7 @@
 #include "DailyLayer.h"
 #include "GameLayer.h"
 #include "MenuPanel.h"
+#include "MeLayer.h"
 #include "Game.h"
 
 /// @bug if clicked super quick, start button will not be active & layer will not transition
@@ -38,8 +39,8 @@ void HomeLayer::OnEvent(Event &e) {
          Game::Get().QueueLayerSwap(this, new GameLayer());
       else if(activeButton == &m_panel.dailyButton)
          Game::Get().QueueLayerSwap(this, new DailyLayer());
-      else if(activeButton != m_focusedPanelButton)
-         m_focusedPanelButton = activeButton;
+      else if(activeButton == &m_panel.meButton)
+         Game::Get().QueueLayerSwap(this, new MeLayer());
 
       e.Handled = true;
    }
@@ -50,7 +51,7 @@ void HomeLayer::OnUpdate() {
    m_panel.Update();
    m_startButton.Update();
    
-   // panel: active & focus
+   // panel focus
    m_panel.clearAllFocus();
    m_focusedPanelButton->setFocus(true, BLANK, BLUE);
 
