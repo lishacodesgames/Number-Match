@@ -35,11 +35,13 @@ void MenuLayer::OnDetach() {
 }
 
 void MenuLayer::OnUpdate() {
-   // panel
+   // start of frame: update
    m_panel.homeButton.Update();
    m_panel.dailyButton.Update();
    m_panel.meButton.Update();
-
+   m_startButton.Update();
+   
+   // panel: active & focus
    m_panel.homeButton.setFocus(false, BLANK, GRAY);
    m_panel.dailyButton.setFocus(false, BLANK, GRAY);
    m_panel.meButton.setFocus(false, BLANK, GRAY);
@@ -50,17 +52,14 @@ void MenuLayer::OnUpdate() {
 
    m_focusedPanelButton->setFocus(true, BLANK, BLUE);
 
-   Button* hoveredButton = m_panel.findHoveredButton();
+   // hover state of all Menu buttons
+   Button* hoveredButton = findHoveredButton();
    if(hoveredButton) {
-      hoveredButton->textColor = DARKBLUE;
+      if(hoveredButton != &m_startButton)
+         hoveredButton->textColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } else 
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-
-   // start button
-   m_startButton.Update();
-   if(m_startButton.isHovered)
-      SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
 }
 
 void MenuLayer::OnEvent(Event &e) {
@@ -91,13 +90,15 @@ void MenuLayer::OnRender() {
    m_startButton.Draw();
 }
 
-Button* MenuPanel::findHoveredButton() {
-   if(homeButton.isHovered)
-      return &homeButton;
-   else if(dailyButton.isHovered)
-      return &dailyButton;
-   else if(meButton.isHovered)
-      return &meButton;
+Button* MenuLayer::findHoveredButton() {
+   if(m_startButton.isHovered)
+      return &m_startButton;
+   else if(m_panel.homeButton.isHovered)
+      return &m_panel.homeButton;
+   else if(m_panel.dailyButton.isHovered)
+      return &m_panel.dailyButton;
+   else if(m_panel.meButton.isHovered)
+      return &m_panel.meButton;
    else  
       return nullptr;
 }

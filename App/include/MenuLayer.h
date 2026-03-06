@@ -11,7 +11,6 @@ struct MenuPanel {
    Button dailyButton;
    Button meButton;
 
-   Button* findHoveredButton();
    Button* findActiveButton();
 };
 
@@ -32,4 +31,6 @@ private:
 
    MenuPanel m_panel;
    Button* m_focusedPanelButton;
+
+   Button* findHoveredButton();
 };
