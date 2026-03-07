@@ -41,14 +41,14 @@ void HomeLayer::OnEvent(Event &e) {
          e.Handled = false;
          return;
       } else if(activeButton != &m_panel.homeButton) {
-         Game::Get().QueueLayerPop(this);
+         App::Get().QueueLayerPop(this);
 
          if(activeButton == &m_panel.dailyButton)
-            Game::Get().QueueLayerPush(new DailyLayer()); 
+            App::Get().QueueLayerPush(new DailyLayer()); 
          else if(activeButton == &m_panel.meButton)
-            Game::Get().QueueLayerPush(new MeLayer());
+            App::Get().QueueLayerPush(new MeLayer());
          else
-            Game::Get().QueueLayerPush(new GameLayer());
+            App::Get().QueueLayerPush(new GameLayer());
       }
       
       e.Handled = true;

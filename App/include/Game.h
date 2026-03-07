@@ -6,13 +6,13 @@
 #include <vector>
 
 /// Singleton class that manages the game loop and all game states (menu, gameplay, pause, etc.) 
-class Game {
-   static Game* s_instance; // static singleton instance
+class App {
+   static App* s_instance; // static singleton instance
 public:
-   Game();
-   ~Game();
+   App();
+   ~App();
 
-   static Game& Get();
+   static App& Get();
 
    void PushLayer(Layer* layer);
    void QueueLayerPush(Layer* layer);

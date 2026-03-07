@@ -1,7 +1,7 @@
 #include "Game.h"
 
 int main() {
-   Game game;
+   App game;
 
    game.Run();
 
