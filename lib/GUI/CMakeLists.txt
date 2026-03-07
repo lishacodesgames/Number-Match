@@ -1,6 +1,7 @@
 add_library(GUI STATIC)
 target_sources(GUI PRIVATE
-   src/Button.cpp 
+   src/Button.cpp
+   src/Shadow.cpp
 )
 
 target_link_libraries(GUI PUBLIC raylib)
