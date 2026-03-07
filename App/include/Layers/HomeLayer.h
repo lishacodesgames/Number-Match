@@ -8,9 +8,6 @@ class HomeLayer : public Layer {
 public:
    HomeLayer();
    ~HomeLayer() override;
-
-   void OnAttach() override;
-   void OnDetach() override;
    void OnUpdate() override;
    void OnEvent(Event &e) override;
    void OnRender() override;

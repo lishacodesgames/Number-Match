@@ -6,9 +6,7 @@
 class DailyLayer : public Layer {
 public:
    DailyLayer();
-   ~DailyLayer() override;
-   void OnAttach() override;
-   void OnDetach() override;
+   ~DailyLayer() override = default;
    void OnEvent(Event& e) override;
    void OnUpdate() override;
    void OnRender() override;

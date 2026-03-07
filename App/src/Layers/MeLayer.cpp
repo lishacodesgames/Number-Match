@@ -9,12 +9,7 @@
 #include "Layers/HomeLayer.h"
 #include "Game.h"
 
-MeLayer::MeLayer() : Layer("MeLayer") { m_panel.meButton.setFocus(true, BLANK, BLUE); }
-void MeLayer::OnAttach() { printf("Me Layer attached\n"); }
-
-
-void MeLayer::OnDetach() { printf("Me Layer detached\n"); }
-MeLayer::~MeLayer() = default;
+MeLayer::MeLayer() : Layer("Me Layer") { m_panel.meButton.setFocus(true, BLANK, BLUE); }
 
 void MeLayer::OnEvent(Event& e) {
    if(e.GetEventType() == EventType::MouseClicked) {

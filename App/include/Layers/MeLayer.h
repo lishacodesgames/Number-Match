@@ -8,9 +8,7 @@
 class MeLayer : public Layer {
 public:
    MeLayer();
-   ~MeLayer() override;
-   void OnAttach() override;
-   void OnDetach() override;
+   ~MeLayer() override = default;
    void OnEvent(Event& e) override;
    void OnUpdate() override;
    void OnRender() override;

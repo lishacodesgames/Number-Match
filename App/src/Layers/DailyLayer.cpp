@@ -9,11 +9,7 @@
 #include "Layers/MeLayer.h"
 #include "Game.h"
 
-DailyLayer::DailyLayer() : Layer("DailyLayer") { m_panel.dailyButton.setFocus(true, BLANK, BLUE); }
-void DailyLayer::OnAttach() { printf("Daily Layer attached\n"); }
-
-void DailyLayer::OnDetach() { printf("Daily Layer detached\n"); }
-DailyLayer::~DailyLayer() = default;
+DailyLayer::DailyLayer() : Layer("Daily Layer") { m_panel.dailyButton.setFocus(true, BLANK, BLUE); }
 
 void DailyLayer::OnEvent(Event& e) {
    if(e.GetEventType() == EventType::MouseClicked) {

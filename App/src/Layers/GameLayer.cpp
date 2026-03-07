@@ -7,18 +7,13 @@
 #include "Game.h"
 
 bool GameLayer::s_isSuspended = false;
-GameLayer::GameLayer() : Layer("GameLayer") {
+GameLayer::GameLayer() : Layer("Game Layer") {
    renderSuspended = false;
    GameLayer::s_isSuspended = false;
 }
-
 void GameLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   printf("Game Layer attached\n");
-}
-
-void GameLayer::OnDetach() {
-   printf("Game Layer detached\n");
+   printf("%s attached\n", m_name.c_str());
 }
 
 void GameLayer::OnUpdate() {

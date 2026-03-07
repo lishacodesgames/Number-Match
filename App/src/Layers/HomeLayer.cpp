@@ -16,22 +16,19 @@ static Vector2 buttonOrigin() {
       (float)(GetScreenWidth() - buttonBounds.x)/2, (float)GetScreenHeight() - MenuPanel::HEIGHT - buttonBounds.y - 50
    };
 }
-HomeLayer::HomeLayer() : Layer("HomeLayer"), 
+HomeLayer::HomeLayer() : Layer("Home Layer"), 
       m_newButton({buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, "New Game", WHITE, BLUE),
       m_continueButton({buttonOrigin().x, buttonOrigin().y-buttonBounds.y-15, buttonBounds.x, buttonBounds.y}, "Continue Game", BLUE, WHITE)
 {
    Image bg = LoadImage("assets/home_background.jpg");
    if(bg.data != nullptr) {
-      ImageResize(&bg, GetScreenWidth(), GetScreenHeight() - MenuPanel::HEIGHT);
+      ImageResize(&bg, GetScreenWidth(), bg.height*1.5); // resize only width so it extends below screen
       m_backgroundTexture = LoadTextureFromImage(bg);
       UnloadImage(bg);
    }
 
    m_focusedPanelButton = &m_panel.homeButton;
 }
-void HomeLayer::OnAttach() { printf("Menu Layer attached\n"); }
-
-void HomeLayer::OnDetach() { printf("Menu Layer detached\n"); }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 
 void HomeLayer::OnEvent(Event &e) {
@@ -71,7 +68,7 @@ void HomeLayer::OnUpdate() {
 }
 
 void HomeLayer::OnRender() {
-   DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 160});
+   DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 25});
 
    const char* gameName = "Number Match";
    Vector2 textPos = {
