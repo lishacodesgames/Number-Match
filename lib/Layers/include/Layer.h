@@ -16,8 +16,8 @@ public:
 
    // ---- layer pause/resume (suspension) ----
    bool renderSuspended = false;
-   virtual void OnSuspend() {};
-   virtual void OnResume() {};
+   virtual void OnSuspend();
+   virtual void OnResume();
 protected:
    std::string m_name;
 };

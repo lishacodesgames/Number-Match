@@ -5,7 +5,8 @@ class GameLayer : public Layer {
 public:
    /// @todo unstatic-ify
    static bool s_isSuspended;
-
+   static void setSuspended(bool state);
+   
    GameLayer();
    ~GameLayer() = default;
 

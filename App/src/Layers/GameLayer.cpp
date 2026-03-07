@@ -2,18 +2,26 @@
 #include "Layers/GameLayer.h"
 
 #include <cstdio>
+#include "Layers/GameLayer.h"
 #include "Layers/HomeLayer.h"
 #include "Layer.h"
 #include "Game.h"
 
 bool GameLayer::s_isSuspended = false;
+void GameLayer::setSuspended(bool state) {
+   if(s_isSuspended == state)
+      return;
+   
+   s_isSuspended = state;
+}
+
 GameLayer::GameLayer() : Layer("Game Layer") {
-   renderSuspended = false;
-   GameLayer::s_isSuspended = false;
+  renderSuspended = false;
+  GameLayer::s_isSuspended = false;
 }
 void GameLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   printf("%s attached\n", m_name.c_str());
+   printf("%s ATTACHED\n", m_name.c_str());
 }
 
 void GameLayer::OnUpdate() {
@@ -33,7 +41,7 @@ void GameLayer::OnEvent(Event& e) {
    if(e.GetEventType() == EventType::KeyPressed) {
       char key = static_cast<KeyPressedEvent&>(e).key;
       if(key == 'q' || key == 'Q') {
-         s_isSuspended = true;
+         setSuspended(true);
          App::Get().QueueLayerPush(new HomeLayer());
          e.Handled = true;
       }
