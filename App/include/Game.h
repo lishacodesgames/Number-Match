@@ -14,7 +14,6 @@ public:
 
    static App& Get();
 
-   void PushLayer(Layer* layer);
    void QueueLayerPush(Layer* layer);
    void QueueLayerPop(Layer* layer);
 

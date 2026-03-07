@@ -13,8 +13,11 @@
 // ---- RAYLIB ----
 #include <raylib.h>
 
+// ---- TYPES AND...STUFF ----
+#include <utility>
+#include <typeinfo>
+
 // ---- OTHER ----
 #include <algorithm>
 #include <optional>
-#include <utility>
 #include <memory>

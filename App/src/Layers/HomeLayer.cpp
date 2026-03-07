@@ -47,8 +47,14 @@ void HomeLayer::OnEvent(Event &e) {
             App::Get().QueueLayerPush(new DailyLayer()); 
          else if(activeButton == &m_panel.meButton)
             App::Get().QueueLayerPush(new MeLayer());
-         else
+         else if(activeButton == &m_newButton)
             App::Get().QueueLayerPush(new GameLayer());
+         else {// resume game layer
+            if(GameLayer::s_isSuspended)        // game layer exists and was suspended
+               GameLayer::s_isSuspended = false;
+            else                                // game layer was not created before this
+               App::Get().QueueLayerPush(new GameLayer());
+         }
       }
       
       e.Handled = true;

@@ -1,8 +1,12 @@
 #include <Precompiled.h>
 #include "Game.h"
 
+#include <algorithm>
+#include <typeinfo>
 #include <raylib.h>
 #include "Layers/HomeLayer.h"
+
+/// @bug Continue button not working. Something wrong with Queueing mechanic
 
 App* App::s_instance = nullptr; // assign memory before assigning "this" ptr to it
 App::App() {
@@ -11,19 +15,23 @@ App::App() {
    InitWindow(800, 600, "Number Match");
    SetTargetFPS(60);
 
-   PushLayer(new HomeLayer());
+   m_layerStack.PushLayer(new HomeLayer());
 }
 
 App::~App() { 
    m_layerStack.Delete(); /// Must be done before CloseWindow()
    CloseWindow(); 
 }
-
 App& App::Get() { return *s_instance; }
 
-void App::PushLayer(Layer* layer) { m_layerStack.PushLayer(layer); }
+void App::QueueLayerPush(Layer* layer) {
+   for(auto* existing : m_layerStack) {
+      if(typeid(*existing) == typeid(*layer)) // duplicate layers
+         QueueLayerPop(layer);
+   }
 
-void App::QueueLayerPush(Layer* layer) { m_pendingPushes.push_back(layer); }
+   m_pendingPushes.push_back(layer);
+}
 void App::QueueLayerPop(Layer* layer) { m_pendingPops.push_back(layer); }
 
 void App::OnEvent(Event& e) {

@@ -3,6 +3,8 @@
 
 class GameLayer : public Layer {
 public:
+   static bool s_isSuspended; // TODO unstatic-ify
+
    GameLayer();
    ~GameLayer() = default;
 
@@ -11,6 +13,10 @@ public:
    void OnUpdate() override;
    void OnEvent(Event& e) override;
    void OnRender() override;
+
+   // TODO (also set renderSuspended)
+   void OnSuspend() override {}
+   void OnResume() override {}
 
 private:
    int x = 400, y = 300;

@@ -18,9 +18,10 @@ public:
    std::vector<Layer*>::iterator end();
    std::vector<Layer*>::reverse_iterator rbegin();
    std::vector<Layer*>::reverse_iterator rend();
+   bool empty() const;
 
 private:
-   std::vector<Layer*> m_Layers{};
+   std::vector<Layer*> m_layers{};
 
    /// makes sure standard layers get placed before overlay layers
    uint32_t m_layerInsertIndex = 0;
