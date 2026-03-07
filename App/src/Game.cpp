@@ -6,8 +6,6 @@
 #include <raylib.h>
 #include "Layers/HomeLayer.h"
 
-/// @bug Continue button not working. Something wrong with Queueing mechanic
-
 App* App::s_instance = nullptr; // assign memory before assigning "this" ptr to it
 App::App() {
    s_instance = this;
@@ -27,7 +25,7 @@ App& App::Get() { return *s_instance; }
 void App::QueueLayerPush(Layer* layer) {
    for(auto* existing : m_layerStack) {
       if(typeid(*existing) == typeid(*layer)) // duplicate layers
-         QueueLayerPop(layer);
+         QueueLayerPop(existing);
    }
 
    m_pendingPushes.push_back(layer);

@@ -3,7 +3,8 @@
 
 class GameLayer : public Layer {
 public:
-   static bool s_isSuspended; // TODO unstatic-ify
+   /// @todo unstatic-ify
+   static bool s_isSuspended;
 
    GameLayer();
    ~GameLayer() = default;
