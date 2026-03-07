@@ -15,7 +15,7 @@ public:
       Rectangle exactBounds, 
       const char* text, Color buttonColor, Color textColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
-      Vector2 shadowOffset = {10, 10}, float shadowBlur = 2.0f, Color shadowColor = BLACK
+      Vector2 shadowOffset = {10, 10}, float shadowBlur = 2.0f, Color shadowColor = BLANK
    );
 
    /// Evenly spaced padding
@@ -24,7 +24,7 @@ public:
       Vector2 padding, 
       const char* text, Color buttonColor, Color textColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
-      Vector2 shadowOffset = {10, 10}, float shadowBlur = 2.0f, Color shadowColor = BLACK
+      Vector2 shadowOffset = {1, 1}, float shadowBlur = 2.0f, Color shadowColor = BLANK
    );
 
    // Custom padding
@@ -33,7 +33,7 @@ public:
       float paddingLeft, float paddingRight, float paddingTop, float paddingBottom,
       const char* text, Color buttonColor, Color textColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
-      Vector2 shadowOffset = {10, 10}, float shadowBlur = 2.0f, Color shadowColor = BLACK
+      Vector2 shadowOffset = {1, 1}, float shadowBlur = 2.0f, Color shadowColor = BLANK
    );
    
    // ------------------------

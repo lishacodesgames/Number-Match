@@ -5,8 +5,6 @@
 #include <raylib.h>
 #include "Button.h"
 
-/// @bug Panel shadow is a weird bw gradient 
-
 static constexpr float BUTTON_SPACING = 192.0f;
 
 static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function

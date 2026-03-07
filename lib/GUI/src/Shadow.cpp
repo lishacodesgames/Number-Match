@@ -15,7 +15,6 @@ Shadow::Shadow (Vector2 offset, float softness, Color color)
    
    // Get address of uniforms from shadow.fs
    m_size_memLoc = GetShaderLocation(m_shader, "size");
-   m_offset_memLoc = GetShaderLocation(m_shader, "offset");
    m_softness_memLoc = GetShaderLocation(m_shader, "softness");
    m_color_memLoc = GetShaderLocation(m_shader, "color");
 }
@@ -33,17 +32,15 @@ void Shadow::Draw(Rectangle target, Vector2 offset, float softness, Vector4 colo
 
    // send C++ data to GPU
    SetShaderValue(m_shader, m_size_memLoc, &size, SHADER_UNIFORM_VEC2);
-   SetShaderValue(m_shader, m_offset_memLoc, &offset, SHADER_UNIFORM_VEC2);
    SetShaderValue(m_shader, m_softness_memLoc, &softness, SHADER_UNIFORM_FLOAT);
    SetShaderValue(m_shader, m_color_memLoc, &color, SHADER_UNIFORM_VEC4);
 
    // draw mesh
-   float padding = softness * 2.0f;
    DrawRectangle( 
-      static_cast<int>(target.x + offset.x - padding),
-      static_cast<int>(target.y + offset.y - padding),
-      static_cast<int>(target.width + padding * 2.0f),
-      static_cast<int>(target.height + padding * 2.0f),
+      static_cast<int>(target.x + offset.x - softness),
+      static_cast<int>(target.y + offset.y - softness),
+      static_cast<int>(target.width + softness * 2.0f),
+      static_cast<int>(target.height + softness * 2.0f),
       WHITE // shader calculates its own color so this remains white
    );
 

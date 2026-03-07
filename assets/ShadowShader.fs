@@ -8,7 +8,6 @@ out vec4 finalColor;
 
 // Uniforms sent from C++
 uniform vec2 size;      	// width and height of the rectangle
-uniform vec2 offset;  		// x/y offset of the shadow
 uniform float softness;    // blur radius
 uniform vec4 color;   		// RGBA shadow color
 
@@ -19,21 +18,20 @@ float rectSDF(vec2 p, vec2 halfSize) {
 }
 
 void main() {
-	
 	// Calculate the TOTAL size of the drawing area (Button + Padding for blur)
-	vec2 fullSize = size + (softness * 4.0);
+	vec2 canvasSize = size + (softness * 2.0);
 
-	// Convert texture coordinates (0→1) to centered coordinates (-0.5→0.5)
-	vec2 p = (fragTexCoord - 0.5) * fullSize;
-	
-	// Apply shadow offset	
-	p -= offset;
+	// Convert fragTexCoord (0->1) into actual pixel coordinates (0 -> canvasSize)
+	vec2 pixelPos = fragTexCoord * canvasSize;
+
+	// Center the coordinates so (0,0) is the middle of the canvas
+	vec2 p = pixelPos - (canvasSize * 0.5);
 	
 	// Compute distance from rectangle edge	
 	float dist = rectSDF(p, size * 0.5);
 	
 	// Smooth blur transition	
-	float alpha = smoothstep(softness, -softness, dist);
+	float alpha = 1.0 - smoothstep(-softness, softness, dist);
 	
 	// Final shadow color
 	finalColor = vec4(color.rgb, color.a * alpha);
