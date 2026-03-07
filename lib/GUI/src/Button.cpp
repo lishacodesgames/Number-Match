@@ -72,10 +72,10 @@ void Button::Draw() {
       m_shadow.Draw(m_bounds, m_shadow.offset, m_shadow.softness, m_shadow.color);
       DrawRectangleRounded(m_bounds, roundness.first, roundness.second, buttonColor);
    } else {
-      m_shadow.Draw(m_bounds, m_shadow.offset/5, m_shadow.softness*0.75f, m_shadow.color);
+      m_shadow.Draw(m_bounds, m_shadow.offset*0.72542f, m_shadow.softness, m_shadow.color);
 
       if(buttonColor == WHITE) // darker for contrast cuz nothings lighter than white
-         DrawRectangleRounded( 
+         DrawRectangleRounded(
             m_bounds, roundness.first, roundness.second, ColorBrightness(buttonColor, -0.069f)
          );
       else // lighter cuz it gives a satisfying pseudo-growth to button
@@ -94,7 +94,7 @@ void Button::Draw() {
    textOrigin.x = m_bounds.x + m_horizontalPadding.x + (m_bounds.width - m_horizontalPadding.x - m_horizontalPadding.y - textSize.x) / 2;
    textOrigin.y = m_bounds.y + m_verticalPadding.x + (m_bounds.height - m_verticalPadding.x -   m_verticalPadding.y - textSize.y) / 2;
 
-  DrawTextEx(GetFontDefault(), text.c_str(), textOrigin, fontSize, 1, textColor);
+   DrawTextEx(GetFontDefault(), text.c_str(), textOrigin, fontSize, 1, textColor);
 }
 
 void Button::setPadding_Bounds(Vector2 horizPadding, Vector2 vertPadding) {

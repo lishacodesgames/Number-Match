@@ -19,11 +19,12 @@ float rectSDF(vec2 p, vec2 halfSize) {
 }
 
 void main() {
-	// Convert texture coordinates (0→1) to centered coordinates (-0.5→0.5)
-	vec2 p = fragTexCoord - 0.5;
 	
-	// Convert to pixel space using rectangle size	
-	p *= size + softness * 2.0;
+	// Calculate the TOTAL size of the drawing area (Button + Padding for blur)
+	vec2 fullSize = size + (softness * 4.0);
+
+	// Convert texture coordinates (0→1) to centered coordinates (-0.5→0.5)
+	vec2 p = (fragTexCoord - 0.5) * fullSize;
 	
 	// Apply shadow offset	
 	p -= offset;
@@ -32,7 +33,7 @@ void main() {
 	float dist = rectSDF(p, size * 0.5);
 	
 	// Smooth blur transition	
-	float alpha = 1.0 - smoothstep(0.0, softness, dist);
+	float alpha = smoothstep(softness, -softness, dist);
 	
 	// Final shadow color
 	finalColor = vec4(color.rgb, color.a * alpha);

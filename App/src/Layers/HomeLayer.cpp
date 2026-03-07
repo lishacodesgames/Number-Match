@@ -21,12 +21,12 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
       m_newButton(
          {buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, 
          "New Game", WHITE, BLUE,
-         20, {0.8f, 8}, {2, 2}, 1.0f, GRAY
+         20, {0.8f, 8}, {5.5f, 5.5f}, 1.0f, GRAY
       ),
       m_continueButton(
          {buttonOrigin().x, buttonOrigin().y-buttonBounds.y-15, buttonBounds.x, buttonBounds.y}, 
          "Continue Game", BLUE, WHITE,
-         20, {0.8f, 8}, {2, 2}, 1.0f, GRAY
+         20, {0.8f, 8}, {5.5f, 5.5f}, 1.0f, GRAY
       )
 {
    Image bg = LoadImage("assets/home_background.jpg");

@@ -1,12 +1,12 @@
 #pragma once
 #include <raylib.h>
 
-/// Customisable shadows for RECANGLES
+/// Customisable shadows for RECTANGLES
 class Shadow {
 public:
    Vector2 offset = {10, 10}; /// How far the shadow is shifted
    float softness = 2.0f;     /// How fuzzy the edges are
-   Vector4 color = {0, 0, 0, 100};    /// The color and transparency of the shadow
+   Vector4 color = {0, 0, 0, 0};    /// The color and transparency of the shadow
 
    Shadow(Vector2 offset, float softness, Color color);
    ~Shadow();
