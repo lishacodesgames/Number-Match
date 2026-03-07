@@ -5,16 +5,20 @@
 #include <raylib.h>
 #include <Button.h>
 
-MenuPanel::MenuPanel() {
-   constexpr float BUTTON_SPACING = 192.0f;
-   Vector2 panelButtonsOrigin = { 
-      (float)(GetScreenWidth()) / 3 - 150, (float)(GetScreenHeight()) - MenuPanel::HEIGHT + 15
-   };
+static constexpr float BUTTON_SPACING = 192.0f;
 
-   homeButton = Button( panelButtonsOrigin, {0, 0}, "Main", BLANK, BLUE);
-   dailyButton = Button( panelButtonsOrigin + Vector2{BUTTON_SPACING, 0}, {0, 0}, "Daily Challenges", BLANK, GRAY);
-   meButton = Button( panelButtonsOrigin + Vector2{BUTTON_SPACING*2.7f, 0}, {0, 0}, "Me", BLANK, GRAY);
+static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function
+   return { 
+      (float)(GetScreenWidth()) / 3 - 150, 
+      (float)(GetScreenHeight()) - MenuPanel::HEIGHT + 15
+   };
 }
+
+MenuPanel::MenuPanel() :
+      homeButton(buttonsOrigin(), {0, 0}, "Main", BLANK, BLUE),
+      dailyButton(buttonsOrigin() + Vector2{BUTTON_SPACING, 0}, {0, 0}, "Daily Challenges", BLANK, GRAY),
+      meButton(buttonsOrigin() + Vector2{BUTTON_SPACING*2.7f, 0}, {0, 0}, "Me", BLANK, GRAY)
+{}
 
 void MenuPanel::Update(Button* focusedButton) {
    homeButton.Update();

@@ -10,7 +10,9 @@
 #include "Layers/MeLayer.h"
 #include "Game.h"
 
-HomeLayer::HomeLayer() : Layer("HomeLayer") {
+HomeLayer::HomeLayer() : Layer("HomeLayer"), 
+      m_startButton({ 320, 250 }, { 28, 14 }, "New Game", WHITE, BLUE, {0.8f, 10}, 22)
+{
    Image bg = LoadImage("assets/home_background.jpg");
    if(bg.data != nullptr) {
       ImageResize(&bg, GetScreenWidth(), GetScreenHeight() - MenuPanel::HEIGHT);
@@ -18,7 +20,6 @@ HomeLayer::HomeLayer() : Layer("HomeLayer") {
       UnloadImage(bg);
    }
 
-   m_startButton = Button({ 320, 250 }, { 22, 14 }, "Start the Game", 22, PINK, DARKGRAY);
    m_focusedPanelButton = &m_panel.homeButton;
 }
 void HomeLayer::OnAttach() { printf("Menu Layer attached\n"); }

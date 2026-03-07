@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include <utility>
 #include <string>
 
 class Button {
@@ -8,33 +9,25 @@ public:
    // ---- CONSTRUCTORS ----
    // ----------------------
 
-   Button() = default; // if user wants to set values manually
-
-   /// Manual bounds settings, regargless of text size
+   /// Manual bounds settings, default text size, no padding, no roundness
    Button(Rectangle exactBounds, const char* text, Color buttonColor, Color textColor);
 
-   /// Origin and padding settings, bounds are calculated based on default text size (20)
-   Button(Vector2 origin, Vector2 padding, const char* text, Color buttonColor, Color textColor);
-
-   /// Origin and padding settings, bounds are calculated based on custom text size
-   Button(Vector2 origin, Vector2 padding, const char* text, int fontSize, Color buttonColor, Color textColor);
-
-   /// Elaborate custom padding default text size (20)
+   /// Evenly spaced padding
    Button(
       Vector2 origin, 
-      float paddingLeft, float paddingRight, 
-      float paddingTop, float paddingBottom, 
+      Vector2 padding, 
       const char* text, 
-      Color buttonColor, Color textColor
+      Color buttonColor, Color textColor,
+      std::pair<float, int> roundness = {0.8f, 8}, int fontSize = 20
    );
 
-   /// Elaborate custom padding custom text size
+   // Custom padding
    Button(
-      Vector2 origin, 
-      float paddingLeft, float paddingRight, 
-      float paddingTop, float paddingBottom, 
-      const char* text, int fontSize, 
-      Color buttonColor, Color textColor
+      Vector2 origin,
+      float paddingLeft, float paddingRight, float paddingTop, float paddingBottom,
+      const char* text, 
+      Color buttonColor, Color textColor,
+      std::pair<float, int> roundness = {0.8f, 8}, int fontSize = 20
    );
    
    // ------------------------
@@ -45,6 +38,7 @@ public:
    std::string text;
    int fontSize = 20;
    Color buttonColor = BLACK, textColor = WHITE;
+   std::pair<float, int> roundness = {0.8f, 8};
 
    // ---------------
    // ---- FLAGS ----
@@ -71,6 +65,11 @@ private:
    Rectangle m_bounds;
    Vector2 m_horizontalPadding; // {left, right}
    Vector2 m_verticalPadding;   // {top, bottom}
+
+   // -----------------
+   // ---- HELPERS ----
+   // -----------------
+   void setPadding_Bounds(Vector2 horizPadding, Vector2 vertPadding);
 
    // -------------------
    // ---- OPERATORS ----
