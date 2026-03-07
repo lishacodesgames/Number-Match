@@ -3,9 +3,13 @@
 
 #include <raylib.h>
 
-Shadow::Shadow(const char* shaderFilePath) {
+Shadow::Shadow (Vector2 offset, float softness, Color color)
+   : offset(offset), softness(softness)
+{
+   this->color = ColorNormalize(color);
+
    // Load the shader from the file path provided
-   m_shader = LoadShader(0, shaderFilePath); // 0 = raylib's default vertex shader
+   m_shader = LoadShader(0, "assets/ShadowShader.fs"); // 0 = raylib's default vertex shader
    
    // Get address of uniforms from shadow.fs
    m_size_memLoc = GetShaderLocation(m_shader, "size");
@@ -16,10 +20,8 @@ Shadow::Shadow(const char* shaderFilePath) {
 
 Shadow::~Shadow() { UnloadShader(m_shader); }
 
-void Shadow::Draw(Rectangle target, Vector2 offset, float softness, Color color) {
-   // Prepare data for the shader (Convert to floats/Vector2)
+void Shadow::Draw(Rectangle target, Vector2 offset, float softness, Vector4 color) {
    Vector2 size = { target.width, target.height };
-   Vector4 floatColor = ColorNormalize(color);
 
    // -------------
    // SHADER WORK

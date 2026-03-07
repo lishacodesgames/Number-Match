@@ -8,9 +8,10 @@
 Button::Button(
    Rectangle exactBounds, 
    const char* text, Color buttonColor, Color textColor,
-   int fontSize, std::pair<float, int> roundness // default args
+   int fontSize, std::pair<float, int> roundness, // default args
+   Vector2 shadowOffset, float shadowBlur, Color shadowColor // default shadow args
 ) 
-   : m_bounds(exactBounds), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor)
+   : m_bounds(exactBounds), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor), m_shadow(shadowOffset, shadowBlur, shadowColor)
 {
    origin = { m_bounds.x, m_bounds.y };
 
@@ -25,16 +26,18 @@ Button::Button(
 Button::Button(
    Vector2 origin, Vector2 padding, 
    const char* text, Color buttonColor, Color textColor,
-   int fontSize, std::pair<float, int> roundness // default args
-) : origin(origin), roundness(roundness),text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor)
+   int fontSize, std::pair<float, int> roundness, // default args
+   Vector2 shadowOffset, float shadowBlur, Color shadowColor // default shadow args
+) : origin(origin), roundness(roundness),text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor), m_shadow(shadowOffset, shadowBlur, shadowColor)
 { setPadding_Bounds({padding.x, padding.x}, {padding.y, padding.y}); }
 
 Button::Button (
    Vector2 origin, 
    float paddingLeft, float paddingRight, float paddingTop, float paddingBottom, 
    const char* text, Color buttonColor, Color textColor,
-   int fontSize, std::pair<float, int> roundness // default args
-) : origin(origin), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor)
+   int fontSize, std::pair<float, int> roundness, // default args
+   Vector2 shadowOffset, float shadowBlur, Color shadowColor // default shadow args
+) : origin(origin), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor), m_shadow(shadowOffset, shadowBlur, shadowColor)
 { setPadding_Bounds({paddingLeft, paddingRight}, {paddingTop, paddingBottom}); }
 
 bool Button::isClicked() const {
@@ -64,21 +67,26 @@ void Button::Update() {
 void Button::Draw() {
    setPadding_Bounds(m_horizontalPadding, m_verticalPadding); // in case user has modified any values
 
-   if (isHovered) {
-      if(buttonColor == WHITE)
-         DrawRectangleRounded(
+   // draw shadow, then button
+   if(!isHovered) {
+      m_shadow.Draw(m_bounds, m_shadow.offset, m_shadow.softness, m_shadow.color);
+      DrawRectangleRounded(m_bounds, roundness.first, roundness.second, buttonColor);
+   } else {
+      m_shadow.Draw(m_bounds, m_shadow.offset/5, m_shadow.softness*0.75f, m_shadow.color);
+
+      if(buttonColor == WHITE) // darker for contrast cuz nothings lighter than white
+         DrawRectangleRounded( 
             m_bounds, roundness.first, roundness.second, ColorBrightness(buttonColor, -0.069f)
          );
-      else
+      else // lighter cuz it gives a satisfying pseudo-growth to button
          DrawRectangleRounded(
             m_bounds, roundness.first, roundness.second, ColorBrightness(buttonColor, 0.169f)
-      );
+         );
 
       DrawRectangleRoundedLinesEx(
          m_bounds, roundness.first, roundness.second, 2, ColorBrightness(buttonColor, -0.1f)
       );
-   } else
-      DrawRectangleRounded(m_bounds, roundness.first, roundness.second, buttonColor);
+   }
 
    // make padding left be only on left and right only on right etc
    Vector2 textSize = MeasureTextEx(GetFontDefault(), text.c_str(), fontSize, 1);
