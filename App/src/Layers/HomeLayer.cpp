@@ -20,13 +20,11 @@ static Vector2 buttonOrigin() {
 HomeLayer::HomeLayer() : Layer("Home Layer"), 
       m_newButton(
          {buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, 
-         "New Game", WHITE, BLUE,
-         20, {0.8f, 8}, {5.5f, 5.5f}, 1.0f, GRAY
+         "New Game", WHITE, BLUE
       ),
       m_continueButton(
          {buttonOrigin().x, buttonOrigin().y-buttonBounds.y-15, buttonBounds.x, buttonBounds.y}, 
-         "Continue Game", BLUE, WHITE,
-         20, {0.8f, 8}, {5.5f, 5.5f}, 1.0f, GRAY
+         "Continue Game", BLUE, WHITE
       )
 {
    Image bg = LoadImage("assets/home_background.jpg");
@@ -77,7 +75,7 @@ void HomeLayer::OnUpdate() {
 }
 
 void HomeLayer::OnRender() {
-   DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 25});
+   DrawTexture(m_backgroundTexture, 0, 0, {180, 180, 180, 45});
 
    const char* gameName = "Number Match";
    Vector2 textPos = {

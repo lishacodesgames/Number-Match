@@ -40,7 +40,7 @@ void MenuPanel::Update(Button* focusedButton) {
 }
 
 void MenuPanel::Draw() {
-   DrawLine(0, GetScreenHeight() - MenuPanel::HEIGHT, GetScreenWidth(), GetScreenHeight() - MenuPanel::HEIGHT, DARKGRAY);
+   DrawLine(0, GetScreenHeight() - MenuPanel::HEIGHT, GetScreenWidth(), GetScreenHeight() - MenuPanel::HEIGHT, {180, 180, 180, 255});
    DrawRectangleV(
       {0.0f, static_cast<float>(GetScreenHeight() - MenuPanel::HEIGHT)}, 
       {static_cast<float>(GetScreenWidth()), MenuPanel::HEIGHT}, WHITE
