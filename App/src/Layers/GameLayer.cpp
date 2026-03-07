@@ -28,7 +28,8 @@ void GameLayer::OnEvent(Event& e) {
    if(e.GetEventType() == EventType::KeyPressed) {
       char key = static_cast<KeyPressedEvent&>(e).key;
       if(key == 'q' || key == 'Q') {
-         Game::Get().QueueLayerSwap(this, new HomeLayer());
+         Game::Get().QueueLayerPop(this);
+         Game::Get().QueueLayerPush(new HomeLayer());
          e.Handled = true;
       }
    }

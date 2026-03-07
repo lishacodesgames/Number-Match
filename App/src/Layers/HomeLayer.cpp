@@ -40,14 +40,17 @@ void HomeLayer::OnEvent(Event &e) {
       if(!activeButton) {
          e.Handled = false;
          return;
-      }
-      else if(activeButton == &m_newButton || activeButton == &m_continueButton)
-         Game::Get().QueueLayerSwap(this, new GameLayer());
-      else if(activeButton == &m_panel.dailyButton)
-         Game::Get().QueueLayerSwap(this, new DailyLayer());
-      else if(activeButton == &m_panel.meButton)
-         Game::Get().QueueLayerSwap(this, new MeLayer());
+      } else if(activeButton != &m_panel.homeButton) {
+         Game::Get().QueueLayerPop(this);
 
+         if(activeButton == &m_panel.dailyButton)
+            Game::Get().QueueLayerPush(new DailyLayer()); 
+         else if(activeButton == &m_panel.meButton)
+            Game::Get().QueueLayerPush(new MeLayer());
+         else
+            Game::Get().QueueLayerPush(new GameLayer());
+      }
+      
       e.Handled = true;
    }
 }

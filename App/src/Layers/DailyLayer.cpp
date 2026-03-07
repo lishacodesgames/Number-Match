@@ -21,11 +21,14 @@ void DailyLayer::OnEvent(Event& e) {
       if(!activeButton) {
          e.Handled = false;
          return;
+      } else if (activeButton != &m_panel.dailyButton) {
+         Game::Get().QueueLayerPop(this);
+
+         if (activeButton == &m_panel.homeButton)
+            Game::Get().QueueLayerPush(new HomeLayer());
+         else
+            Game::Get().QueueLayerPush(new MeLayer());
       }
-      else if(activeButton == &m_panel.homeButton)
-         Game::Get().QueueLayerSwap(this, new HomeLayer());
-      else if(activeButton == &m_panel.meButton)
-         Game::Get().QueueLayerSwap(this, new MeLayer());
       
       e.Handled = true;
    }

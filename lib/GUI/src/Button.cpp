@@ -64,8 +64,13 @@ void Button::Draw() {
    setPadding_Bounds(m_horizontalPadding, m_verticalPadding); // in case user has modified any values
 
    if (isHovered) {
-      DrawRectangleRounded(m_bounds, roundness.first, roundness.second, ColorBrightness(buttonColor, 0.169f));
-      DrawRectangleRoundedLinesEx(m_bounds, roundness.first, roundness.second, 2, ColorBrightness(buttonColor, -0.1f));
+      if(buttonColor == WHITE) {
+         DrawRectangleRounded(m_bounds, roundness.first, roundness.second, ColorBrightness(buttonColor, -0.069f));
+         DrawRectangleRoundedLinesEx(m_bounds, roundness.first, roundness.second, 2, ColorBrightness(buttonColor, -0.1f));         
+      } else {
+         DrawRectangleRounded(m_bounds, roundness.first, roundness.second, ColorBrightness(buttonColor, 0.169f));
+         DrawRectangleRoundedLinesEx(m_bounds, roundness.first, roundness.second, 2, ColorBrightness(buttonColor, -0.1f));
+      }
    } else
       DrawRectangleRounded(m_bounds, roundness.first, roundness.second, buttonColor);
 

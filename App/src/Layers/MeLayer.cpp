@@ -1,6 +1,7 @@
 #include <Precompiled.h>
 #include "Layers/MeLayer.h"
 
+#include <Button.h>
 #include <raylib.h>
 #include <Event.h>
 #include <cstdio>
@@ -21,11 +22,14 @@ void MeLayer::OnEvent(Event& e) {
       if(!activeButton) {
          e.Handled = false;
          return;
-      } 
-      else if(activeButton == &m_panel.homeButton)
-         Game::Get().QueueLayerSwap(this, new HomeLayer());
-      else if(activeButton == &m_panel.dailyButton)
-         Game::Get().QueueLayerSwap(this, new DailyLayer());
+      } else if(activeButton != &m_panel.meButton) {
+         Game::Get().QueueLayerPop(this);
+
+         if(activeButton == &m_panel.homeButton)
+            Game::Get().QueueLayerPush(new HomeLayer());
+         else
+            Game::Get().QueueLayerPush(new DailyLayer());
+      }
 
       e.Handled = true;
    }

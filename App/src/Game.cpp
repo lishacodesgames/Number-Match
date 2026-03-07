@@ -23,10 +23,8 @@ Game& Game::Get() { return *s_instance; }
 
 void Game::PushLayer(Layer* layer) { m_layerStack.PushLayer(layer); }
 
-void Game::QueueLayerSwap(Layer* pop_layer, Layer* push_layer) {
-   m_pendingPop = pop_layer;
-   m_pendingPush = push_layer;
-}
+void Game::QueueLayerPush(Layer* layer) { m_pendingPushes.push_back(layer); }
+void Game::QueueLayerPop(Layer* layer) { m_pendingPops.push_back(layer); }
 
 void Game::OnEvent(Event& e) {
    // TOPMOST (last) layer must get the event FIRST
@@ -39,18 +37,26 @@ void Game::OnEvent(Event& e) {
 
 void Game::Run() {
    while(!WindowShouldClose()) {
-      // 1. apply pending layer changes at the end of the current frame, to avoid mid-frame changes that could cause bugs
-      if(m_pendingPop) {
-         m_layerStack.PopLayer(m_pendingPop);
-         delete m_pendingPop; // free memory of popped layer
-         m_pendingPop = nullptr;
+      // ---------------------------
+      // 1. apply pending layer changes at the end of the current frame
+      // to avoid mid-frame changes that could cause bugs
+      // ---------------------------
+      for(Layer* layer : m_pendingPops) {
+         m_layerStack.PopLayer(layer);
+         delete layer; // free memory of popped layer
+         layer = nullptr;
       }
-      if(m_pendingPush) {
-         m_layerStack.PushLayer(m_pendingPush);
-         m_pendingPush = nullptr;
-      }
+      m_pendingPops.clear();
 
+      for(Layer* layer : m_pendingPushes) {
+         m_layerStack.PushLayer(layer);
+         layer = nullptr;
+      }
+      m_pendingPushes.clear();
+
+      // ---------------------------
       // 2. generate events
+      // ---------------------------
       
       // key event
       int key = GetKeyPressed();
@@ -66,12 +72,20 @@ void Game::Run() {
          OnEvent(e);
       }
 
-      // 3. update logic: bottom layer -> top layer, so that top layers can override logic of lower layers 
+      // ---------------------------
+      // 3. update logic: bottom layer -> top layer
+      // so that top layers can override logic of lower layers 
       // (eg. pause menu can override gameplay input)
+      // ---------------------------
+      
       for(Layer* layer : m_layerStack)
          layer->OnUpdate();
       
-      // 4. render: bottom layer -> top layer, so that top layers render on top of lower layers
+      // ---------------------------
+      // 4. render: bottom layer -> top layer
+      // so that top layers render on top of lower layers
+      // ---------------------------
+      
       BeginDrawing();
       ClearBackground(RAYWHITE);
 
