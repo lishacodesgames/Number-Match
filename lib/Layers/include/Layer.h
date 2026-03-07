@@ -22,5 +22,5 @@ public:
    void setSuspended(bool state);
 protected:
    std::string m_name;
-   bool m_isSuspended;
+   bool m_isSuspended = false;
 };
