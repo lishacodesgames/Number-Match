@@ -38,10 +38,10 @@ void Shadow::Draw(Rectangle target, Vector2 offset, float softness, Vector4 colo
    // draw mesh
    float padding = softness * 2;
    DrawRectangle(
-      static_cast<int>(target.x - padding),
-      static_cast<int>(target.y - padding),
-      static_cast<int>(target.width + padding*2),
-      static_cast<int>(target.height + padding*2),
+      static_cast<int>(target.x + offset.x),
+      static_cast<int>(target.y + offset.y),
+      static_cast<int>(target.width),
+      static_cast<int>(target.height),
       WHITE // shader calculates its own color so this remains white
    );
 
