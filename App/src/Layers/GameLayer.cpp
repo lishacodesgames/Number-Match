@@ -1,9 +1,9 @@
 #include <Precompiled.h>
-#include "GameLayer.h"
+#include "Layers/GameLayer.h"
 
 #include <Layer.h>
 #include <cstdio>
-#include "HomeLayer.h"
+#include "Layers/HomeLayer.h"
 #include "Game.h"
 
 GameLayer::GameLayer() : Layer("GameLayer") {}

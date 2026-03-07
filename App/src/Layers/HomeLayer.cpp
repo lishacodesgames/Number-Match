@@ -1,16 +1,14 @@
 #include <Precompiled.h>
-#include "HomeLayer.h"
+#include "Layers/HomeLayer.h"
 
 #include <raymath.h>
 #include <raylib.h>
 #include <cstdio>
-#include "DailyLayer.h"
-#include "GameLayer.h"
+#include "Layers/DailyLayer.h"
+#include "Layers/GameLayer.h"
 #include "MenuPanel.h"
-#include "MeLayer.h"
+#include "Layers/MeLayer.h"
 #include "Game.h"
-
-/// @bug if clicked super quick, start button will not be active & layer will not transition
 
 HomeLayer::HomeLayer() : Layer("HomeLayer") {
    Image bg = LoadImage("assets/home_background.jpg");

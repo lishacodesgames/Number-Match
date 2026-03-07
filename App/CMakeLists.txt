@@ -1,11 +1,11 @@
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
-   src/DailyLayer.cpp
+   src/Layers/DailyLayer.cpp
+   src/Layers/GameLayer.cpp
+   src/Layers/HomeLayer.cpp
+   src/Layers/MeLayer.cpp
    src/Game.cpp
-   src/GameLayer.cpp
-   src/HomeLayer.cpp
    src/main.cpp
-   src/MeLayer.cpp
    src/MenuPanel.cpp
 )
 

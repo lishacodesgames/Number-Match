@@ -2,7 +2,7 @@
 #include "Game.h"
 
 #include <raylib.h>
-#include "HomeLayer.h"
+#include "Layers/HomeLayer.h"
 
 Game* Game::s_instance = nullptr; // assign memory before assigning "this" ptr to it
 Game::Game() {

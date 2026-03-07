@@ -1,11 +1,11 @@
 #include <Precompiled.h>
-#include "MeLayer.h"
+#include "Layers/MeLayer.h"
 
 #include <raylib.h>
 #include <Event.h>
 #include <cstdio>
-#include "DailyLayer.h"
-#include "HomeLayer.h"
+#include "Layers/DailyLayer.h"
+#include "Layers/HomeLayer.h"
 #include "Game.h"
 
 MeLayer::MeLayer() : Layer("MeLayer") { m_panel.meButton.setFocus(true, BLANK, BLUE); }
