@@ -10,8 +10,15 @@
 #include "Layers/MeLayer.h"
 #include "Game.h"
 
+static constexpr Vector2 buttonBounds = {350, 40};
+static Vector2 buttonOrigin() {
+   return {
+      (float)(GetScreenWidth() - buttonBounds.x)/2, (float)GetScreenHeight() - MenuPanel::HEIGHT - buttonBounds.y - 50
+   };
+}
 HomeLayer::HomeLayer() : Layer("HomeLayer"), 
-      m_startButton({ 320, 250 }, { 28, 14 }, "New Game", WHITE, BLUE, 22)
+      m_newButton({buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, "New Game", WHITE, BLUE),
+      m_continueButton({buttonOrigin().x, buttonOrigin().y-buttonBounds.y-15, buttonBounds.x, buttonBounds.y}, "Continue Game", BLUE, WHITE)
 {
    Image bg = LoadImage("assets/home_background.jpg");
    if(bg.data != nullptr) {
@@ -34,7 +41,7 @@ void HomeLayer::OnEvent(Event &e) {
          e.Handled = false;
          return;
       }
-      else if(activeButton == &m_startButton)
+      else if(activeButton == &m_newButton || activeButton == &m_continueButton)
          Game::Get().QueueLayerSwap(this, new GameLayer());
       else if(activeButton == &m_panel.dailyButton)
          Game::Get().QueueLayerSwap(this, new DailyLayer());
@@ -47,25 +54,33 @@ void HomeLayer::OnEvent(Event &e) {
 
 void HomeLayer::OnUpdate() {
    m_panel.Update(&m_panel.homeButton);
-   m_startButton.Update();
+   m_newButton.Update();
+   m_continueButton.Update();
 
-   if(m_startButton.isHovered)
+   if(m_newButton.isHovered || m_continueButton.isHovered)
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
 }
 
 void HomeLayer::OnRender() {
-   DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 60});
+   DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 160});
 
-   DrawText("Welcome to the Game!", 172, 152, 45, BLACK); // outline
-   DrawText("Welcome to the Game!", 170, 150, 45, DARKBLUE);
-   m_startButton.Draw();
-
+   const char* gameName = "Number Match";
+   Vector2 textPos = {
+      (float)(GetScreenWidth() - MeasureTextEx(GetFontDefault(), gameName, 45, 1).x)/2 - 20, 150.0f
+   };
+   DrawText(gameName, textPos.x + 2, textPos.y + 2, 45, BLACK); // outline
+   DrawText(gameName, textPos.x, textPos.y, 45, DARKBLUE);
+   
+   m_newButton.Draw();
+   m_continueButton.Draw();
    m_panel.Draw();
 }
 
 Button* HomeLayer::findHoveredButton() {
-   if(m_startButton.isHovered)
-      return &m_startButton;
+   if(m_newButton.isHovered)
+      return &m_newButton;
+   else if(m_continueButton.isHovered)
+      return &m_continueButton;
    else 
       return m_panel.findHoveredButton();
 }

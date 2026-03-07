@@ -4,8 +4,12 @@
 #include <Button.h>
 #include <utility>
 
-Button::Button(Rectangle exactBounds, const char* text, Color buttonColor, Color textColor) 
-   : m_bounds(exactBounds), text(text), buttonColor(buttonColor), textColor(textColor)
+Button::Button(
+   Rectangle exactBounds, 
+   const char* text, Color buttonColor, Color textColor,
+   int fontSize, std::pair<float, int> roundness // default args
+) 
+   : m_bounds(exactBounds), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor)
 {
    origin = { m_bounds.x, m_bounds.y };
 
@@ -19,8 +23,7 @@ Button::Button(Rectangle exactBounds, const char* text, Color buttonColor, Color
 
 Button::Button(
    Vector2 origin, Vector2 padding, 
-   const char* text, 
-   Color buttonColor, Color textColor,
+   const char* text, Color buttonColor, Color textColor,
    int fontSize, std::pair<float, int> roundness // default args
 ) : origin(origin), roundness(roundness),text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor)
 { setPadding_Bounds({padding.x, padding.x}, {padding.y, padding.y}); }
@@ -28,8 +31,7 @@ Button::Button(
 Button::Button (
    Vector2 origin, 
    float paddingLeft, float paddingRight, float paddingTop, float paddingBottom, 
-   const char* text, 
-   Color buttonColor, Color textColor,
+   const char* text, Color buttonColor, Color textColor,
    int fontSize, std::pair<float, int> roundness // default args
 ) : origin(origin), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor)
 { setPadding_Bounds({paddingLeft, paddingRight}, {paddingTop, paddingBottom}); }
@@ -59,6 +61,8 @@ void Button::Update() {
 }
 
 void Button::Draw() {
+   setPadding_Bounds(m_horizontalPadding, m_verticalPadding); // in case user has modified any values
+
    if (isHovered) {
       DrawRectangleRounded(m_bounds, roundness.first, roundness.second, ColorBrightness(buttonColor, 0.169f));
       DrawRectangleRoundedLinesEx(m_bounds, roundness.first, roundness.second, 2, ColorBrightness(buttonColor, -0.1f));

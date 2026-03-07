@@ -17,7 +17,8 @@ public:
 
 private:
    Texture2D m_backgroundTexture;   
-   Button m_startButton;
+   Button m_newButton;
+   Button m_continueButton;
 
    MenuPanel m_panel;
    Button* m_focusedPanelButton;

@@ -10,14 +10,17 @@ public:
    // ----------------------
 
    /// Manual bounds settings, default text size, no padding, no roundness
-   Button(Rectangle exactBounds, const char* text, Color buttonColor, Color textColor);
+   Button(
+      Rectangle exactBounds, 
+      const char* text, Color buttonColor, Color textColor,
+      int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
+   );
 
    /// Evenly spaced padding
    Button(
       Vector2 origin, 
       Vector2 padding, 
-      const char* text, 
-      Color buttonColor, Color textColor,
+      const char* text, Color buttonColor, Color textColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
    );
 
@@ -25,8 +28,7 @@ public:
    Button(
       Vector2 origin,
       float paddingLeft, float paddingRight, float paddingTop, float paddingBottom,
-      const char* text, 
-      Color buttonColor, Color textColor,
+      const char* text, Color buttonColor, Color textColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
    );
    
