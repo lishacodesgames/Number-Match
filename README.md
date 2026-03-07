@@ -20,8 +20,6 @@ My version is desktop-friendly, has no ads, and is just as addicting.
 
 ## Build
 ```bash
-mkdir build
-cd build
 cmake --preset Release
 cmake --build --preset Release
 ```
