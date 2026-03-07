@@ -6,8 +6,8 @@
 #include <cstdio>
 #include "Layers/DailyLayer.h"
 #include "Layers/GameLayer.h"
-#include "MenuPanel.h"
 #include "Layers/MeLayer.h"
+#include "MenuPanel.h"
 #include "Game.h"
 
 static constexpr Vector2 buttonBounds = {350, 40};

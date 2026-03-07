@@ -1,9 +1,9 @@
 #include <Precompiled.h>
-#include <LayerStack.h>
+#include "LayerStack.h"
 
 #include <algorithm>
-#include <Layer.h>
 #include <vector>
+#include "Layer.h"
 
 void LayerStack::PushLayer(Layer* layer) {
    m_layers.emplace(begin() + m_layerInsertIndex, layer);

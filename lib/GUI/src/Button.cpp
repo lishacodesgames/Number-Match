@@ -1,7 +1,8 @@
 #include <Precompiled.h>
+#include "Button.h"
+
 #include <raymath.h>
 #include <raylib.h>
-#include <Button.h>
 #include <utility>
 
 Button::Button(

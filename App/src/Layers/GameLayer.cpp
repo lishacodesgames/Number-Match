@@ -1,9 +1,9 @@
 #include <Precompiled.h>
 #include "Layers/GameLayer.h"
 
-#include <Layer.h>
 #include <cstdio>
 #include "Layers/HomeLayer.h"
+#include "Layer.h"
 #include "Game.h"
 
 bool GameLayer::s_isSuspended = false;

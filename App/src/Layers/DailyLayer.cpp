@@ -2,11 +2,11 @@
 #include "Layers/DailyLayer.h"
 
 #include <raylib.h>
-#include <Event.h>
-#include <Layer.h>
 #include <cstdio>
 #include "Layers/HomeLayer.h"
 #include "Layers/MeLayer.h"
+#include "Event.h"
+#include "Layer.h"
 #include "Game.h"
 
 DailyLayer::DailyLayer() : Layer("Daily Layer") { m_panel.dailyButton.setFocus(true, BLANK, BLUE); }

@@ -1,9 +1,7 @@
 #pragma once
-
-#pragma once
-#include <Layer.h>
-#include <Event.h>
 #include "MenuPanel.h"
+#include "Event.h"
+#include "Layer.h"
 
 class MeLayer : public Layer {
 public:
