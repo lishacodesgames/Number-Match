@@ -22,8 +22,12 @@ My version is desktop-friendly, has no ads, and is just as addicting.
 ```bash
 cmake --preset Release
 cmake --build --preset Release
+./build/Release/App/NumberMatch
 ```
-Executable will appear in `build/` under preset name
+**Note:** <br> 
+- for Windows, omit the `./` and add `.exe` at the end
+- Make sure you're running from the repo directory `Number-Match/`
+- Make sure you have cmake and ninja in your path variables
 
 ### Linux Dependencies
 Raylib requires a lot of libraries that are built-in on Mac and Windows. <br>
