@@ -21,7 +21,7 @@ Button::Button(
    Vector2 origin, Vector2 padding, 
    const char* text, 
    Color buttonColor, Color textColor,
-   std::pair<float, int> roundness, int fontSize // default args
+   int fontSize, std::pair<float, int> roundness // default args
 ) : origin(origin), roundness(roundness),text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor)
 { setPadding_Bounds({padding.x, padding.x}, {padding.y, padding.y}); }
 
@@ -30,7 +30,7 @@ Button::Button (
    float paddingLeft, float paddingRight, float paddingTop, float paddingBottom, 
    const char* text, 
    Color buttonColor, Color textColor,
-   std::pair<float, int> roundness, int fontSize // default args
+   int fontSize, std::pair<float, int> roundness // default args
 ) : origin(origin), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), textColor(textColor)
 { setPadding_Bounds({paddingLeft, paddingRight}, {paddingTop, paddingBottom}); }
 

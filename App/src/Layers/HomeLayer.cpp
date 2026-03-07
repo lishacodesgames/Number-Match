@@ -11,7 +11,7 @@
 #include "Game.h"
 
 HomeLayer::HomeLayer() : Layer("HomeLayer"), 
-      m_startButton({ 320, 250 }, { 28, 14 }, "New Game", WHITE, BLUE, {0.8f, 10}, 22)
+      m_startButton({ 320, 250 }, { 28, 14 }, "New Game", WHITE, BLUE, 22)
 {
    Image bg = LoadImage("assets/home_background.jpg");
    if(bg.data != nullptr) {

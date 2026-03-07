@@ -18,7 +18,7 @@ public:
       Vector2 padding, 
       const char* text, 
       Color buttonColor, Color textColor,
-      std::pair<float, int> roundness = {0.8f, 8}, int fontSize = 20
+      int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
    );
 
    // Custom padding
@@ -27,7 +27,7 @@ public:
       float paddingLeft, float paddingRight, float paddingTop, float paddingBottom,
       const char* text, 
       Color buttonColor, Color textColor,
-      std::pair<float, int> roundness = {0.8f, 8}, int fontSize = 20
+      int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
    );
    
    // ------------------------
