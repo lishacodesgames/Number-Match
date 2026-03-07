@@ -9,8 +9,8 @@ static constexpr float BUTTON_SPACING = 192.0f;
 
 static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function
    return { 
-      (float)(GetScreenWidth()) / 3 - 150, 
-      (float)(GetScreenHeight()) - MenuPanel::HEIGHT + 15
+      static_cast<float>(GetScreenWidth() / 3 - 150), 
+      static_cast<float>(GetScreenHeight() - MenuPanel::HEIGHT + 15)
    };
 }
 
@@ -42,8 +42,8 @@ void MenuPanel::Update(Button* focusedButton) {
 void MenuPanel::Draw() {
    DrawLine(0, GetScreenHeight() - MenuPanel::HEIGHT, GetScreenWidth(), GetScreenHeight() - MenuPanel::HEIGHT, DARKGRAY);
    DrawRectangleV(
-      {0.0f, (float)(GetScreenHeight() - MenuPanel::HEIGHT)}, 
-      {(float)GetScreenWidth(), MenuPanel::HEIGHT}, WHITE
+      {0.0f, static_cast<float>(GetScreenHeight() - MenuPanel::HEIGHT)}, 
+      {static_cast<float>(GetScreenWidth()), MenuPanel::HEIGHT}, WHITE
    );
 
    homeButton.Draw();

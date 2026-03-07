@@ -13,7 +13,8 @@
 static constexpr Vector2 buttonBounds = {350, 40};
 static Vector2 buttonOrigin() {
    return {
-      (float)(GetScreenWidth() - buttonBounds.x)/2, (float)GetScreenHeight() - MenuPanel::HEIGHT - buttonBounds.y - 50
+      static_cast<float>(GetScreenWidth() - buttonBounds.x)/2, 
+      static_cast<float>(GetScreenHeight() - MenuPanel::HEIGHT - buttonBounds.y - 50)
    };
 }
 HomeLayer::HomeLayer() : Layer("Home Layer"), 
@@ -72,7 +73,8 @@ void HomeLayer::OnRender() {
 
    const char* gameName = "Number Match";
    Vector2 textPos = {
-      (float)(GetScreenWidth() - MeasureTextEx(GetFontDefault(), gameName, 45, 1).x)/2 - 20, 150.0f
+      static_cast<float>(GetScreenWidth() - MeasureTextEx(GetFontDefault(), gameName, 45, 1).x)/2 - 20, 
+      150.0f
    };
    DrawText(gameName, textPos.x + 2, textPos.y + 2, 45, BLACK); // outline
    DrawText(gameName, textPos.x, textPos.y, 45, DARKBLUE);
