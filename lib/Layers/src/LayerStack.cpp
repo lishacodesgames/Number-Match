@@ -12,19 +12,27 @@ void LayerStack::PushLayer(Layer* layer) {
    layer->OnAttach();
 }
 
+void LayerStack::PopLayer(Layer* layer) {
+   auto it = std::find(begin(), begin() + m_layerInsertIndex, layer);
+
+   if(it != begin() + m_layerInsertIndex) {
+      layer->OnDetach();
+      m_layers.erase(it);
+      m_layerInsertIndex--;
+   }
+}
+
 void LayerStack::PushOverlay(Layer* overlay) {
    m_layers.emplace_back(overlay);
    overlay->OnAttach();
 }
 
-void LayerStack::PopLayer(Layer* layer) {
-   std::vector<Layer*>::iterator it = 
-      std::find(begin(), end(), layer);
+void LayerStack::PopOverlay(Layer* overlay) {
+   auto it = std::find(begin() + m_layerInsertIndex, end(), overlay);
 
    if(it != end()) {
-      layer->OnDetach();
+      overlay->OnDetach();
       m_layers.erase(it);
-      m_layerInsertIndex--;
    }
 }
 

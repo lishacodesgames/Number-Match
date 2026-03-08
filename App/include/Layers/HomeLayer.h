@@ -17,6 +17,5 @@ private:
    Button m_newButton;
    Button m_continueButton;
 
-   PanelLayer m_panel;
    Button* findHoveredButton();
 };

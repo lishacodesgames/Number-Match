@@ -2,41 +2,14 @@
 #include "Layers/MeLayer.h"
 
 #include <raylib.h>
-#include "Layers/PanelLayer.h"
-#include "Layers/DailyLayer.h"
-#include "Layers/HomeLayer.h"
-#include "Button.h"
-#include "Event.h"
-#include "Game.h"
+#include "Layer.h"
 
-MeLayer::MeLayer() : Layer("Me Layer") { 
-   m_panel.resetAllFocus();
-   m_panel.meButton.setFocus(true, BLANK, BLUE);
-   m_panel.currentPage = Menu::Me;
-}
+MeLayer::MeLayer() : Layer("Me Layer", false) {}
 
-void MeLayer::OnEvent(Event& e) {
-   if(e.GetEventType() == EventType::MouseClicked) {
-      Button* activeButton = m_panel.findHoveredButton();
-      if(!activeButton) {
-         e.Handled = false;
-         return;
-      } else if(activeButton != &m_panel.meButton) {
-         App::Get().QueueLayerPop(this);
+void MeLayer::OnEvent(Event& e) {}
 
-         if(activeButton == &m_panel.homeButton)
-            App::Get().QueueLayerPush(new HomeLayer());
-         else
-            App::Get().QueueLayerPush(new DailyLayer());
-      }
-
-      e.Handled = true;
-   }
-}
-
-void MeLayer::OnUpdate() { m_panel.OnUpdate(); }
+void MeLayer::OnUpdate() {}
 
 void MeLayer::OnRender() {
    DrawText("Coming soon...", GetScreenWidth()/2-150, GetScreenHeight()/2-100, 35, DARKGRAY);
-   m_panel.OnRender();
 }

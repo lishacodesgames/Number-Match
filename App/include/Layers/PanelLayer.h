@@ -6,9 +6,12 @@
 enum class Menu {None, Home, Daily, Me};
 
 class PanelLayer : public Layer {
+   static PanelLayer* s_instance; // instance of panel layer, so other layers can access panel without dependencies 
 public:
+   static void PopInstance();
+
    PanelLayer();
-   ~PanelLayer() override = default;
+   ~PanelLayer() override;
    void OnEvent(Event& e) override;
    void OnUpdate() override;
    void OnRender() override;

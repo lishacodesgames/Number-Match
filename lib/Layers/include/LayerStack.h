@@ -7,11 +7,13 @@ class LayerStack {
 public:
    LayerStack() = default;
    ~LayerStack() = default;
+   void Delete(); /// Deletes all layers (must be done before Window closes or segmentation fault is thrown)
 
    void PushLayer(Layer* layer);
-   void PushOverlay(Layer* overlay);
    void PopLayer(Layer* layer);
-   void Delete(); /// Deletes all layers (must be done before Window closes else segmentation fault will occur)
+   
+   void PushOverlay(Layer* overlay);
+   void PopOverlay(Layer* overlay);
 
    // to allow range based forloops over the layerstack object itself
    std::vector<Layer*>::iterator begin();

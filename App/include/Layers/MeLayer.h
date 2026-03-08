@@ -10,7 +10,4 @@ public:
    void OnEvent(Event& e) override;
    void OnUpdate() override;
    void OnRender() override;
-
-private:
-   PanelLayer m_panel;
 };

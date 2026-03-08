@@ -4,7 +4,9 @@
 
 class Layer {
 public:
-   Layer(const std::string& name); /// called when new layer pointer made with "new"
+   bool isOverlay = false;
+
+   Layer(const std::string& name, bool isOverlay); /// called when new layer pointer made with "new"
    virtual ~Layer() = default; /// called with "delete" keyword
 
    // ---- Pure virtual functions ----

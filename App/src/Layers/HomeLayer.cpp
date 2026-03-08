@@ -16,7 +16,7 @@ static Vector2 buttonOrigin() {
       static_cast<float>(GetScreenHeight() - PanelLayer::HEIGHT - buttonBounds.y - 50)
    };
 }
-HomeLayer::HomeLayer() : Layer("Home Layer"), 
+HomeLayer::HomeLayer() : Layer("Home Layer", false), 
       m_newButton(
          {buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, 
          nullptr, "New Game", WHITE, BLUE
@@ -32,10 +32,6 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
       m_backgroundTexture = LoadTextureFromImage(bg);
       UnloadImage(bg);
    }
-
-   m_panel.resetAllFocus();
-   m_panel.homeButton.setFocus(true, BLANK, BLUE);
-   m_panel.currentPage = Menu::Home;
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 
@@ -45,38 +41,27 @@ void HomeLayer::OnEvent(Event &e) {
       if(!activeButton) {
          e.Handled = false;
          return;
-      } else if(activeButton != &m_panel.homeButton) {
-         App::Get().QueueLayerPop(this);
-
-         if(activeButton == &m_panel.dailyButton) {
-            App::Get().QueueLayerPush(new DailyLayer()); 
-         }
-         else if(activeButton == &m_panel.meButton)
-            App::Get().QueueLayerPush(new MeLayer());
-         else if(activeButton == &m_newButton) {
-            App::Get().QueueLayerPush(new GameLayer());
-            m_panel.currentPage = Menu::None;
-         }
-         else {// continue button pressed
-            if(GameLayer::s_isSuspended)          // game layer exists and was suspended
-               GameLayer::setSuspended(false);
-            else                                // game layer was not created before this
-               App::Get().QueueLayerPush(new GameLayer());
-            m_panel.currentPage = Menu::None;
-         }
       }
       
+      PanelLayer::PopInstance();         
+      App::Get().QueueLayerPop(this);
+      if(activeButton == &m_continueButton && GameLayer::s_isSuspended)
+         GameLayer::setSuspended(false);
+      else // new pressed or continue pressed but there was no previous game (hence suspended is false) 
+         App::Get().QueueLayerPush(new GameLayer());
+
       e.Handled = true;
    }
 }
 
 void HomeLayer::OnUpdate() {
-   m_panel.OnUpdate();
    m_newButton.Update();
    m_continueButton.Update();
 
-   if(m_newButton.isHovered || m_continueButton.isHovered)
+   if(findHoveredButton())
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+   else
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
 void HomeLayer::OnRender() {
@@ -92,7 +77,6 @@ void HomeLayer::OnRender() {
    
    m_newButton.Draw();
    m_continueButton.Draw();
-   m_panel.OnRender();
 }
 
 Button* HomeLayer::findHoveredButton() {
@@ -100,6 +84,6 @@ Button* HomeLayer::findHoveredButton() {
       return &m_newButton;
    else if(m_continueButton.isHovered)
       return &m_continueButton;
-   else 
-      return m_panel.findHoveredButton();
+   else
+      return nullptr;
 }

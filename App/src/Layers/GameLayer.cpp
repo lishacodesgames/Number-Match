@@ -2,6 +2,7 @@
 #include "Layers/GameLayer.h"
 
 #include <raylib.h>
+#include "Layers/PanelLayer.h"
 #include "Layers/GameLayer.h"
 #include "Layers/HomeLayer.h"
 #include "Layer.h"
@@ -20,7 +21,7 @@ void GameLayer::setSuspended(bool state) {
       TraceLog(LOG_INFO, "LISHA SAYS: Game Layer RESUMED");
 }
 
-GameLayer::GameLayer() : Layer("Game Layer") {
+GameLayer::GameLayer() : Layer("Game Layer", false) {
   renderSuspended = false;
   GameLayer::s_isSuspended = false;
 }
@@ -48,6 +49,7 @@ void GameLayer::OnEvent(Event& e) {
       if(key == 'q' || key == 'Q') {
          setSuspended(true);
          App::Get().QueueLayerPush(new HomeLayer());
+         App::Get().QueueLayerPush(new PanelLayer());
          e.Handled = true;
       }
    }

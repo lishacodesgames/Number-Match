@@ -17,17 +17,20 @@ static Vector2 buttonsOrigin() { // must be compuled after window exists, hence 
    };
 }
 
-PanelLayer::PanelLayer() : Layer("Panel Layer"),
-      homeButton(
-         {0, 0}, {0, 0}, nullptr, "Main", BLANK, BLUE
-      ),
-      dailyButton(
-         {0, 0}, {0, 0}, nullptr, "Daily Challenges", BLANK, GRAY
-      ),
-      meButton(
-         {0, 0}, {0, 0}, nullptr, "Me", BLANK, GRAY
-      )
+PanelLayer* PanelLayer::s_instance = nullptr;
+void PanelLayer::PopInstance() {
+   if(s_instance)
+      App::Get().QueueLayerPop(s_instance);
+}
+
+PanelLayer::PanelLayer() : Layer("Panel Layer", true),
+      homeButton({0, 0}, {0, 0}, nullptr, "Main", BLANK, BLUE),
+      dailyButton({0, 0}, {0, 0}, nullptr, "Daily Challenges", BLANK, GRAY),
+      meButton({0, 0}, {0, 0}, nullptr, "Me", BLANK, GRAY) 
 {
+   s_instance = this;
+   homeButton.setFocus(true, BLANK, BLUE);
+
    homeButton.origin = buttonsOrigin();
    dailyButton.origin = homeButton.origin + Vector2{BUTTON_SPACING, 0};
    meButton.origin = homeButton.origin + Vector2{BUTTON_SPACING * 2.7f, 0};
@@ -38,7 +41,7 @@ PanelLayer::PanelLayer() : Layer("Panel Layer"),
    // Home
    Image home = LoadImage("assets/home-icon.png");
    aspectRatio = static_cast<int>(home.width / home.height);
-   ImageResize(&home, 20, 20/aspectRatio);
+   ImageResize(&home, 20, 20 / aspectRatio);
 
    homeButton.icon = LoadTextureFromImage(home);
    UnloadImage(home);
@@ -46,7 +49,7 @@ PanelLayer::PanelLayer() : Layer("Panel Layer"),
    // Daily Challenges
    Image daily = LoadImage("assets/daily-icon.png");
    aspectRatio = static_cast<int>(daily.width / daily.height);
-   ImageResize(&daily, 20, 20/aspectRatio);
+   ImageResize(&daily, 20, 20 / aspectRatio);
 
    dailyButton.icon = LoadTextureFromImage(daily);
    UnloadImage(daily);
@@ -54,11 +57,12 @@ PanelLayer::PanelLayer() : Layer("Panel Layer"),
    // Me
    Image me = LoadImage("assets/me-icon.png");
    aspectRatio = static_cast<int>(me.width / me.height);
-   ImageResize(&me, 20, 20/aspectRatio);
+   ImageResize(&me, 20, 20 / aspectRatio);
 
    meButton.icon = LoadTextureFromImage(me);
    UnloadImage(me);
 }
+PanelLayer::~PanelLayer() { s_instance = nullptr; }
 
 void PanelLayer::OnEvent(Event& e) {
    // TODO
@@ -68,16 +72,24 @@ void PanelLayer::OnEvent(Event& e) {
          return;
 
       Layer* newLayer = nullptr;
-      if(activeButton == &homeButton && currentPage != Menu::Home)
+      if(activeButton == &homeButton && currentPage != Menu::Home) {
          newLayer = new HomeLayer();
-      else if(activeButton == &dailyButton && currentPage != Menu::Daily)
+         currentPage = Menu::Home;
+      } else if(activeButton == &dailyButton && currentPage != Menu::Daily) {
          newLayer = new DailyLayer();
-      else if(activeButton == &meButton && currentPage != Menu::Me)
+         currentPage = Menu::Daily;
+      } else if(activeButton == &meButton && currentPage != Menu::Me) {
          newLayer = new MeLayer();
+         currentPage = Menu::Me;
+      }
 
       if(newLayer) {
+         resetAllFocus();
+         activeButton->setFocus(true, BLANK, BLUE);
+
          App::Get().QueueLayerPush(newLayer);
          App::Get().QueueLayerPop(currentLayer);
+
          currentLayer = newLayer;
       }
    }
@@ -96,8 +108,7 @@ void PanelLayer::OnUpdate() {
    if (hoveredButton) {
       hoveredButton->contentColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-   } else
-      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+   } // else case will be handled by below layers, since this one is an overlay
 }
 
 void PanelLayer::OnRender() {
