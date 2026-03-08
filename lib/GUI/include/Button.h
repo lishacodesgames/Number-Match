@@ -9,10 +9,25 @@ public:
    // ---- CONSTRUCTORS ----
    // ----------------------
 
+   /** Constructor parameters' organisation
+    * 
+    *  -- compulsory --
+    * Rectangle (Rectangle or origin+padding)
+    * icon & text -- set nullptr and/or "" if not wanted
+    * bg color & text+icon color
+    * 
+    * -- optional --
+    * font size & button roundness
+    * 
+    */
+
+   ~Button();
+
    /// Manual bounds settings, default text size, no padding, no roundness
    Button(
       Rectangle exactBounds, 
-      const char* text, Color buttonColor, Color textColor,
+      Texture2D* icon, const char* text, 
+      Color buttonColor, Color contentColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
    );
 
@@ -20,7 +35,8 @@ public:
    Button(
       Vector2 origin, 
       Vector2 padding, 
-      const char* text, Color buttonColor, Color textColor,
+      Texture2D* icon, const char* text, 
+      Color buttonColor, Color contentColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
    );
 
@@ -28,7 +44,8 @@ public:
    Button(
       Vector2 origin,
       float paddingLeft, float paddingRight, float paddingTop, float paddingBottom,
-      const char* text, Color buttonColor, Color textColor,
+      Texture2D* icon, const char* text, 
+      Color buttonColor, Color contentColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
    );
    
@@ -37,9 +54,10 @@ public:
    // ------------------------
 
    Vector2 origin = {0, 0};
-   std::string text;
+   Texture2D icon = {0}; // optional
+   std::string text; // compulsory
    int fontSize = 20;
-   Color buttonColor = BLACK, textColor = WHITE;
+   Color buttonColor = BLACK, contentColor = WHITE;
    std::pair<float, int> roundness = {0.8f, 8};
 
    // ---------------
@@ -55,7 +73,7 @@ public:
    // ----------------
 
    bool isClicked() const; /// explicitly check at this moment is button being clicked
-   void setFocus(bool isFocused, Color buttonColor, Color textColor);
+   void setFocus(bool isFocused, Color buttonColor, Color contentColor);
    void Update();
    void Draw();
    

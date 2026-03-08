@@ -20,11 +20,11 @@ static Vector2 buttonOrigin() {
 HomeLayer::HomeLayer() : Layer("Home Layer"), 
       m_newButton(
          {buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, 
-         "New Game", WHITE, BLUE
+         nullptr, "New Game", WHITE, BLUE
       ),
       m_continueButton(
          {buttonOrigin().x, buttonOrigin().y-buttonBounds.y-15, buttonBounds.x, buttonBounds.y}, 
-         "Continue Game", BLUE, WHITE
+         nullptr, "Continue Game", BLUE, WHITE
       )
 {
    Image bg = LoadImage("assets/home_background.jpg");

@@ -15,10 +15,43 @@ static Vector2 buttonsOrigin() { // must be compuled after window exists, hence 
 }
 
 MenuPanel::MenuPanel() :
-      homeButton(buttonsOrigin(), {0, 0}, "Main", BLANK, BLUE),
-      dailyButton(buttonsOrigin() + Vector2{BUTTON_SPACING, 0}, {0, 0}, "Daily Challenges", BLANK, GRAY),
-      meButton(buttonsOrigin() + Vector2{BUTTON_SPACING*2.7f, 0}, {0, 0}, "Me", BLANK, GRAY)
-{}
+      homeButton(
+         buttonsOrigin(), {0, 0}, nullptr, "Main", BLANK, BLUE
+      ),
+      dailyButton(
+         buttonsOrigin() + Vector2{BUTTON_SPACING, 0}, {0, 0}, nullptr, "Daily Challenges", BLANK, GRAY
+      ),
+      meButton(
+         buttonsOrigin() + Vector2{BUTTON_SPACING*2.7f, 0}, {0, 0}, nullptr, "Me", BLANK, GRAY
+      )
+{
+   // Load the texture for each button
+   float aspectRatio;
+
+   // Home
+   Image home = LoadImage("assets/home-icon.png");
+   aspectRatio = static_cast<float>(home.width / home.height);
+   ImageResize(&home, 20, 20/aspectRatio);
+
+   homeButton.icon = LoadTextureFromImage(home);
+   UnloadImage(home);
+
+   // Daily Challenges
+   Image daily = LoadImage("assets/daily-icon.png");
+   aspectRatio = static_cast<float>(daily.width / daily.height);
+   ImageResize(&daily, 20, 20/aspectRatio);
+
+   dailyButton.icon = LoadTextureFromImage(daily);
+   UnloadImage(daily);
+
+   // Me
+   Image me = LoadImage("assets/me-icon.png");
+   aspectRatio = static_cast<float>(me.width / me.height);
+   ImageResize(&me, 20, 20/aspectRatio);
+
+   meButton.icon = LoadTextureFromImage(me);
+   UnloadImage(me);
+}
 
 void MenuPanel::Update(Button* focusedButton) {
    homeButton.Update();
@@ -33,7 +66,7 @@ void MenuPanel::Update(Button* focusedButton) {
 
    Button* hoveredButton = findHoveredButton();
    if(hoveredButton) {
-      hoveredButton->textColor = DARKBLUE;
+      hoveredButton->contentColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
