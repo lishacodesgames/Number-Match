@@ -14,6 +14,8 @@ public:
 
 private:
    Texture2D m_backgroundTexture;   
+   Texture2D m_coinTexture;
+
    Button m_newButton;
    Button m_continueButton;
 

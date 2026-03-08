@@ -27,10 +27,17 @@ HomeLayer::HomeLayer() : Layer("Home Layer", false),
       )
 {
    Image bg = LoadImage("assets/home_background.jpg");
-   if(bg.data != nullptr) {
+   if(bg.data) {
       ImageResize(&bg, GetScreenWidth(), bg.height*1.5); // resize only width so it extends below screen
       m_backgroundTexture = LoadTextureFromImage(bg);
       UnloadImage(bg);
+   }
+
+   Image coin = LoadImage("assets/coin-icon.png");
+   if(coin.data) {
+      ImageResize(&coin, 15, 15);
+      m_coinTexture = LoadTextureFromImage(coin);
+      UnloadImage(coin);
    }
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
@@ -65,8 +72,15 @@ void HomeLayer::OnUpdate() {
 }
 
 void HomeLayer::OnRender() {
-   DrawTexture(m_backgroundTexture, 0, 0, {180, 180, 180, 45});
+   DrawTexture(m_backgroundTexture, 0, 0, {180, 180, 180, 45}); // background
 
+   // coins display. TODO add changeability
+   Rectangle coinBox = {static_cast<float>(GetScreenWidth())/2-48, 20, 100, 40};
+   DrawRectangleRounded(coinBox, 5.0f, 5, WHITE);
+   DrawTexture(m_coinTexture, coinBox.x+11.5f, coinBox.y+11.5f, WHITE);
+   DrawText(      "1,343",    coinBox.x+40.0f, coinBox.y+11.5f, 20, {0, 0, 0, 226});
+
+   // title and score
    const char* gameName = "Number Match";
    Vector2 textPos = {
       static_cast<float>(GetScreenWidth() - MeasureTextEx(GetFontDefault(), gameName, 45, 1).x)/2 - 20, 
@@ -75,6 +89,7 @@ void HomeLayer::OnRender() {
    DrawText(gameName, textPos.x + 2, textPos.y + 2, 45, BLACK); // outline
    DrawText(gameName, textPos.x, textPos.y, 45, DARKBLUE);
    
+   // game buttons
    m_newButton.Draw();
    m_continueButton.Draw();
 }
