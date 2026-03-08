@@ -7,6 +7,7 @@ struct MenuPanel {
    void Draw();
    
    static constexpr float HEIGHT = 50.0f;
+   static constexpr float BUTTON_SPACING = 192.0f;
 
    Button homeButton;
    Button dailyButton;

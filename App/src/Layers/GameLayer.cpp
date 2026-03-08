@@ -1,7 +1,6 @@
 #include <Precompiled.h>
 #include "Layers/GameLayer.h"
 
-#include <cstdio>
 #include "Layers/GameLayer.h"
 #include "Layers/HomeLayer.h"
 #include "Layer.h"
@@ -21,7 +20,7 @@ GameLayer::GameLayer() : Layer("Game Layer") {
 }
 void GameLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   printf("%s ATTACHED\n", m_name.c_str());
+   TraceLog(LOG_INFO, "LISHA SAYS: %s ATTACHED", m_name.c_str());
 }
 
 void GameLayer::OnUpdate() {

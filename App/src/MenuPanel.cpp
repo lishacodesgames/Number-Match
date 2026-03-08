@@ -5,8 +5,6 @@
 #include <raylib.h>
 #include "Button.h"
 
-static constexpr float BUTTON_SPACING = 192.0f;
-
 static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function
    return { 
       static_cast<float>(GetScreenWidth() / 3 - 150), 
@@ -26,11 +24,11 @@ MenuPanel::MenuPanel() :
       )
 {
    // Load the texture for each button
-   float aspectRatio;
+   int aspectRatio;
 
    // Home
    Image home = LoadImage("assets/home-icon.png");
-   aspectRatio = static_cast<float>(home.width / home.height);
+   aspectRatio = static_cast<int>(home.width / home.height);
    ImageResize(&home, 20, 20/aspectRatio);
 
    homeButton.icon = LoadTextureFromImage(home);
@@ -38,7 +36,7 @@ MenuPanel::MenuPanel() :
 
    // Daily Challenges
    Image daily = LoadImage("assets/daily-icon.png");
-   aspectRatio = static_cast<float>(daily.width / daily.height);
+   aspectRatio = static_cast<int>(daily.width / daily.height);
    ImageResize(&daily, 20, 20/aspectRatio);
 
    dailyButton.icon = LoadTextureFromImage(daily);
@@ -46,7 +44,7 @@ MenuPanel::MenuPanel() :
 
    // Me
    Image me = LoadImage("assets/me-icon.png");
-   aspectRatio = static_cast<float>(me.width / me.height);
+   aspectRatio = static_cast<int>(me.width / me.height);
    ImageResize(&me, 20, 20/aspectRatio);
 
    meButton.icon = LoadTextureFromImage(me);
@@ -73,10 +71,10 @@ void MenuPanel::Update(Button* focusedButton) {
 }
 
 void MenuPanel::Draw() {
-   DrawLine(0, GetScreenHeight() - MenuPanel::HEIGHT, GetScreenWidth(), GetScreenHeight() - MenuPanel::HEIGHT, {180, 180, 180, 255});
+   DrawLine(0, GetScreenHeight() - HEIGHT, GetScreenWidth(), GetScreenHeight() - HEIGHT, {180, 180, 180, 255});
    DrawRectangleV(
-      {0.0f, static_cast<float>(GetScreenHeight() - MenuPanel::HEIGHT)}, 
-      {static_cast<float>(GetScreenWidth()), MenuPanel::HEIGHT}, WHITE
+      {0.0f, static_cast<float>(GetScreenHeight() - HEIGHT)}, 
+      {static_cast<float>(GetScreenWidth()), HEIGHT}, WHITE
    );
 
    homeButton.Draw();

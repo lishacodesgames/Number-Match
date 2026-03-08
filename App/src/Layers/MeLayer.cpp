@@ -2,7 +2,6 @@
 #include "Layers/MeLayer.h"
 
 #include <raylib.h>
-#include <cstdio>
 #include "Layers/DailyLayer.h"
 #include "Layers/HomeLayer.h"
 #include "Button.h"

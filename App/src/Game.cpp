@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <typeinfo>
 #include <raylib.h>
-#include <cstdio>
 #include "Layers/HomeLayer.h"
 
 App* App::s_instance = nullptr; // assign memory before assigning "this" ptr to it
@@ -43,7 +42,7 @@ void App::OnEvent(Event& e) {
 }
 
 void App::Run() {
-   printf("LISHA SAYS: Working Directory: %s\n", GetWorkingDirectory());
+   TraceLog(LOG_INFO, "LISHA SAYS: Working Directory: %s", GetWorkingDirectory());
 
    while(!WindowShouldClose()) {
       // ---------------------------

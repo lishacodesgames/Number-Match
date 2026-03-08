@@ -3,7 +3,6 @@
 
 #include <raymath.h>
 #include <raylib.h>
-#include <cstdio>
 #include "Layers/DailyLayer.h"
 #include "Layers/GameLayer.h"
 #include "Layers/MeLayer.h"
