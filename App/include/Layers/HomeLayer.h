@@ -13,8 +13,9 @@ public:
    void OnRender() override;
 
 private:
-   Texture2D m_backgroundTexture;   
-   Texture2D m_coinTexture;
+   Texture2D m_backgroundTexture = {0};   
+   Texture2D m_coinTexture = {0};
+   Texture2D m_trophyTexture = {0};
 
    Button m_newButton;
    Button m_continueButton;
