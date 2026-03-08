@@ -6,7 +6,12 @@
 
 MeLayer::MeLayer() : Layer("Me Layer", false) {}
 
-void MeLayer::OnEvent(Event& e) {}
+void MeLayer::OnEvent(Event& e) {
+   if(e.GetEventType() == EventType::KeyPressed)
+      TraceLog(LOG_INFO, "LISHA SAYS: The '%c' key was pressed", static_cast<KeyPressedEvent&>(e).key);
+   else if(e.GetEventType() == EventType::MouseClicked)
+      TraceLog(LOG_INFO, "LISHA SAYS: Mouse was clicked");
+}
 
 void MeLayer::OnUpdate() {}
 

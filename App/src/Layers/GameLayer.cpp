@@ -6,7 +6,7 @@
 #include "Layers/GameLayer.h"
 #include "Layers/HomeLayer.h"
 #include "Layer.h"
-#include "Game.h"
+#include "App.h"
 
 bool GameLayer::s_isSuspended = false;
 void GameLayer::setSuspended(bool state) {

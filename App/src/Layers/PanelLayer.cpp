@@ -8,7 +8,7 @@
 #include "Layers/MeLayer.h"
 #include "Button.h"
 #include "Event.h"
-#include "Game.h"
+#include "App.h"
 
 static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function
    return { 

@@ -5,11 +5,11 @@ target_sources(${PROJECT_NAME} PRIVATE
    src/Layers/HomeLayer.cpp
    src/Layers/MeLayer.cpp
    src/Layers/PanelLayer.cpp
-   src/Game.cpp
+   src/App.cpp
    src/main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE GUI Layers raylib)
+target_link_libraries(${PROJECT_NAME} PRIVATE GUI Core raylib)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib/pch include)
 target_precompile_headers( ${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib/pch/Precompiled.h )
 

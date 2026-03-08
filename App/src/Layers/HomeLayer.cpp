@@ -7,7 +7,7 @@
 #include "Layers/DailyLayer.h"
 #include "Layers/GameLayer.h"
 #include "Layers/MeLayer.h"
-#include "Game.h"
+#include "App.h"
 
 static constexpr Vector2 buttonBounds = {350, 40};
 static Vector2 buttonOrigin() {

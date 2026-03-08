@@ -2,11 +2,17 @@
 #include "Layers/DailyLayer.h"
 
 #include <raylib.h>
+#include "Event.h"
 #include "Layer.h"
 
 DailyLayer::DailyLayer() : Layer("Daily Layer", false) {}
 
-void DailyLayer::OnEvent(Event& e) {}
+void DailyLayer::OnEvent(Event& e) {
+   if(e.GetEventType() == EventType::KeyPressed)
+      TraceLog(LOG_INFO, "LISHA SAYS: The '%c' key was pressed", static_cast<KeyPressedEvent&>(e).key);
+   else if(e.GetEventType() == EventType::MouseClicked)
+      TraceLog(LOG_INFO, "LISHA SAYS: Mouse was clicked");
+}
 
 void DailyLayer::OnUpdate() {}
 
