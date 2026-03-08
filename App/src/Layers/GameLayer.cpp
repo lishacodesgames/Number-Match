@@ -59,9 +59,10 @@ void GameLayer::OnRender() {
    if(s_isSuspended && !renderSuspended)
       return;
 
-   DrawText("GAME", GetScreenWidth() / 2 - 100, 50, 55, DARKBLUE);
-   DrawText("Move circle with WASD or arrows", GetScreenWidth() / 2 - 250, 120, 30, DARKGRAY);
-   DrawText("Press Q to return to menu", GetScreenWidth() / 2 - 120, 150, 20, GRAY);
+   Vector2 GamePos = {static_cast<float>(GetScreenWidth() / 2 - 70), 50};
+   DrawTextEx(App::font_black, "GAME", GamePos, 70, 5, DARKBLUE);
+   DrawTextEx(App::font_semibold, "Press Q to return to menu", {GamePos.x-25, GamePos.y+70}, 22, 1.5f, GRAY);
+   DrawTextEx(App::font_semibold, "Move circle with WASD or arrows", {GamePos.x-150, GamePos.y+90}, 40, 2, DARKGRAY);
 
    DrawCircle(x, y, 25, PINK);
 }

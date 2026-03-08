@@ -9,11 +9,17 @@
 #include "Layers/HomeLayer.h"
 
 App* App::s_instance = nullptr; // assign memory before assigning "this" ptr to it
+Font App::font_semibold = GetFontDefault(); // font must be loaded after InitWindow()
+Font App::font_black = GetFontDefault();
+
 App::App() {
+   TraceLog(LOG_INFO, "LISHA SAYS: Loading App...");
    s_instance = this;
 
    InitWindow(800, 600, "Number Match");
    SetTargetFPS(60);
+   font_semibold = LoadFontEx("assets/RedHatDisplay-SemiBold.ttf", 40, NULL, 0);
+   font_black = LoadFontEx("assets/RedHatDisplay-Black.ttf", 70, NULL, 0);
 
    // deleted when layer popped
    HomeLayer* home = new HomeLayer();
@@ -22,6 +28,7 @@ App::App() {
    m_layerStack.PushOverlay(panel);
 
    panel->currentLayer = home;
+   TraceLog(LOG_INFO, "LISHA SAYS: App Loaded!");
 }
 
 App::~App() { 

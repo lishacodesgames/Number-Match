@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 #include "Layer.h"
+#include "App.h"
 
 MeLayer::MeLayer() : Layer("Me Layer", false) {}
 
@@ -16,5 +17,6 @@ void MeLayer::OnEvent(Event& e) {
 void MeLayer::OnUpdate() {}
 
 void MeLayer::OnRender() {
-   DrawText("Coming soon...", GetScreenWidth()/2-150, GetScreenHeight()/2-100, 35, DARKGRAY);
+   Vector2 textPos = {static_cast<float>(GetScreenWidth())/2-150, static_cast<float>(GetScreenHeight())/2-100};
+   DrawTextEx(App::font_semibold, "Coming soon...", textPos, 35, 2.5f, DARKGRAY);
 }

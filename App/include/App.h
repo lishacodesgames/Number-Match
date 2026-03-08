@@ -13,6 +13,8 @@ public:
    ~App();
 
    static App& Get();
+   static Font font_semibold;
+   static Font font_black;
 
    void QueueLayerPush(Layer* layer);
    void QueueLayerPop(Layer* layer);
