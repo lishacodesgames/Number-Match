@@ -18,7 +18,5 @@ private:
    Button m_continueButton;
 
    MenuPanel m_panel;
-   Button* m_focusedPanelButton;
-
    Button* findHoveredButton();
 };

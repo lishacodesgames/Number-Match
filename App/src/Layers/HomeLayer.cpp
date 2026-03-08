@@ -33,7 +33,8 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
       UnloadImage(bg);
    }
 
-   m_focusedPanelButton = &m_panel.homeButton;
+   m_panel.resetAllFocus();
+   m_panel.homeButton.setFocus(true, BLANK, BLUE);
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 
@@ -65,7 +66,7 @@ void HomeLayer::OnEvent(Event &e) {
 }
 
 void HomeLayer::OnUpdate() {
-   m_panel.Update(&m_panel.homeButton);
+   m_panel.Update();
    m_newButton.Update();
    m_continueButton.Update();
 

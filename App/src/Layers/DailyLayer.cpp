@@ -8,7 +8,10 @@
 #include "Layer.h"
 #include "Game.h"
 
-DailyLayer::DailyLayer() : Layer("Daily Layer") { m_panel.dailyButton.setFocus(true, BLANK, BLUE); }
+DailyLayer::DailyLayer() : Layer("Daily Layer") { 
+   m_panel.resetAllFocus();
+   m_panel.dailyButton.setFocus(true, BLANK, BLUE); 
+}
 
 void DailyLayer::OnEvent(Event& e) {
    if(e.GetEventType() == EventType::MouseClicked) {
@@ -29,7 +32,7 @@ void DailyLayer::OnEvent(Event& e) {
    }
 }
 
-void DailyLayer::OnUpdate() { m_panel.Update(&m_panel.dailyButton); }
+void DailyLayer::OnUpdate() { m_panel.Update(); }
 
 void DailyLayer::OnRender() {
    DrawText("Coming soon...", GetScreenWidth()/2-150, GetScreenHeight()/2-100, 35, DARKGRAY);

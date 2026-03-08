@@ -1,9 +1,10 @@
 #pragma once
 #include "Button.h"
+#include "Layer.h"
 
 struct MenuPanel {
    MenuPanel();
-   void Update(Button* focusedButton);
+   void Update();
    void Draw();
    
    static constexpr float HEIGHT = 50.0f;
@@ -15,4 +16,7 @@ struct MenuPanel {
 
    Button* findHoveredButton();
    Button* findActiveButton();
+   Button* findFocusedButton();
+
+   void resetAllFocus();
 };

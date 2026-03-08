@@ -51,15 +51,13 @@ MenuPanel::MenuPanel() :
    UnloadImage(me);
 }
 
-void MenuPanel::Update(Button* focusedButton) {
+void MenuPanel::Update() {
    homeButton.Update();
    dailyButton.Update();
    meButton.Update();
 
-   homeButton.setFocus(false, BLANK, GRAY);
-   dailyButton.setFocus(false, BLANK, GRAY);
-   meButton.setFocus(false, BLANK, GRAY);
-   
+   Button* focusedButton = findFocusedButton();
+   resetAllFocus();
    focusedButton->setFocus(true, BLANK, BLUE);
 
    Button* hoveredButton = findHoveredButton();
@@ -103,3 +101,22 @@ Button* MenuPanel::findActiveButton() {
    else  
       return nullptr;
 }
+
+Button* MenuPanel::findFocusedButton() {
+   if(homeButton.isFocused)
+      return &homeButton;
+   else if(dailyButton.isFocused)
+      return &dailyButton;
+   else if(meButton.isFocused)
+      return &meButton;
+   else {
+      TraceLog(LOG_ERROR, "LISHA SAYS: No panel button is focused!");
+      return nullptr;
+   }
+ }
+
+ void MenuPanel::resetAllFocus() {
+   homeButton.setFocus(false, BLANK, GRAY);
+   dailyButton.setFocus(false, BLANK, GRAY);
+   meButton.setFocus(false, BLANK, GRAY);
+ }

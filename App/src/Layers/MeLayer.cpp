@@ -8,7 +8,10 @@
 #include "Event.h"
 #include "Game.h"
 
-MeLayer::MeLayer() : Layer("Me Layer") { m_panel.meButton.setFocus(true, BLANK, BLUE); }
+MeLayer::MeLayer() : Layer("Me Layer") { 
+   m_panel.resetAllFocus();
+   m_panel.meButton.setFocus(true, BLANK, BLUE);
+}
 
 void MeLayer::OnEvent(Event& e) {
    if(e.GetEventType() == EventType::MouseClicked) {
@@ -29,7 +32,7 @@ void MeLayer::OnEvent(Event& e) {
    }
 }
 
-void MeLayer::OnUpdate() { m_panel.Update(&m_panel.meButton); }
+void MeLayer::OnUpdate() { m_panel.Update(); }
 
 void MeLayer::OnRender() {
    DrawText("Coming soon...", GetScreenWidth()/2-150, GetScreenHeight()/2-100, 35, DARKGRAY);
