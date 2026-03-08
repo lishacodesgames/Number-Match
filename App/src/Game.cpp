@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <typeinfo>
 #include <raylib.h>
+#include <cstdio>
 #include "Layers/HomeLayer.h"
 
 App* App::s_instance = nullptr; // assign memory before assigning "this" ptr to it
@@ -42,6 +43,8 @@ void App::OnEvent(Event& e) {
 }
 
 void App::Run() {
+   printf("LISHA SAYS: Working Directory: %s\n", GetWorkingDirectory());
+
    while(!WindowShouldClose()) {
       // ---------------------------
       // 1. apply pending layer changes at the start of the current frame

@@ -115,7 +115,7 @@ void Button::Draw() {
    contentOrigin.y = m_bounds.y + m_verticalPadding.x + availableVerticalSpace / 2;
 
    if(IsTextureValid(icon)) {
-      DrawTexture(icon, contentOrigin.x, contentOrigin.y, WHITE);
+      DrawTexture(icon, contentOrigin.x, contentOrigin.y, contentColor);
       DrawTextEx(GetFontDefault(), text.c_str(), contentOrigin + padAfterIcon, fontSize, 1, contentColor);
    } else {
       DrawTextEx(GetFontDefault(), text.c_str(), contentOrigin, fontSize, 1, contentColor);
