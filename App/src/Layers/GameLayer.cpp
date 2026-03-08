@@ -1,6 +1,7 @@
 #include <Precompiled.h>
 #include "Layers/GameLayer.h"
 
+#include <raylib.h>
 #include "Layers/GameLayer.h"
 #include "Layers/HomeLayer.h"
 #include "Layer.h"
@@ -8,10 +9,15 @@
 
 bool GameLayer::s_isSuspended = false;
 void GameLayer::setSuspended(bool state) {
+   // TODO FIX TO CALL OnSuspend() and OnResume()
    if(s_isSuspended == state)
       return;
    
    s_isSuspended = state;
+   if(s_isSuspended)
+      TraceLog(LOG_INFO, "LISHA SAYS: Game Layer SUSPENDED");
+   else
+      TraceLog(LOG_INFO, "LISHA SAYS: Game Layer RESUMED");
 }
 
 GameLayer::GameLayer() : Layer("Game Layer") {

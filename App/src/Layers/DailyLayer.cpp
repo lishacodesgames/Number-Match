@@ -32,9 +32,9 @@ void DailyLayer::OnEvent(Event& e) {
    }
 }
 
-void DailyLayer::OnUpdate() { m_panel.Update(); }
+void DailyLayer::OnUpdate() { m_panel.OnUpdate(); }
 
 void DailyLayer::OnRender() {
    DrawText("Coming soon...", GetScreenWidth()/2-150, GetScreenHeight()/2-100, 35, DARKGRAY);
-   m_panel.Draw();
+   m_panel.OnRender();
 }

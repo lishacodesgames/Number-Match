@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <typeinfo>
 #include <raylib.h>
+#include <cstdio>
 #include "Layers/HomeLayer.h"
 
 App* App::s_instance = nullptr; // assign memory before assigning "this" ptr to it
@@ -19,6 +20,7 @@ App::App() {
 App::~App() { 
    m_layerStack.Delete(); /// Must be done before CloseWindow()
    CloseWindow(); 
+   printf("LISHA SAYS: GOODBYE!\n");
 }
 App& App::Get() { return *s_instance; }
 

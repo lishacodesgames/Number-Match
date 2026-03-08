@@ -12,5 +12,5 @@ public:
    void OnRender() override;
 
 private:
-   MenuPanel m_panel;
+   PanelLayer m_panel;
 };

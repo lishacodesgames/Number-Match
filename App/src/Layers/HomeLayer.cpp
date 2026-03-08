@@ -13,7 +13,7 @@ static constexpr Vector2 buttonBounds = {350, 40};
 static Vector2 buttonOrigin() {
    return {
       static_cast<float>(GetScreenWidth() - buttonBounds.x)/2, 
-      static_cast<float>(GetScreenHeight() - MenuPanel::HEIGHT - buttonBounds.y - 50)
+      static_cast<float>(GetScreenHeight() - PanelLayer::HEIGHT - buttonBounds.y - 50)
    };
 }
 HomeLayer::HomeLayer() : Layer("Home Layer"), 
@@ -66,7 +66,7 @@ void HomeLayer::OnEvent(Event &e) {
 }
 
 void HomeLayer::OnUpdate() {
-   m_panel.Update();
+   m_panel.OnUpdate();
    m_newButton.Update();
    m_continueButton.Update();
 
@@ -87,7 +87,7 @@ void HomeLayer::OnRender() {
    
    m_newButton.Draw();
    m_continueButton.Draw();
-   m_panel.Draw();
+   m_panel.OnRender();
 }
 
 Button* HomeLayer::findHoveredButton() {

@@ -4,25 +4,30 @@
 #include <raymath.h>
 #include <raylib.h>
 #include "Button.h"
+#include "Event.h"
 
 static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function
    return { 
       static_cast<float>(GetScreenWidth() / 3 - 150), 
-      static_cast<float>(GetScreenHeight() - MenuPanel::HEIGHT + 15)
+      static_cast<float>(GetScreenHeight() - PanelLayer::HEIGHT + 15)
    };
 }
 
-MenuPanel::MenuPanel() :
+PanelLayer::PanelLayer() : Layer("Panel Layer"),
       homeButton(
-         buttonsOrigin(), {0, 0}, nullptr, "Main", BLANK, BLUE
+         {0, 0}, {0, 0}, nullptr, "Main", BLANK, BLUE
       ),
       dailyButton(
-         buttonsOrigin() + Vector2{BUTTON_SPACING, 0}, {0, 0}, nullptr, "Daily Challenges", BLANK, GRAY
+         {0, 0}, {0, 0}, nullptr, "Daily Challenges", BLANK, GRAY
       ),
       meButton(
-         buttonsOrigin() + Vector2{BUTTON_SPACING*2.7f, 0}, {0, 0}, nullptr, "Me", BLANK, GRAY
+         {0, 0}, {0, 0}, nullptr, "Me", BLANK, GRAY
       )
 {
+   homeButton.origin = buttonsOrigin();
+   dailyButton.origin = homeButton.origin + Vector2{BUTTON_SPACING, 0};
+   meButton.origin = homeButton.origin + Vector2{BUTTON_SPACING * 2.7f, 0};
+
    // Load the texture for each button
    int aspectRatio;
 
@@ -51,24 +56,28 @@ MenuPanel::MenuPanel() :
    UnloadImage(me);
 }
 
-void MenuPanel::Update() {
-   homeButton.Update();
-   dailyButton.Update();
-   meButton.Update();
-
-   Button* focusedButton = findFocusedButton();
-   resetAllFocus();
-   focusedButton->setFocus(true, BLANK, BLUE);
-
-   Button* hoveredButton = findHoveredButton();
-   if(hoveredButton) {
-      hoveredButton->contentColor = DARKBLUE;
-      SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-   } else
-      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+void PanelLayer::OnEvent(Event& e) {
+   // TODO
 }
 
-void MenuPanel::Draw() {
+void PanelLayer::OnUpdate() {
+  homeButton.Update();
+  dailyButton.Update();
+  meButton.Update();
+
+  Button* focusedButton = findFocusedButton();
+  resetAllFocus();
+  focusedButton->setFocus(true, BLANK, BLUE);
+
+  Button* hoveredButton = findHoveredButton();
+  if (hoveredButton) {
+    hoveredButton->contentColor = DARKBLUE;
+    SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+  } else
+    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+}
+
+void PanelLayer::OnRender() {
    DrawLine(0, GetScreenHeight() - HEIGHT, GetScreenWidth(), GetScreenHeight() - HEIGHT, {180, 180, 180, 255});
    DrawRectangleV(
       {0.0f, static_cast<float>(GetScreenHeight() - HEIGHT)}, 
@@ -80,7 +89,7 @@ void MenuPanel::Draw() {
    meButton.Draw();
 }
 
-Button* MenuPanel::findHoveredButton() {
+Button* PanelLayer::findHoveredButton() {
   if (homeButton.isHovered)
     return &homeButton;
   else if (dailyButton.isHovered)
@@ -91,7 +100,7 @@ Button* MenuPanel::findHoveredButton() {
     return nullptr;
 }
 
-Button* MenuPanel::findActiveButton() {
+Button* PanelLayer::findActiveButton() {
    if(homeButton.isActive)
       return &homeButton;
    else if(dailyButton.isActive)
@@ -102,7 +111,7 @@ Button* MenuPanel::findActiveButton() {
       return nullptr;
 }
 
-Button* MenuPanel::findFocusedButton() {
+Button* PanelLayer::findFocusedButton() {
    if(homeButton.isFocused)
       return &homeButton;
    else if(dailyButton.isFocused)
@@ -115,7 +124,7 @@ Button* MenuPanel::findFocusedButton() {
    }
  }
 
- void MenuPanel::resetAllFocus() {
+ void PanelLayer::resetAllFocus() {
    homeButton.setFocus(false, BLANK, GRAY);
    dailyButton.setFocus(false, BLANK, GRAY);
    meButton.setFocus(false, BLANK, GRAY);
