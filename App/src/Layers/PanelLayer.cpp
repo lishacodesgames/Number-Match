@@ -3,8 +3,12 @@
 
 #include <raymath.h>
 #include <raylib.h>
+#include "Layers/DailyLayer.h"
+#include "Layers/HomeLayer.h"
+#include "Layers/MeLayer.h"
 #include "Button.h"
 #include "Event.h"
+#include "Game.h"
 
 static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function
    return { 
@@ -58,23 +62,42 @@ PanelLayer::PanelLayer() : Layer("Panel Layer"),
 
 void PanelLayer::OnEvent(Event& e) {
    // TODO
+   if(e.GetEventType() == EventType::MouseClicked) {
+      Button* activeButton = findHoveredButton();
+      if(!activeButton)
+         return;
+
+      Layer* newLayer = nullptr;
+      if(activeButton == &homeButton && currentPage != Menu::Home)
+         newLayer = new HomeLayer();
+      else if(activeButton == &dailyButton && currentPage != Menu::Daily)
+         newLayer = new DailyLayer();
+      else if(activeButton == &meButton && currentPage != Menu::Me)
+         newLayer = new MeLayer();
+
+      if(newLayer) {
+         App::Get().QueueLayerPush(newLayer);
+         App::Get().QueueLayerPop(currentLayer);
+         currentLayer = newLayer;
+      }
+   }
 }
 
 void PanelLayer::OnUpdate() {
-  homeButton.Update();
-  dailyButton.Update();
-  meButton.Update();
+   homeButton.Update();
+   dailyButton.Update();
+   meButton.Update();
 
-  Button* focusedButton = findFocusedButton();
-  resetAllFocus();
-  focusedButton->setFocus(true, BLANK, BLUE);
+   Button* focusedButton = findFocusedButton();
+   resetAllFocus();
+   focusedButton->setFocus(true, BLANK, BLUE);
 
-  Button* hoveredButton = findHoveredButton();
-  if (hoveredButton) {
-    hoveredButton->contentColor = DARKBLUE;
-    SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-  } else
-    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+   Button* hoveredButton = findHoveredButton();
+   if (hoveredButton) {
+      hoveredButton->contentColor = DARKBLUE;
+      SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+   } else
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
 void PanelLayer::OnRender() {
@@ -90,14 +113,14 @@ void PanelLayer::OnRender() {
 }
 
 Button* PanelLayer::findHoveredButton() {
-  if (homeButton.isHovered)
-    return &homeButton;
-  else if (dailyButton.isHovered)
-    return &dailyButton;
-  else if (meButton.isHovered)
-    return &meButton;
-  else
-    return nullptr;
+   if (homeButton.isHovered)
+      return &homeButton;
+   else if (dailyButton.isHovered)
+      return &dailyButton;
+   else if (meButton.isHovered)
+      return &meButton;
+   else
+      return nullptr;
 }
 
 Button* PanelLayer::findActiveButton() {

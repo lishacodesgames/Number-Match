@@ -2,6 +2,7 @@
 #include "Layers/MeLayer.h"
 
 #include <raylib.h>
+#include "Layers/PanelLayer.h"
 #include "Layers/DailyLayer.h"
 #include "Layers/HomeLayer.h"
 #include "Button.h"
@@ -11,6 +12,7 @@
 MeLayer::MeLayer() : Layer("Me Layer") { 
    m_panel.resetAllFocus();
    m_panel.meButton.setFocus(true, BLANK, BLUE);
+   m_panel.currentPage = Menu::Me;
 }
 
 void MeLayer::OnEvent(Event& e) {

@@ -35,6 +35,7 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
 
    m_panel.resetAllFocus();
    m_panel.homeButton.setFocus(true, BLANK, BLUE);
+   m_panel.currentPage = Menu::Home;
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 
@@ -47,17 +48,21 @@ void HomeLayer::OnEvent(Event &e) {
       } else if(activeButton != &m_panel.homeButton) {
          App::Get().QueueLayerPop(this);
 
-         if(activeButton == &m_panel.dailyButton)
+         if(activeButton == &m_panel.dailyButton) {
             App::Get().QueueLayerPush(new DailyLayer()); 
+         }
          else if(activeButton == &m_panel.meButton)
             App::Get().QueueLayerPush(new MeLayer());
-         else if(activeButton == &m_newButton)
+         else if(activeButton == &m_newButton) {
             App::Get().QueueLayerPush(new GameLayer());
-         else {// resume game layer
+            m_panel.currentPage = Menu::None;
+         }
+         else {// continue button pressed
             if(GameLayer::s_isSuspended)          // game layer exists and was suspended
                GameLayer::setSuspended(false);
             else                                // game layer was not created before this
                App::Get().QueueLayerPush(new GameLayer());
+            m_panel.currentPage = Menu::None;
          }
       }
       

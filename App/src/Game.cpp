@@ -5,6 +5,7 @@
 #include <typeinfo>
 #include <raylib.h>
 #include <cstdio>
+#include "Layers/PanelLayer.h"
 #include "Layers/HomeLayer.h"
 
 App* App::s_instance = nullptr; // assign memory before assigning "this" ptr to it
@@ -14,7 +15,13 @@ App::App() {
    InitWindow(800, 600, "Number Match");
    SetTargetFPS(60);
 
-   m_layerStack.PushLayer(new HomeLayer());
+   // deleted when layer popped
+   HomeLayer* home = new HomeLayer();
+   m_layerStack.PushLayer(home);
+   PanelLayer* panel = new PanelLayer();
+   m_layerStack.PushOverlay(panel);
+
+   panel->currentLayer = home;
 }
 
 App::~App() { 

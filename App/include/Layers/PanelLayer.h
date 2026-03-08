@@ -3,6 +3,8 @@
 #include "Layer.h"
 #include "Event.h" 
 
+enum class Menu {None, Home, Daily, Me};
+
 class PanelLayer : public Layer {
 public:
    PanelLayer();
@@ -17,6 +19,9 @@ public:
    Button homeButton;
    Button dailyButton;
    Button meButton;
+
+   Menu currentPage;
+   Layer* currentLayer;
 
    Button* findHoveredButton();
    Button* findActiveButton();

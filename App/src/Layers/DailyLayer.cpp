@@ -2,6 +2,7 @@
 #include "Layers/DailyLayer.h"
 
 #include <raylib.h>
+#include "Layers/PanelLayer.h"
 #include "Layers/HomeLayer.h"
 #include "Layers/MeLayer.h"
 #include "Event.h"
@@ -11,6 +12,7 @@
 DailyLayer::DailyLayer() : Layer("Daily Layer") { 
    m_panel.resetAllFocus();
    m_panel.dailyButton.setFocus(true, BLANK, BLUE); 
+   m_panel.currentPage = Menu::Daily;
 }
 
 void DailyLayer::OnEvent(Event& e) {
