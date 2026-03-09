@@ -76,6 +76,7 @@ public:
    // ---- GETS & SETS ----
    // ---------------------
 
+   void setIcon(Texture2D icon);
    void setIcon(const char* filepath, Vector2 dimensions = {0, 0});
    void setOrigin(Vector2 origin);
    void setSize(Vector2 size);

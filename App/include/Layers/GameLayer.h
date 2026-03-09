@@ -1,4 +1,5 @@
 #pragma once
+#include "Button.h"
 #include "Layer.h"
 
 class GameLayer : public Layer {
@@ -12,4 +13,5 @@ public:
    void OnRender() override;
 private:
    int x = 400, y = 300;
+   Button gobackButton;
 };

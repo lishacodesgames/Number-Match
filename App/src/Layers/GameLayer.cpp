@@ -8,21 +8,13 @@
 #include "Layer.h"
 #include "App.h"
 
-GameLayer::GameLayer() : Layer("Game Layer") {}
+GameLayer::GameLayer() : Layer("Game Layer"),
+      gobackButton({15, 15}, {0, 0}, nullptr, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}) // cyan
+{ gobackButton.setIcon("assets/goback-icon.png", {30, 30}); }
 
 void GameLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
    Layer::OnAttach();   
-}
-
-void GameLayer::OnUpdate() {
-   if(isSuspended && !suspended_update)
-      return;
-
-  if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) x += 4;
-  if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) x -= 4;
-  if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) y -= 4;
-  if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) y += 4;
 }
 
 void GameLayer::OnEvent(Event& e) {
@@ -37,12 +29,35 @@ void GameLayer::OnEvent(Event& e) {
          App::QueueLayerPush(new PanelLayer());
          e.Handled = true;
       }
+   } else if(e.GetEventType() == EventType::MouseClicked && gobackButton.isHovered) {
+      OnSuspend();
+      App::QueueLayerPush(new HomeLayer());
+      App::QueueLayerPush(new PanelLayer());
+      e.Handled = true;
    }
+}
+
+void GameLayer::OnUpdate() {
+   if(isSuspended && !suspended_update)
+      return;
+   
+   gobackButton.Update();
+   if(gobackButton.isHovered)
+      SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+   else
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+
+   if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) x += 4;
+   if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) x -= 4;
+   if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) y -= 4;
+   if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) y += 4;
 }
 
 void GameLayer::OnRender() {
    if(isSuspended && !suspended_render)
       return;
+
+   gobackButton.Draw();
 
    Vector2 GamePos = {static_cast<float>(GetScreenWidth() / 2 - 70), 50};
    DrawTextEx(App::font_black, "GAME", GamePos, 70, 5, DARKBLUE);

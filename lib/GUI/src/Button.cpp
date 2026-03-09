@@ -46,8 +46,8 @@ void Button::Draw() {
    bool iconExists = IsTextureValid(icon);
    Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 1);
 
-   float iconSpace = iconExists ? icon.width*ICON_PAD_MULTIPLIER : 0;
-   float contentWidth = iconExists ? textSize.x + iconSpace : textSize.x;
+   float iconSpace = iconExists && text!= "" ? icon.width*ICON_PAD_MULTIPLIER : 0;
+   float contentWidth = textSize.x + iconSpace;
 
    // center X
    float remSpaceX = m_bounds.width - m_horizontalPadding.x - m_horizontalPadding.y - contentWidth;
@@ -91,7 +91,7 @@ Button::Button(
    
    if(icon) {
       this->icon = *icon;
-      x -= (this->icon.width*ICON_PAD_MULTIPLIER)/2;
+      x -= (this->icon.width/2) * (text == ""? 1 : ICON_PAD_MULTIPLIER);
    }
    
    m_horizontalPadding = { x, x };
@@ -131,6 +131,11 @@ Button::Button (
 #pragma endregion
 
 #pragma region Setters
+void Button::setIcon(Texture2D icon) {
+   this->icon = icon;
+   setPadding(m_horizontalPadding, m_verticalPadding);
+}
+
 void Button::setIcon(const char* filepath, Vector2 dimensions) { // dimensions = {0, 0} as default args
    Image img = LoadImage(filepath);
    if(!dimensions.x || !dimensions.y) {// any are 0
@@ -141,7 +146,7 @@ void Button::setIcon(const char* filepath, Vector2 dimensions) { // dimensions =
    this->icon = LoadTextureFromImage(img);
    UnloadImage(img);
 
-   m_bounds.width += icon.width*ICON_PAD_MULTIPLIER;
+   setPadding(m_horizontalPadding, m_verticalPadding);
 }
 
 void Button::setOrigin(Vector2 origin) {
@@ -161,8 +166,10 @@ void Button::setPadding(Vector2 horizPadding, Vector2 vertPadding) {
    this->m_verticalPadding = vertPadding;
 
    Vector2 size = MeasureTextEx(font, text.c_str(), fontSize, 1);
-   if(IsTextureValid(icon))
-      size = {size.x + icon.width*1.5f, std::max(size.y, static_cast<float>(icon.height))};
+   if(IsTextureValid(icon)) {
+      size.x += icon.width * (text == ""? 1:ICON_PAD_MULTIPLIER);
+      size.y = std::max(size.y, (float)(icon.height));
+   }
 
    m_bounds.width = size.x + horizPadding.x + horizPadding.y;
    m_bounds.height = size.y + vertPadding.x + vertPadding.y;
