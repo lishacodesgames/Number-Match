@@ -1,9 +1,12 @@
 #include <Precompiled.h>
 #include "Button.h"
 
+#include <algorithm>
 #include <raymath.h>
 #include <raylib.h>
 #include <utility>
+
+static constexpr float ICON_PAD_MULTIPLIER = 1.5f;
 
 #pragma region Methods
 void Button::Update() {
@@ -39,28 +42,32 @@ void Button::Draw() {
       );
    }
 
+   // helper variables for calculation
    bool iconExists = IsTextureValid(icon);
+   Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 1);
 
-   // make padding left be only on left and right only on right etc
-   Vector2 contentSize = MeasureTextEx(font, text.c_str(), fontSize, 1);
-   Vector2 padAfterIcon = {icon.width*1.5f, 0};
-   if(iconExists) // add icon size and 5% more padding between icon and text
-      contentSize += padAfterIcon*2;
+   float iconSpace = iconExists ? icon.width*ICON_PAD_MULTIPLIER : 0;
+   float contentWidth = iconExists ? textSize.x + iconSpace : textSize.x;
 
-   Vector2 contentOrigin;
-   float availableHorizontalSpace = m_bounds.width - m_horizontalPadding.x - m_horizontalPadding.y - contentSize.x;
-   contentOrigin.x = m_bounds.x + m_horizontalPadding.x + availableHorizontalSpace / 2;
-   float availableVerticalSpace = m_bounds.height - m_verticalPadding.x -   m_verticalPadding.y - contentSize.y;
-   contentOrigin.y = m_bounds.y + m_verticalPadding.x + availableVerticalSpace / 2;
+   // center X
+   float remSpaceX = m_bounds.width - m_horizontalPadding.x - m_horizontalPadding.y - contentWidth;
+   float originX = m_bounds.x  + m_horizontalPadding.x + remSpaceX/2; // centered horizontally
 
-   if(IsTextureValid(icon)) {
-      DrawTexture(icon, contentOrigin.x, contentOrigin.y, contentColor);
-      DrawTextEx(font, text.c_str(), contentOrigin + padAfterIcon, fontSize, 1, contentColor);
-   } else {
-      DrawTextEx(font, text.c_str(), contentOrigin, fontSize, 1, contentColor);
+   // center Y
+   if(iconExists) { // center icon
+      float remIconSpaceY = m_bounds.height - m_verticalPadding.x - m_verticalPadding.y - icon.height;
+      float iconOriginY = m_bounds.y + m_verticalPadding.x + remIconSpaceY/2;
+
+      DrawTexture(icon, originX, iconOriginY, contentColor);
    }
 
+   //center text
+   float remTextSpaceY = m_bounds.height - m_verticalPadding.x - m_verticalPadding.y - textSize.y;
+   float textOriginY = m_bounds.y + m_verticalPadding.x + remTextSpaceY/2;
+
+   DrawTextEx(font, text.c_str(), {originX + iconSpace, textOriginY}, fontSize, 1, contentColor);
 }
+
 #pragma endregion
 
 #pragma region Constructors
@@ -78,12 +85,14 @@ Button::Button(
 ) 
    : m_bounds(exactBounds), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), font(font)
 {
-   if(icon)
-      this->icon = *icon;
-
    Vector2 textSize = MeasureTextEx(font, text, 20, 1);
-   float x = m_bounds.width / 2 - textSize.x / 2;
-   float y = m_bounds.height / 2 - textSize.y / 2;
+   float x = (m_bounds.width - textSize.x)/2;
+   float y = (m_bounds.height - textSize.y)/2;
+   
+   if(icon) {
+      this->icon = *icon;
+      x -= (this->icon.width*ICON_PAD_MULTIPLIER)/2;
+   }
    
    m_horizontalPadding = { x, x };
    m_verticalPadding = { y,  y };
@@ -122,10 +131,17 @@ Button::Button (
 #pragma endregion
 
 #pragma region Setters
-void Button::setFocus(bool isFocused, Color buttonColor, Color contentColor) {
-   this->isFocused = isFocused;
-   this->buttonColor = buttonColor;
-   this->contentColor = contentColor;
+void Button::setIcon(const char* filepath, Vector2 dimensions) { // dimensions = {0, 0} as default args
+   Image img = LoadImage(filepath);
+   if(!dimensions.x || !dimensions.y) {// any are 0
+      dimensions.x = img.width;
+      dimensions.y = img.height;
+   }
+   ImageResize(&img, dimensions.x, dimensions.y);
+   this->icon = LoadTextureFromImage(img);
+   UnloadImage(img);
+
+   m_bounds.width += icon.width*ICON_PAD_MULTIPLIER;
 }
 
 void Button::setOrigin(Vector2 origin) {
@@ -146,10 +162,16 @@ void Button::setPadding(Vector2 horizPadding, Vector2 vertPadding) {
 
    Vector2 size = MeasureTextEx(font, text.c_str(), fontSize, 1);
    if(IsTextureValid(icon))
-      size += {icon.width*1.5f, 0};
+      size = {size.x + icon.width*1.5f, std::max(size.y, static_cast<float>(icon.height))};
 
    m_bounds.width = size.x + horizPadding.x + horizPadding.y;
    m_bounds.height = size.y + vertPadding.x + vertPadding.y;
+}
+
+void Button::setFocus(bool isFocused, Color buttonColor, Color contentColor) {
+   this->isFocused = isFocused;
+   this->buttonColor = buttonColor;
+   this->contentColor = contentColor;
 }
 #pragma endregion
 

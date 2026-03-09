@@ -12,8 +12,8 @@
 
 static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function
    return { 
-      static_cast<float>(GetScreenWidth() / 3 - 150), 
-      static_cast<float>(GetScreenHeight() - PanelLayer::HEIGHT + 15)
+      static_cast<float>(GetScreenWidth() / 3 - 180),
+      static_cast<float>(GetScreenHeight() - PanelLayer::HEIGHT + 10)
    };
 }
 
@@ -41,32 +41,9 @@ PanelLayer::PanelLayer() : Layer("Panel Layer", true),
    dailyButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING, 0});
    meButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING * 2.7f, 0});
 
-   // Load the texture for each button
-   int aspectRatio;
-
-   // Home
-   Image home = LoadImage("assets/home-icon.png");
-   aspectRatio = static_cast<int>(home.width / home.height);
-   ImageResize(&home, 20, 20 / aspectRatio);
-
-   homeButton.icon = LoadTextureFromImage(home);
-   UnloadImage(home);
-
-   // Daily Challenges
-   Image daily = LoadImage("assets/daily-icon.png");
-   aspectRatio = static_cast<int>(daily.width / daily.height);
-   ImageResize(&daily, 20, 20 / aspectRatio);
-
-   dailyButton.icon = LoadTextureFromImage(daily);
-   UnloadImage(daily);
-
-   // Me
-   Image me = LoadImage("assets/me-icon.png");
-   aspectRatio = static_cast<int>(me.width / me.height);
-   ImageResize(&me, 20, 20 / aspectRatio);
-
-   meButton.icon = LoadTextureFromImage(me);
-   UnloadImage(me);
+   homeButton.setIcon("assets/home-icon.png", {20, 20});
+   dailyButton.setIcon("assets/daily-icon.png", {20, 20});
+   meButton.setIcon("assets/me-icon.png", {20, 20});
 }
 PanelLayer::~PanelLayer() { s_instance = nullptr; }
 

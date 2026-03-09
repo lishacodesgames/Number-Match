@@ -76,11 +76,12 @@ public:
    // ---- GETS & SETS ----
    // ---------------------
 
-   void setFocus(bool isFocused, Color buttonColor, Color contentColor);
+   void setIcon(const char* filepath, Vector2 dimensions = {0, 0});
    void setOrigin(Vector2 origin);
    void setSize(Vector2 size);
    void setBounds(Rectangle bounds);
    void setPadding(Vector2 horizPadding, Vector2 vertPadding);
+   void setFocus(bool isFocused, Color buttonColor, Color contentColor);
 
    Vector2 getOrigin() const;
    Vector2 getSize() const;
