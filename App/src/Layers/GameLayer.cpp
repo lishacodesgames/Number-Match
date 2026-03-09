@@ -8,30 +8,15 @@
 #include "Layer.h"
 #include "App.h"
 
-bool GameLayer::s_isSuspended = false;
-void GameLayer::setSuspended(bool state) {
-   // TODO FIX TO CALL OnSuspend() and OnResume()
-   if(s_isSuspended == state)
-      return;
-   
-   s_isSuspended = state;
-   if(s_isSuspended)
-      TraceLog(LOG_INFO, "LISHA SAYS: Game Layer SUSPENDED");
-   else
-      TraceLog(LOG_INFO, "LISHA SAYS: Game Layer RESUMED");
-}
+GameLayer::GameLayer() : Layer("Game Layer") {}
 
-GameLayer::GameLayer() : Layer("Game Layer", false) {
-  renderSuspended = false;
-  GameLayer::s_isSuspended = false;
-}
 void GameLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   TraceLog(LOG_INFO, "LISHA SAYS: %s ATTACHED", m_name.c_str());
+   Layer::OnAttach();   
 }
 
 void GameLayer::OnUpdate() {
-   if(s_isSuspended)
+   if(isSuspended && !suspended_update)
       return;
 
   if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) x += 4;
@@ -41,13 +26,13 @@ void GameLayer::OnUpdate() {
 }
 
 void GameLayer::OnEvent(Event& e) {
-   if(s_isSuspended)
+   if(isSuspended && !suspended_event)
       return;
 
    if(e.GetEventType() == EventType::KeyPressed) {
       char key = static_cast<KeyPressedEvent&>(e).key;
       if(key == 'q' || key == 'Q') {
-         setSuspended(true);
+         OnSuspend();
          App::Get().QueueLayerPush(new HomeLayer());
          App::Get().QueueLayerPush(new PanelLayer());
          e.Handled = true;
@@ -56,7 +41,7 @@ void GameLayer::OnEvent(Event& e) {
 }
 
 void GameLayer::OnRender() {
-   if(s_isSuspended && !renderSuspended)
+   if(isSuspended && !suspended_render)
       return;
 
    Vector2 GamePos = {static_cast<float>(GetScreenWidth() / 2 - 70), 50};
