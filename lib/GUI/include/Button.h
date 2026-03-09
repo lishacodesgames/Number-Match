@@ -3,6 +3,18 @@
 #include <utility>
 #include <string>
 
+/** Constructor parameters' organisation
+ * 
+ *  -- compulsory --
+ * Rectangle (Rectangle or origin+padding)
+ * icon & text -- set nullptr and/or "" if not wanted
+ * bg color & text+icon color
+ * 
+ * -- optional --
+ * font size & button roundness
+ * custom font
+ * 
+ */
 class Button {
 public:
    // ----------------
@@ -14,19 +26,6 @@ public:
    // ----------------------
    // ---- CONSTRUCTORS ----
    // ----------------------
-
-   /** Constructor parameters' organisation
-    * 
-    *  -- compulsory --
-    * Rectangle (Rectangle or origin+padding)
-    * icon & text -- set nullptr and/or "" if not wanted
-    * bg color & text+icon color
-    * 
-    * -- optional --
-    * font size & button roundness
-    * custom font
-    * 
-    */
 
    ~Button();
 

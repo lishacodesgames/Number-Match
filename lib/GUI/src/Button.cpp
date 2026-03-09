@@ -144,9 +144,12 @@ void Button::setPadding(Vector2 horizPadding, Vector2 vertPadding) {
    this->m_horizontalPadding = horizPadding;
    this->m_verticalPadding = vertPadding;
 
-   Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 1);
-   m_bounds.width = textSize.x + horizPadding.x + horizPadding.y;
-   m_bounds.height = textSize.y + vertPadding.x + vertPadding.y;
+   Vector2 size = MeasureTextEx(font, text.c_str(), fontSize, 1);
+   if(IsTextureValid(icon))
+      size += {icon.width*1.5f, 0};
+
+   m_bounds.width = size.x + horizPadding.x + horizPadding.y;
+   m_bounds.height = size.y + vertPadding.x + vertPadding.y;
 }
 #pragma endregion
 
