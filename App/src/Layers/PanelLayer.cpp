@@ -31,9 +31,9 @@ PanelLayer::PanelLayer() : Layer("Panel Layer", true),
    s_instance = this;
    homeButton.setFocus(true, BLANK, BLUE);
 
-   homeButton.origin = buttonsOrigin();
-   dailyButton.origin = homeButton.origin + Vector2{BUTTON_SPACING, 0};
-   meButton.origin = homeButton.origin + Vector2{BUTTON_SPACING * 2.7f, 0};
+   homeButton.setOrigin(buttonsOrigin());
+   dailyButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING, 0});
+   meButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING * 2.7f, 0});
 
    // Load the texture for each button
    int aspectRatio;

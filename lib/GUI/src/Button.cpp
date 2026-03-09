@@ -5,66 +5,7 @@
 #include <raylib.h>
 #include <utility>
 
-Button::~Button() {
-   if(IsTextureValid(icon))
-      UnloadTexture(icon);
-}
-
-Button::Button(
-   Rectangle exactBounds, 
-   Texture2D* icon, const char* text, 
-   Color buttonColor, Color contentColor,
-   int fontSize, std::pair<float, int> roundness // default args
-) 
-   : m_bounds(exactBounds), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor)
-{
-   origin = { m_bounds.x, m_bounds.y };
-   if(icon)
-      this->icon = *icon;
-
-   Vector2 textSize = MeasureTextEx(GetFontDefault(), text, 20, 1);
-   float x = m_bounds.width / 2 - textSize.x / 2;
-   float y = m_bounds.height / 2 - textSize.y / 2;
-   
-   m_horizontalPadding = { x, x };
-   m_verticalPadding = { y,  y };
-}
-
-Button::Button(
-   Vector2 origin, Vector2 padding, 
-   Texture2D* icon, const char* text, 
-   Color buttonColor, Color contentColor,
-   int fontSize, std::pair<float, int> roundness // default args
-) : origin(origin), roundness(roundness),text(text), fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor)
-{ 
-   if(icon)
-      this->icon = *icon;
-   setPadding_Bounds({padding.x, padding.x}, {padding.y, padding.y});
-}
-
-Button::Button (
-   Vector2 origin, 
-   float paddingLeft, float paddingRight, float paddingTop, float paddingBottom, 
-   Texture2D* icon, const char* text, 
-   Color buttonColor, Color contentColor,
-   int fontSize, std::pair<float, int> roundness // default args
-) : origin(origin), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor)
-{ 
-   if(icon)
-      this->icon = *icon;   
-   setPadding_Bounds({paddingLeft, paddingRight}, {paddingTop, paddingBottom}); 
-}
-
-bool Button::isClicked() const {
-   return (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), m_bounds));
-}
-
-void Button::setFocus(bool isFocused, Color buttonColor, Color contentColor) {
-   this->isFocused = isFocused;
-   this->buttonColor = buttonColor;
-   this->contentColor = contentColor;
-}
-
+#pragma region Methods
 void Button::Update() {
   // update hover flag
    if (CheckCollisionPointRec(GetMousePosition(), m_bounds))
@@ -80,8 +21,6 @@ void Button::Update() {
 }
 
 void Button::Draw() {
-   setPadding_Bounds(m_horizontalPadding, m_verticalPadding); // in case user has modified any values
-
    // draw button
    if(!isHovered)
       DrawRectangleRounded(m_bounds, roundness.first, roundness.second, buttonColor);
@@ -103,7 +42,7 @@ void Button::Draw() {
    bool iconExists = IsTextureValid(icon);
 
    // make padding left be only on left and right only on right etc
-   Vector2 contentSize = MeasureTextEx(GetFontDefault(), text.c_str(), fontSize, 1);
+   Vector2 contentSize = MeasureTextEx(font, text.c_str(), fontSize, 1);
    Vector2 padAfterIcon = {icon.width*1.5f, 0};
    if(iconExists) // add icon size and 5% more padding between icon and text
       contentSize += padAfterIcon*2;
@@ -116,28 +55,112 @@ void Button::Draw() {
 
    if(IsTextureValid(icon)) {
       DrawTexture(icon, contentOrigin.x, contentOrigin.y, contentColor);
-      DrawTextEx(GetFontDefault(), text.c_str(), contentOrigin + padAfterIcon, fontSize, 1, contentColor);
+      DrawTextEx(font, text.c_str(), contentOrigin + padAfterIcon, fontSize, 1, contentColor);
    } else {
-      DrawTextEx(GetFontDefault(), text.c_str(), contentOrigin, fontSize, 1, contentColor);
+      DrawTextEx(font, text.c_str(), contentOrigin, fontSize, 1, contentColor);
    }
 
 }
+#pragma endregion
 
-void Button::setPadding_Bounds(Vector2 horizPadding, Vector2 vertPadding) {
+#pragma region Constructors
+Button::~Button() {
+   if(IsTextureValid(icon))
+      UnloadTexture(icon);
+}
+
+Button::Button(
+   Rectangle exactBounds, 
+   Texture2D* icon, const char* text, 
+   Color buttonColor, Color contentColor,
+   int fontSize, std::pair<float, int> roundness, // default args
+   Font font
+) 
+   : m_bounds(exactBounds), roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), font(font)
+{
+   if(icon)
+      this->icon = *icon;
+
+   Vector2 textSize = MeasureTextEx(font, text, 20, 1);
+   float x = m_bounds.width / 2 - textSize.x / 2;
+   float y = m_bounds.height / 2 - textSize.y / 2;
+   
+   m_horizontalPadding = { x, x };
+   m_verticalPadding = { y,  y };
+}
+
+Button::Button(
+   Vector2 origin, Vector2 padding, 
+   Texture2D* icon, const char* text, 
+   Color buttonColor, Color contentColor,
+   int fontSize, std::pair<float, int> roundness, // default args
+   Font font
+) : roundness(roundness),text(text), fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), font(font)
+{ 
+   if(icon)
+      this->icon = *icon;
+
+   setOrigin(origin);
+   setPadding({padding.x, padding.x}, {padding.y, padding.y});
+}
+
+Button::Button (
+   Vector2 origin, 
+   float paddingLeft, float paddingRight, float paddingTop, float paddingBottom, 
+   Texture2D* icon, const char* text, 
+   Color buttonColor, Color contentColor,
+   int fontSize, std::pair<float, int> roundness, // default args
+   Font font
+) : roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), font(font)
+{ 
+   if(icon)
+      this->icon = *icon;   
+
+   setOrigin(origin);
+   setPadding({paddingLeft, paddingRight}, {paddingTop, paddingBottom}); 
+}
+#pragma endregion
+
+#pragma region Setters
+void Button::setFocus(bool isFocused, Color buttonColor, Color contentColor) {
+   this->isFocused = isFocused;
+   this->buttonColor = buttonColor;
+   this->contentColor = contentColor;
+}
+
+void Button::setOrigin(Vector2 origin) {
+   m_bounds.x = origin.x;
+   m_bounds.y = origin.y;
+}
+
+void Button::setSize(Vector2 size) {
+   m_bounds.width = size.x;
+   m_bounds.height = size.y;
+}
+
+void Button::setBounds(Rectangle bounds) { m_bounds = bounds; }
+
+void Button::setPadding(Vector2 horizPadding, Vector2 vertPadding) {
    this->m_horizontalPadding = horizPadding;
    this->m_verticalPadding = vertPadding;
 
-   m_bounds.x = origin.x;
-   m_bounds.y = origin.y;
-
-   Vector2 textSize = MeasureTextEx(GetFontDefault(), text.c_str(), fontSize, 1);
+   Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 1);
    m_bounds.width = textSize.x + horizPadding.x + horizPadding.y;
    m_bounds.height = textSize.y + vertPadding.x + vertPadding.y;
 }
+#pragma endregion
 
+#pragma region Getters
+
+Vector2 Button::getOrigin() const { return {m_bounds.x, m_bounds.y}; }
+Vector2 Button::getSize() const { return {m_bounds.width, m_bounds.height}; }
+Rectangle Button::getBounds() const { return m_bounds; }
+
+#pragma endregion
+
+#pragma region Operators
 bool operator==(const Button& first, const Button& second) {
    return (
-      first.origin == second.origin &&
       first.text == second.text &&
       first.fontSize == second.fontSize &&
       first.buttonColor  == second.buttonColor &&
@@ -163,3 +186,4 @@ bool operator==(const Rectangle& first, const Rectangle& second) {
       first.height == second.height
    );
 }
+#pragma endregion

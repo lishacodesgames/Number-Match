@@ -5,6 +5,12 @@
 
 class Button {
 public:
+   // ----------------
+   // ---- METHODS ----
+   // ----------------
+   void Update();
+   void Draw();
+
    // ----------------------
    // ---- CONSTRUCTORS ----
    // ----------------------
@@ -18,6 +24,7 @@ public:
     * 
     * -- optional --
     * font size & button roundness
+    * custom font
     * 
     */
 
@@ -28,7 +35,8 @@ public:
       Rectangle exactBounds, 
       Texture2D* icon, const char* text, 
       Color buttonColor, Color contentColor,
-      int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
+      int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
+      Font font = GetFontDefault()
    );
 
    /// Evenly spaced padding
@@ -37,7 +45,8 @@ public:
       Vector2 padding, 
       Texture2D* icon, const char* text, 
       Color buttonColor, Color contentColor,
-      int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
+      int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
+      Font font = GetFontDefault()
    );
 
    // Custom padding
@@ -46,19 +55,37 @@ public:
       float paddingLeft, float paddingRight, float paddingTop, float paddingBottom,
       Texture2D* icon, const char* text, 
       Color buttonColor, Color contentColor,
-      int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8}
+      int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
+      Font font = GetFontDefault()
    );
    
    // ------------------------
    // ---- PUBLIC MEMBERS ----
    // ------------------------
 
-   Vector2 origin = {0, 0};
    Texture2D icon = {0}; // optional
    std::string text; // compulsory
-   int fontSize = 20;
+
    Color buttonColor = BLACK, contentColor = WHITE;
+
+   int fontSize = 20;
    std::pair<float, int> roundness = {0.8f, 8};
+
+   Font font;
+
+   // ---------------------
+   // ---- GETS & SETS ----
+   // ---------------------
+
+   void setFocus(bool isFocused, Color buttonColor, Color contentColor);
+   void setOrigin(Vector2 origin);
+   void setSize(Vector2 size);
+   void setBounds(Rectangle bounds);
+   void setPadding(Vector2 horizPadding, Vector2 vertPadding);
+
+   Vector2 getOrigin() const;
+   Vector2 getSize() const;
+   Rectangle getBounds() const;
 
    // ---------------
    // ---- FLAGS ----
@@ -67,15 +94,6 @@ public:
    bool isHovered = false; // is button being hovered
    bool isActive = false; // is button being clicked
    bool isFocused = false; // set by user. Has button been clicked?
-
-   // ----------------
-   // ---- METHODS ----
-   // ----------------
-
-   bool isClicked() const; /// explicitly check at this moment is button being clicked
-   void setFocus(bool isFocused, Color buttonColor, Color contentColor);
-   void Update();
-   void Draw();
    
 private: 
    // -------------------------
@@ -85,11 +103,6 @@ private:
    Rectangle m_bounds;
    Vector2 m_horizontalPadding; // {left, right}
    Vector2 m_verticalPadding;   // {top, bottom}
-
-   // -----------------
-   // ---- HELPERS ----
-   // -----------------
-   void setPadding_Bounds(Vector2 horizPadding, Vector2 vertPadding);
 
    // -------------------
    // ---- OPERATORS ----

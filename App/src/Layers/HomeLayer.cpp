@@ -9,7 +9,7 @@
 #include "Layers/MeLayer.h"
 #include "App.h"
 
-static constexpr Vector2 buttonBounds = {350, 40};
+static constexpr Vector2 buttonBounds = {350, 35};
 static Vector2 buttonOrigin() {
    return {
       static_cast<float>(GetScreenWidth() - buttonBounds.x)/2, 
@@ -19,11 +19,11 @@ static Vector2 buttonOrigin() {
 HomeLayer::HomeLayer() : Layer("Home Layer", false), 
       m_newButton(
          {buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, 
-         nullptr, "New Game", WHITE, BLUE
+         nullptr, "New Game", WHITE, BLUE, 25, {0.8f, 8}, App::font_semibold
       ),
       m_continueButton(
-         {buttonOrigin().x, buttonOrigin().y-buttonBounds.y-15, buttonBounds.x, buttonBounds.y}, 
-         nullptr, "Continue Game", BLUE, WHITE
+         {buttonOrigin().x, buttonOrigin().y-buttonBounds.y-10, buttonBounds.x, buttonBounds.y}, 
+         nullptr, "Continue Game", BLUE, WHITE, 25, {0.8f, 8}, App::font_semibold
       )
 {
    Image bg = LoadImage("assets/home_background.jpg");

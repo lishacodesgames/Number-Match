@@ -18,10 +18,10 @@ App::App() {
 
    InitWindow(800, 600, "Number Match");
    SetTargetFPS(60);
+
    font_semibold = LoadFontEx("assets/RedHatDisplay-SemiBold.ttf", 40, NULL, 0);
    font_black = LoadFontEx("assets/RedHatDisplay-Black.ttf", 70, NULL, 0);
 
-   // deleted when layer popped
    HomeLayer* home = new HomeLayer();
    m_layerStack.PushLayer(home);
    PanelLayer* panel = new PanelLayer();
