@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <vector>
+#include <string>
 #include "LayerStack.h"
 #include "Event.h"
 #include "Layer.h"
@@ -16,8 +17,11 @@ public:
    static Font font_semibold;
    static Font font_black;
 
+   void QueueLayerSwap(Layer* pop, Layer* push);
    void QueueLayerPush(Layer* layer);
    void QueueLayerPop(Layer* layer);
+
+   Layer* GetLayerByName(const std::string& name);
 
    void OnEvent(Event& e);
    void Run();

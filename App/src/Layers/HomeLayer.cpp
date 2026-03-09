@@ -16,7 +16,7 @@ static Vector2 buttonOrigin() {
       static_cast<float>(GetScreenHeight() - PanelLayer::HEIGHT - buttonBounds.y - 50)
    };
 }
-HomeLayer::HomeLayer() : Layer("Home Layer", false), 
+HomeLayer::HomeLayer() : Layer("Home Layer"), 
       m_newButton(
          {buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, 
          nullptr, "New Game", WHITE, BLUE, 25, {0.8f, 8}, App::font_semibold
@@ -59,8 +59,10 @@ void HomeLayer::OnEvent(Event &e) {
       
       PanelLayer::PopInstance();         
       App::Get().QueueLayerPop(this);
-      if(activeButton == &m_continueButton && GameLayer::s_isSuspended)
-         GameLayer::setSuspended(false);
+
+      Layer* game = App::Get().GetLayerByName("Game Layer");
+      if(activeButton == &m_continueButton && game) // continue pressed & previous game exists
+         game->OnResume();
       else // new pressed or continue pressed but there was no previous game (hence suspended is false) 
          App::Get().QueueLayerPush(new GameLayer());
 
@@ -82,7 +84,7 @@ Vector2 operator+(const Vector2& vec, const float& fl) { return {vec.x+fl, vec.y
 void HomeLayer::OnRender() {
    DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 30}); // background
 
-   // coins display. TODO add changeability
+   // coins display. @todo add changeability
    Rectangle coinBox = {static_cast<float>(GetScreenWidth())/2-48, 20, 100, 40};
    DrawRectangleRounded(coinBox, 5.0f, 5, WHITE);
    DrawTexture(m_coinTexture, coinBox.x+11.5f, coinBox.y+11.5f, WHITE);

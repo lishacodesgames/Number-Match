@@ -48,7 +48,6 @@ PanelLayer::PanelLayer() : Layer("Panel Layer", true),
 PanelLayer::~PanelLayer() { s_instance = nullptr; }
 
 void PanelLayer::OnEvent(Event& e) {
-   // TODO
    if(e.GetEventType() == EventType::MouseClicked) {
       Button* activeButton = findHoveredButton();
       if(!activeButton)
@@ -69,10 +68,7 @@ void PanelLayer::OnEvent(Event& e) {
       if(newLayer) {
          resetAllFocus();
          activeButton->setFocus(true, BLANK, BLUE);
-
-         App::Get().QueueLayerPush(newLayer);
-         App::Get().QueueLayerPop(currentLayer);
-
+         App::Get().QueueLayerSwap(currentLayer, newLayer);
          currentLayer = newLayer;
       }
    }

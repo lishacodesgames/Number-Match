@@ -4,22 +4,37 @@
 
 class Layer {
 public:
+   /** @brief
+    * @if true, then layer will always be pushed to the top of layerstack
+    * @else layer will be push at the layer insert index (above layers but below overlays)
+    */
    bool isOverlay = false;
 
-   Layer(const std::string& name, bool isOverlay); /// called when new layer pointer made with "new"
+   Layer( /// called when new layer pointer made with "new"
+      const std::string& name, bool isOverlay = false, 
+      bool suspended_render = false, bool suspended_update = false, bool suspended_event = false
+   );
    virtual ~Layer() = default; /// called with "delete" keyword
 
    // ---- Pure virtual functions ----
    virtual void OnAttach(); /// called when layer is actually pushed onto layer stack
    virtual void OnDetach(); /// called when layer is actually popped from layer stack
-   virtual void OnUpdate() = 0; /// called every frame (key hold)
    virtual void OnEvent(Event &e) = 0; /// check-once event (key press)
+   virtual void OnUpdate() = 0; /// called every frame (key hold)
    virtual void OnRender() = 0;
-
+   
    // ---- layer pause/resume (suspension) ----
-   bool renderSuspended = false;
    virtual void OnSuspend();
    virtual void OnResume();
+   bool isSuspended = false;
+   bool suspended_event = false;
+   bool suspended_update = false;
+   bool suspended_render = false;
+
+   // ---- Getters ----
+   const std::string& GetName();
+
 protected:
+   // ---- Protected Members ----
    std::string m_name;
 };
