@@ -33,8 +33,8 @@ void GameLayer::OnEvent(Event& e) {
       char key = static_cast<KeyPressedEvent&>(e).key;
       if(key == 'q' || key == 'Q') {
          OnSuspend();
-         App::Get().QueueLayerPush(new HomeLayer());
-         App::Get().QueueLayerPush(new PanelLayer());
+         App::QueueLayerPush(new HomeLayer());
+         App::QueueLayerPush(new PanelLayer());
          e.Handled = true;
       }
    }

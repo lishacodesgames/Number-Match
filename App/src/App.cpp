@@ -8,15 +8,17 @@
 #include "Layers/PanelLayer.h"
 #include "Layers/HomeLayer.h"
 
-App* App::s_instance = nullptr; // assign memory before assigning "this" ptr to it
 Font App::font_semibold = GetFontDefault(); // font must be loaded after InitWindow()
 Font App::font_black = GetFontDefault();
 
-App::App() {
-   TraceLog(LOG_INFO, "LISHA SAYS: Loading App...");
+App* App::s_instance = nullptr;
+
+App::App(const std::string& name) {
    s_instance = this;
 
-   InitWindow(800, 600, "Number Match");
+   TraceLog(LOG_INFO, "LISHA SAYS: Loading App...");
+
+   InitWindow(800, 600, name.c_str());
    SetTargetFPS(60);
 
    font_semibold = LoadFontEx("assets/RedHatDisplay-SemiBold.ttf", 40, NULL, 0);
@@ -33,10 +35,10 @@ App::App() {
 
 App::~App() { 
    m_layerStack.Delete(); /// Must be done before CloseWindow()
-   CloseWindow(); 
+   CloseWindow();
+   s_instance = nullptr;
    printf("LISHA SAYS: GOODBYE!\n");
 }
-App& App::Get() { return *s_instance; }
 
 void App::QueueLayerSwap(Layer* pop, Layer* push) {
    QueueLayerPop(pop);
@@ -44,16 +46,16 @@ void App::QueueLayerSwap(Layer* pop, Layer* push) {
 }
 
 void App::QueueLayerPush(Layer* layer) {
-   for(Layer* existing : m_layerStack)
+   for(Layer* existing : s_instance->m_layerStack)
       if(typeid(*existing) == typeid(*layer)) // duplicate layers
          QueueLayerPop(existing);
 
-   m_pendingPushes.push_back(layer);
+   s_instance->m_pendingPushes.push_back(layer);
 }
-void App::QueueLayerPop(Layer* layer) { m_pendingPops.push_back(layer); }
+void App::QueueLayerPop(Layer* layer) { s_instance->m_pendingPops.push_back(layer); }
 
 Layer* App::GetLayerByName(const std::string& name) {
-   for(Layer* layer : m_layerStack)
+   for(Layer* layer : s_instance->m_layerStack)
       if(layer->GetName() == name)
          return layer;
    

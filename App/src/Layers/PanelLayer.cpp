@@ -20,7 +20,7 @@ static Vector2 buttonsOrigin() { // must be compuled after window exists, hence 
 PanelLayer* PanelLayer::s_instance = nullptr;
 void PanelLayer::PopInstance() {
    if(s_instance)
-      App::Get().QueueLayerPop(s_instance);
+      App::QueueLayerPop(s_instance);
 }
 
 PanelLayer::PanelLayer() : Layer("Panel Layer", true),
@@ -68,7 +68,7 @@ void PanelLayer::OnEvent(Event& e) {
       if(newLayer) {
          resetAllFocus();
          activeButton->setFocus(true, BLANK, BLUE);
-         App::Get().QueueLayerSwap(currentLayer, newLayer);
+         App::QueueLayerSwap(currentLayer, newLayer);
          currentLayer = newLayer;
       }
    }
