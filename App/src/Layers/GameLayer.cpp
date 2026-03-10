@@ -1,6 +1,7 @@
 #include <Precompiled.h>
 #include "Layers/GameLayer.h"
 
+#include <raymath.h>
 #include <raylib.h>
 #include "Layers/PanelLayer.h"
 #include "Layers/GameLayer.h"
@@ -46,11 +47,6 @@ void GameLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-
-   if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) x += 4;
-   if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) x -= 4;
-   if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) y -= 4;
-   if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) y += 4;
 }
 
 void GameLayer::OnRender() {
@@ -58,11 +54,4 @@ void GameLayer::OnRender() {
       return;
 
    gobackButton.Draw();
-
-   Vector2 GamePos = {static_cast<float>(GetScreenWidth() / 2 - 70), 50};
-   DrawTextEx(App::font_black, "GAME", GamePos, 70, 5, DARKBLUE);
-   DrawTextEx(App::font_semibold, "Press Q to return to menu", {GamePos.x-25, GamePos.y+70}, 22, 1.5f, GRAY);
-   DrawTextEx(App::font_semibold, "Move circle with WASD or arrows", {GamePos.x-150, GamePos.y+90}, 40, 2, DARKGRAY);
-
-   DrawCircle(x, y, 25, PINK);
 }

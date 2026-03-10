@@ -12,6 +12,5 @@ public:
    void OnEvent(Event& e) override;
    void OnRender() override;
 private:
-   int x = 400, y = 300;
    Button gobackButton;
 };

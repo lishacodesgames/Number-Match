@@ -168,7 +168,7 @@ void Button::setPadding(Vector2 horizPadding, Vector2 vertPadding) {
    Vector2 size = MeasureTextEx(font, text.c_str(), fontSize, 1);
    if(IsTextureValid(icon)) {
       size.x += icon.width * (text == ""? 1:ICON_PAD_MULTIPLIER);
-      size.y = std::max(size.y, (float)(icon.height));
+      size.y = std::max(size.y, static_cast<float>(icon.height));
    }
 
    m_bounds.width = size.x + horizPadding.x + horizPadding.y;
