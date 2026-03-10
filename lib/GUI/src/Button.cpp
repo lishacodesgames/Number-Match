@@ -46,7 +46,7 @@ void Button::Draw() {
    bool iconExists = IsTextureValid(icon);
    Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 1);
 
-   float iconSpace = iconExists && text!= "" ? icon.width*ICON_PAD_MULTIPLIER : 0;
+   float iconSpace = icon.width * (iconExists && text != "" ? ICON_PAD_MULTIPLIER : 1);
    float contentWidth = textSize.x + iconSpace;
 
    // center X

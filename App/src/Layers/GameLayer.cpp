@@ -10,14 +10,14 @@
 #include "App.h"
 
 GameLayer::GameLayer() : Layer("Game Layer"),
-      gobackButton({15, 15}, {0, 0}, "", BLACK, Color{42, 187, 235, 255}, 20, {0, 0}),
-      settingsButton({0, 0}, {0, 0}, "", BLACK, Color{42, 187, 235, 255}, 20, {0, 0})
+      gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
+      settingsButton({0, 0}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0})
 {
    TraceLog(LOG_DEBUG, "LISHA SAYS: Constructing GameLayer...");
-   gobackButton.setIcon("assets/icons/goback_24x24.png");
+   gobackButton.setIcon("assets/icons/goback_18x24.png");
     
    settingsButton.setIcon("assets/icons/settings_30x30.png");
-   settingsButton.setOrigin(GetScreenWidth() - 75, 15);
+   settingsButton.setOrigin(GetScreenWidth() - 45, 15);
 }
 
 void GameLayer::OnAttach() {

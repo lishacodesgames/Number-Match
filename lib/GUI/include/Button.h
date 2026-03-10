@@ -96,7 +96,7 @@ public:
 
    bool isHovered = false; // is button being hovered
    bool isActive = false; // is button being clicked
-   bool isFocused = false; // set by user. Has button been clicked?
+   bool isFocused = false; // set by user. Has button been clicked
    
 private: 
    // -------------------------
