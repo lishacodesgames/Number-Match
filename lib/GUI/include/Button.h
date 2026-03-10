@@ -77,7 +77,7 @@ public:
    // ---------------------
 
    void setIcon(Texture2D icon);
-   void setIcon(const char* filepath, Vector2 dimensions = {0, 0});
+   void setIcon(const char* filepath, Vector2 dimensions = {0, 0}); /// @param dimensions default = {0, 0}, keeps original dimensions of texture
    void setOrigin(Vector2 origin);
    void setSize(Vector2 size);
    void setBounds(Rectangle bounds);

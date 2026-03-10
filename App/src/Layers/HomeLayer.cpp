@@ -26,26 +26,10 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
          nullptr, "Continue Game", BLUE, WHITE, 25, {0.8f, 8}, App::font_semibold
       )
 {
-   Image bg = LoadImage("assets/home_background.jpg");
-   if(bg.data) {
-      ImageResize(&bg, GetScreenWidth(), bg.height*1.5); // resize only width so it extends below screen
-      m_backgroundTexture = LoadTextureFromImage(bg);
-      UnloadImage(bg);
-   }
+   m_backgroundTexture = LoadTexture("assets/backgrounds/home_background_800x1417.jpg");
 
-   Image coin = LoadImage("assets/coin-icon.png");
-   if(coin.data) {
-      ImageResize(&coin, 15, 15);
-      m_coinTexture = LoadTextureFromImage(coin);
-      UnloadImage(coin);
-   }
-
-   Image trophy = LoadImage("assets/trophy-icon.png");
-   if(trophy.data) {
-      ImageResize(&trophy, 27, 27);
-      m_trophyTexture = LoadTextureFromImage(trophy);
-      UnloadImage(trophy);
-   }
+   m_coinTexture = LoadTexture("assets/icons/coin_20x20.png");
+   m_trophyTexture = LoadTexture("assets/icons/trophy_30x30.png");
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 
@@ -87,7 +71,7 @@ void HomeLayer::OnRender() {
    // coins display. @todo add changeability
    Rectangle coinBox = {static_cast<float>(GetScreenWidth())/2-48, 20, 100, 40};
    DrawRectangleRounded(coinBox, 5.0f, 5, WHITE);
-   DrawTexture(m_coinTexture, coinBox.x+11.5f, coinBox.y+11.5f, WHITE);
+   DrawTexture(m_coinTexture, coinBox.x+10.0f, coinBox.y+10.0f, WHITE);
    DrawTextEx(App::font_semibold, "1,343", {coinBox.x+34.0f, coinBox.y+5.85f}, 27.3f, 1.5f, {0, 0, 0, 175});
 
    // title

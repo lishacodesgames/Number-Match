@@ -11,7 +11,7 @@
 
 GameLayer::GameLayer() : Layer("Game Layer"),
       gobackButton({15, 15}, {0, 0}, nullptr, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}) // cyan
-{ gobackButton.setIcon("assets/goback-icon.png", {30, 30}); }
+{ gobackButton.setIcon("assets/icons/goback_24x24.png"); }
 
 void GameLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);

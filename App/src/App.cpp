@@ -21,8 +21,8 @@ App::App(const std::string& name) {
    InitWindow(800, 600, name.c_str());
    SetTargetFPS(60);
 
-   font_semibold = LoadFontEx("assets/RedHatDisplay-SemiBold.ttf", 40, NULL, 0);
-   font_black = LoadFontEx("assets/RedHatDisplay-Black.ttf", 70, NULL, 0);
+   font_semibold = LoadFontEx("assets/fonts/RedHatDisplay-SemiBold.ttf", 40, NULL, 0);
+   font_black = LoadFontEx("assets/fonts/RedHatDisplay-Black.ttf", 70, NULL, 0);
 
    HomeLayer* home = new HomeLayer();
    m_layerStack.PushLayer(home);
