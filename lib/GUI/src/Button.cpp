@@ -78,7 +78,7 @@ Button::~Button() {
 
 Button::Button(
    Rectangle exactBounds, 
-   Texture2D* icon, const char* text, 
+   const char* text, 
    Color buttonColor, Color contentColor,
    int fontSize, std::pair<float, int> roundness, // default args
    Font font
@@ -89,26 +89,18 @@ Button::Button(
    float x = (m_bounds.width - textSize.x)/2;
    float y = (m_bounds.height - textSize.y)/2;
    
-   if(icon) {
-      this->icon = *icon;
-      x -= (this->icon.width/2) * (text == ""? 1 : ICON_PAD_MULTIPLIER);
-   }
-   
    m_horizontalPadding = { x, x };
    m_verticalPadding = { y,  y };
 }
 
 Button::Button(
    Vector2 origin, Vector2 padding, 
-   Texture2D* icon, const char* text, 
+   const char* text, 
    Color buttonColor, Color contentColor,
    int fontSize, std::pair<float, int> roundness, // default args
    Font font
 ) : roundness(roundness),text(text), fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), font(font)
-{ 
-   if(icon)
-      this->icon = *icon;
-
+{
    setOrigin(origin);
    setPadding({padding.x, padding.x}, {padding.y, padding.y});
 }
@@ -116,15 +108,12 @@ Button::Button(
 Button::Button (
    Vector2 origin, 
    float paddingLeft, float paddingRight, float paddingTop, float paddingBottom, 
-   Texture2D* icon, const char* text, 
+   const char* text, 
    Color buttonColor, Color contentColor,
    int fontSize, std::pair<float, int> roundness, // default args
    Font font
 ) : roundness(roundness), text(text), fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), font(font)
-{ 
-   if(icon)
-      this->icon = *icon;   
-
+{
    setOrigin(origin);
    setPadding({paddingLeft, paddingRight}, {paddingTop, paddingBottom}); 
 }
@@ -147,6 +136,11 @@ void Button::setIcon(const char* filepath, Vector2 dimensions) { // dimensions =
    UnloadImage(img);
 
    setPadding(m_horizontalPadding, m_verticalPadding);
+}
+
+void Button::setOrigin(int x, int y) {
+   m_bounds.x = static_cast<float>(x);
+   m_bounds.y = static_cast<float>(y);
 }
 
 void Button::setOrigin(Vector2 origin) {

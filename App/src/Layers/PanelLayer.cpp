@@ -25,13 +25,13 @@ void PanelLayer::PopInstance() {
 
 PanelLayer::PanelLayer() : Layer("Panel Layer", true),
       homeButton(
-         {0, 0}, {0, 0}, nullptr, "Main", BLANK, BLUE, 30, {0.0f, 0}, App::font_semibold
+         {0, 0}, {0, 0}, "Main", BLANK, BLUE, 30, {0.0f, 0}, App::font_semibold
       ),
       dailyButton(
-         {0, 0}, {0, 0}, nullptr, "Daily Challenges", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold
+         {0, 0}, {0, 0}, "Daily Challenges", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold
       ),
       meButton(
-         {0, 0}, {0, 0}, nullptr, "Me", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold
+         {0, 0}, {0, 0}, "Me", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold
       ) 
 {
    s_instance = this;

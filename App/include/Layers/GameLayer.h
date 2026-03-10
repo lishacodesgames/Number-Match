@@ -13,4 +13,5 @@ public:
    void OnRender() override;
 private:
    Button gobackButton;
+   Button settingsButton;
 };

@@ -7,7 +7,7 @@
  * 
  *  -- compulsory --
  * Rectangle (Rectangle or origin+padding)
- * icon & text -- set nullptr and/or "" if not wanted
+ * text -- set "" if not wanted
  * bg color & text+icon color
  * 
  * -- optional --
@@ -32,7 +32,7 @@ public:
    /// Manual bounds settings, default text size, no padding, no roundness
    Button(
       Rectangle exactBounds, 
-      Texture2D* icon, const char* text, 
+      const char* text, 
       Color buttonColor, Color contentColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
       Font font = GetFontDefault()
@@ -42,7 +42,7 @@ public:
    Button(
       Vector2 origin, 
       Vector2 padding, 
-      Texture2D* icon, const char* text, 
+      const char* text, 
       Color buttonColor, Color contentColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
       Font font = GetFontDefault()
@@ -52,7 +52,7 @@ public:
    Button(
       Vector2 origin,
       float paddingLeft, float paddingRight, float paddingTop, float paddingBottom,
-      Texture2D* icon, const char* text, 
+      const char* text, 
       Color buttonColor, Color contentColor,
       int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
       Font font = GetFontDefault()
@@ -78,7 +78,9 @@ public:
 
    void setIcon(Texture2D icon);
    void setIcon(const char* filepath, Vector2 dimensions = {0, 0}); /// @param dimensions default = {0, 0}, keeps original dimensions of texture
+   
    void setOrigin(Vector2 origin);
+   void setOrigin(int x, int y);
    void setSize(Vector2 size);
    void setBounds(Rectangle bounds);
    void setPadding(Vector2 horizPadding, Vector2 vertPadding);

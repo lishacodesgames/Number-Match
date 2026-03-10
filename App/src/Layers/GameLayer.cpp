@@ -10,8 +10,15 @@
 #include "App.h"
 
 GameLayer::GameLayer() : Layer("Game Layer"),
-      gobackButton({15, 15}, {0, 0}, nullptr, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}) // cyan
-{ gobackButton.setIcon("assets/icons/goback_24x24.png"); }
+      gobackButton({15, 15}, {0, 0}, "", BLACK, Color{42, 187, 235, 255}, 20, {0, 0}),
+      settingsButton({0, 0}, {0, 0}, "", BLACK, Color{42, 187, 235, 255}, 20, {0, 0})
+{
+   TraceLog(LOG_DEBUG, "LISHA SAYS: Constructing GameLayer...");
+   gobackButton.setIcon("assets/icons/goback_24x24.png");
+    
+   settingsButton.setIcon("assets/icons/settings_30x30.png");
+   settingsButton.setOrigin(GetScreenWidth() - 75, 15);
+}
 
 void GameLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -43,7 +50,9 @@ void GameLayer::OnUpdate() {
       return;
    
    gobackButton.Update();
-   if(gobackButton.isHovered)
+   settingsButton.Update();
+
+   if(gobackButton.isHovered || settingsButton.isHovered)
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -54,4 +63,5 @@ void GameLayer::OnRender() {
       return;
 
    gobackButton.Draw();
+   settingsButton.Draw();
 }
