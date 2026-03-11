@@ -1,0 +1,242 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		// autosave
+		"files.autoSave": "afterDelay",
+		"files.autoSaveDelay": 1000,
+
+		// chat
+		"chat.agent.enabled": false,
+		"chat.commandCenter.enabled": false,
+		"chat.notifyWindowOnConfirmation": "off",
+		"github.copilot.enable": {
+			"*": true,
+		},
+		
+		// c++ format
+		"C_Cpp.clang_format_fallbackStyle": "Google",
+		"C_Cpp.default.compilerPath": "/usr/bin/g++",
+		"C_Cpp.vcFormat.indent.preserveComments": true,
+
+		// code runner
+		"code-runner.runInTerminal": true,
+
+		// debug
+		"debug.onTaskErrors": "debugAnyway",
+
+		// terminal
+		"terminal.integrated.minimumContrastRatio": 1,
+		"workbench.colorCustomizations": {
+			"editor.foldBackground": "#3a2a1f55",
+
+			"terminal.foreground": "#33827a",
+			"terminal.ansiBrightYellow": "#3d5a4c",
+			"terminal.ansiBrightRed": "#c43030",
+			"terminal.ansiMagenta": "#93bfc5",
+			"terminal.ansiCyan": "#497070",
+		},
+		"terminal.integrated.stickyScroll.enabled": false,
+
+		// vscode appearance
+		"editor.accessibilitySupport": "on",
+		"editor.cursorBlinking": "expand",
+		"editor.cursorSmoothCaretAnimation": "on",
+		"editor.guides.indentation": false,
+		"editor.inlineSuggest.syntaxHighlightingEnabled": true,
+		"editor.minimap.size": "proportional",
+		"editor.minimap.renderCharacters": false,
+		"editor.minimap.showSlider": "always",
+		"editor.renderLineHighlight": "gutter",
+		"editor.renderLineHighlightOnlyWhenFocus": true,
+		"editor.selectionHighlightMultiline": true,
+		"editor.tabSize": 3,
+		"editor.wordWrap": "on",
+		"editor.wrappingIndent": "deepIndent",
+		"workbench.activityBar.location": "top",
+		"workbench.editor.empty.hint": "hidden",
+		"workbench.colorTheme": "Kimbie Dark",
+		"workbench.iconTheme": "vscode-icons",
+
+		// editor colors
+		"editor.tokenColorCustomizations": {
+			"textMateRules": [
+				{
+					"scope": "comment",
+					"settings": {
+						"foreground": "#653F31",
+						"fontStyle": "italic bold"
+					}
+				},
+				{ // anything in quotes
+					"scope": ["string.quoted.double", "string.quoted.single"],
+					"settings": {
+						"foreground": "#95d7ca",
+					},
+				},
+				{ // operators like +, -, ==, etc
+					"scope": ["keyword.operator", "punctuation.separator"],
+					"settings": {
+						"foreground": "#4a8bbc",
+					},
+				},
+				{ // numeric constants
+					"scope": ["constant.character", "constant.numeric"],
+					"settings": {
+						"foreground": "#5bad6e",
+					},
+				},
+			],
+		},
+		"editor.semanticTokenColorCustomizations": {
+			"rules": {
+				"namespace": "#ff5100",
+				"property": { // class members
+					"foreground": "#eaa3a3",
+					"fontStyle": "italic",
+				},
+				"method": "#fb8c8c", // class methods
+				"operator": "#477aa1", // operators like +, -, ==, etc
+				"variable": { // local variables
+					"foreground": "#6cbde5",
+				},
+			},
+		},
+
+		// extension: background
+		"background.editorBackgrounds": [
+			"/home/lishalikesmint/Pictures/VSCode/vscode-editor-bg-1.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-editor-bg-2.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-editor-bg-3.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-editor-bg-4.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-editor-bg-5.jpeg"
+		],
+		"background.sidebarBackgrounds": [
+			"/home/lishalikesmint/Pictures/VSCode/vscode-sidebar-bg-1.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-sidebar-bg-2.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-sidebar-bg-3.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-sidebar-bg-4.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-sidebar-bg-5.jpeg"
+		],
+		"background.panelBackgrounds": [
+			"/home/lishalikesmint/Pictures/VSCode/vscode-panel-bg-1.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-panel-bg-2.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-panel-bg-3.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-panel-bg-4.jpeg",
+			"/home/lishalikesmint/Pictures/VSCode/vscode-panel-bg-5.jpeg"
+		],
+		"background.useInvertedOpacity": false,
+		"background.backgroundOpacity": [ 0.05, 0.07, 0.17, 0.05 ],
+		"background.backgroundSize": [ "Cover", "Cover", "Cover", "Cover" ],
+		"background.autoInstall": true,
+		"background.backgroundChangeTime": [1800, 1200, 600, 1800], // 30 mins
+		"background.backgroundAlignment": [
+			"Center Center",
+			"Center Center",
+			"Top Left",
+			"Center Center"
+		],
+
+		// extension: Better Comments
+		"better-comments.highlightPlainText": true,
+		"better-comments.tags": [
+			{
+				//!
+				"tag": "!",
+				"color": "#D94359",
+				"strikethrough": false,
+				"underline": false,
+				"backgroundColor": "transparent",
+				"bold": false,
+				"italic": true,
+			},
+			{
+				//?
+				"tag": "?",
+				"color": "#6372CF",
+				"strikethrough": false,
+				"underline": false,
+				"backgroundColor": "transparent",
+				"bold": false,
+				"italic": true,
+			},
+			{
+				// //
+				"tag": "//",
+				"color": "#C586A3",
+				"strikethrough": false,
+				"underline": false,
+				"backgroundColor": "transparent",
+				"bold": false,
+				"italic": true,
+			},
+			{
+				// todo
+				"tag": "todo",
+				"color": "#EBD23D",
+				"strikethrough": false,
+				"underline": false,
+				"backgroundColor": "transparent",
+				"bold": false,
+				"italic": true,
+			},
+			{
+				//*
+				"tag": "*",
+				"color": "#98C379",
+				"strikethrough": false,
+				"underline": false,
+				"backgroundColor": "transparent",
+				"bold": false,
+				"italic": true,
+			},
+			{
+				// ~~
+				"tag": "~~",
+				"color": "#8A5C78",
+				"strikethrough": true,
+				"underline": false,
+				"backgroundColor": "transparent",
+				"italic": true,
+			},
+		],
+
+		// extension: colorize
+		"colorize.languages": ["css", "json", "jsonc", "cpp"],
+		"colorize.hide_current_line_decorations": false,
+
+		// extension: gitlens
+		"gitlens.ai.model": "vscode",
+		"gitlens.ai.vscode.model": "copilot:gpt-4.1",
+
+		// extension: indent-rainbow
+		"indentRainbow.colors": [
+			"#82AAFF66",
+			"#C792EA66",
+			"#F78C6C61",
+			"#FFCB6B61",
+			"#C3E88D66",
+			"#89DDFF66",
+		],
+		"indentRainbow.errorColor": "#00000022",
+		"indentRainbow.indicatorStyle": "light",
+		"indentRainbow.lightIndicatorStyleLineWidth": 1.25,
+		"indentRainbow.ignoreErrorLanguages": ["markdown"],
+
+		// extension: prettier
+		"[cpp]": {
+			"editor.wordBasedSuggestions": "off",
+			"editor.semanticHighlighting.enabled": true,
+			"editor.stickyScroll.defaultModel": "foldingProviderModel",
+			"editor.suggest.insertMode": "replace"
+		},
+		"[jsonc]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode",
+		},
+		"prettier.tabWidth": 3,
+		"prettier.useTabs": true,
+	}
+}
