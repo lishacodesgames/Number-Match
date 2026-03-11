@@ -3,6 +3,7 @@
 
 #include <raymath.h>
 #include <raylib.h>
+#include "Layers/OptionsLayer.h"
 #include "Layers/PanelLayer.h"
 #include "Layers/GameLayer.h"
 #include "Layers/HomeLayer.h"
@@ -37,11 +38,15 @@ void GameLayer::OnEvent(Event& e) {
          App::QueueLayerPush(new PanelLayer());
          e.Handled = true;
       }
-   } else if(e.GetEventType() == EventType::MouseClicked && gobackButton.isHovered) {
-      OnSuspend();
-      App::QueueLayerPush(new HomeLayer());
-      App::QueueLayerPush(new PanelLayer());
-      e.Handled = true;
+   } else if(e.GetEventType() == EventType::MouseClicked) {
+      if(gobackButton.isHovered) {
+         OnSuspend();
+         App::QueueLayerPush(new HomeLayer());
+         App::QueueLayerPush(new PanelLayer());
+         e.Handled = true;
+      } else if(settingsButton.isHovered) {
+         App::QueueLayerPush(new OptionsLayer());
+      }
    }
 }
 

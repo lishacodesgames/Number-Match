@@ -4,6 +4,7 @@ target_sources(${PROJECT_NAME} PRIVATE
    src/Layers/GameLayer.cpp
    src/Layers/HomeLayer.cpp
    src/Layers/MeLayer.cpp
+   src/Layers/OptionsLayer.cpp
    src/Layers/PanelLayer.cpp
    src/App.cpp
    src/main.cpp
