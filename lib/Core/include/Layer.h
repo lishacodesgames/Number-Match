@@ -24,7 +24,7 @@ public:
    virtual void OnRender() = 0;
    
    // ---- layer pause/resume (suspension) ----
-   virtual void OnSuspend();
+   virtual void OnSuspend(bool render = false, bool update = false, bool event = false);
    virtual void OnResume();
    bool isSuspended = false;
    bool suspended_event = false;

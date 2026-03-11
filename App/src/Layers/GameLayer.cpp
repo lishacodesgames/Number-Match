@@ -45,7 +45,9 @@ void GameLayer::OnEvent(Event& e) {
          App::QueueLayerPush(new PanelLayer());
          e.Handled = true;
       } else if(settingsButton.isHovered) {
+         OnSuspend(true); // suspend but render
          App::QueueLayerPush(new OptionsLayer());
+         e.Handled = true;
       }
    }
 }

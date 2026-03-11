@@ -16,9 +16,17 @@ OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
       )
 {}
 
+void OptionsLayer::OnAttach() {
+   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+   Layer::OnAttach();
+}
+
 void OptionsLayer::OnEvent(Event& e) {
-   if(e.GetEventType() == EventType::MouseClicked && m_doneButton.isHovered)
+   e.Handled = true; // don't want any events to pass through to gamelayer
+   if(e.GetEventType() == EventType::MouseClicked && m_doneButton.isHovered) {
+      App::GetLayerByName("Game Layer")->OnResume(); // we're sure that game exists bc OptionsLayer only exists in its context
       App::QueueLayerPop(this);
+   }
 }
 
 void OptionsLayer::OnUpdate() {
@@ -26,6 +34,8 @@ void OptionsLayer::OnUpdate() {
 
    if(m_doneButton.isHovered)
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+   else
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
 void OptionsLayer::OnRender() {

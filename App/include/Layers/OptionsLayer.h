@@ -10,6 +10,7 @@ public:
    OptionsLayer();
    ~OptionsLayer() override = default;
 
+   void OnAttach() override;
    void OnEvent(Event& e) override;
    void OnUpdate() override;
    void OnRender() override;
