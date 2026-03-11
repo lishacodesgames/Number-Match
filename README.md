@@ -22,7 +22,11 @@ My version is desktop-friendly, has no ads, and is just as addicting.
 ```bash
 cmake --preset Release
 cmake --build --preset Release
+
 ./build/Release/App/NumberMatch
+OR
+cd build/Release/App
+./NumberMatch
 ```
 **Note:** <br> 
 - for Windows, omit the `./` and add `.exe` at the end
