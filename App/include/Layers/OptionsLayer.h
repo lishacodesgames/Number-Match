@@ -4,6 +4,7 @@
 #include "Layer.h"
 
 #include <raylib.h>
+#include <array>
 
 class OptionsLayer : public Layer {
 public:
@@ -17,4 +18,7 @@ public:
 private:
    Rectangle m_bounds;
    Button m_doneButton;
+
+   enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, RIGHTS, PREFS, PUZZLE, REMOVE_ADS};
+   std::array<Rectangle, 8> m_banners;
 };

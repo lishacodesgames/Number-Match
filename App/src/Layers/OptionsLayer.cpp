@@ -4,6 +4,9 @@
 #include "Event.h"
 #include "App.h"
 
+static constexpr int PANEL_HEIGHT = 35;
+static constexpr float BANNER_HEIGHT = 30;
+
 OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
       m_bounds({
          200, 100, 
@@ -14,7 +17,24 @@ OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
          {m_bounds.x + m_bounds.width - 55, m_bounds.y + 7}, // origin 
          {0, 0}, "Done", BLANK, BLUE, 20, {0, 0}, App::font_semibold
       )
-{}
+{
+   float originX = m_bounds.x + m_bounds.width * (15.0f/100.0f)/2.0f; // half of 15%
+   float originY = m_bounds.y + PANEL_HEIGHT * 1.5f;
+   Vector2 size = {m_bounds.width * 0.85f, BANNER_HEIGHT};
+
+   constexpr float spacing = BANNER_HEIGHT + 20;
+
+   m_banners[SETTINGS] = {originX, originY, size.x, size.y};
+
+   m_banners[HOW_TO] = {originX, originY + spacing, size.x, size.y};
+   m_banners[HELP] = {originX, originY + spacing + BANNER_HEIGHT, size.x, size.y};
+   m_banners[ABOUT] = {originX, originY + spacing + BANNER_HEIGHT*2, size.x, size.y};
+   m_banners[RIGHTS] = {originX, originY + spacing + BANNER_HEIGHT*3, size.x, size.y};
+   m_banners[PREFS] = {originX, originY + spacing + BANNER_HEIGHT*4, size.x, size.y};
+
+   m_banners[PUZZLE] = {originX, originY + spacing*2 + BANNER_HEIGHT*4, size.x, size.y};
+   m_banners[REMOVE_ADS] = {originX, originY + spacing*3 + BANNER_HEIGHT*4, size.x, size.y};
+}
 
 void OptionsLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -45,11 +65,11 @@ void OptionsLayer::OnRender() {
    
    // top panel
    Rectangle panel = m_bounds;
-   panel.height = 35;
+   panel.height = PANEL_HEIGHT;
    
    Rectangle panelSharpBottom = panel;
-   panelSharpBottom.y += panel.height/2;
-   panelSharpBottom.height /= 2;
+   panelSharpBottom.y += PANEL_HEIGHT/2;
+   panelSharpBottom.height = PANEL_HEIGHT/2;
 
    DrawRectangleRounded(panel, 0.8f, 6, WHITE);
    DrawRectangleRec(panelSharpBottom, WHITE);
@@ -59,4 +79,10 @@ void OptionsLayer::OnRender() {
       20, 1, BLACK
    );
    m_doneButton.Draw();
+
+   // banners
+   for(Rectangle banner : m_banners) {
+      DrawRectangleRounded(banner, 0.85f, 4, WHITE);
+      DrawRectangleRoundedLines(banner, 0.85f, 4, GRAY);
+   }
 }
