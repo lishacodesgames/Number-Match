@@ -31,13 +31,18 @@ void OptionsLayer::OnUpdate() {
 void OptionsLayer::OnRender() {
    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), {80, 80, 80, 180}); // to make the bg darker
 
-   DrawRectangleRounded(m_bounds, 0.1f, 6, LIGHTGRAY);
+   DrawRectangleRounded(m_bounds, 0.1f, 6, LIGHTGRAY); // main popup
    
    // top panel
    Rectangle panel = m_bounds;
-   panel.height = 30;
+   panel.height = 35;
+   
+   Rectangle panelSharpBottom = panel;
+   panelSharpBottom.y += panel.height/2;
+   panelSharpBottom.height /= 2;
 
-   DrawRectangleRounded(panel, 0.1f, 6, RAYWHITE);
+   DrawRectangleRounded(panel, 0.8f, 6, WHITE);
+   DrawRectangleRec(panelSharpBottom, WHITE);
    DrawTextEx(
       App::font_semibold, "Options", 
       {m_bounds.x + m_bounds.width/2 - 30, m_bounds.y + 7}, 
