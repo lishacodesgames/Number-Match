@@ -4,7 +4,8 @@
 			"path": "."
 		}
 	],
-	"settings": {
+	"settings": 
+	{
 		// autosave
 		"files.autoSave": "afterDelay",
 		"files.autoSaveDelay": 1000,
@@ -238,5 +239,27 @@
 		},
 		"prettier.tabWidth": 3,
 		"prettier.useTabs": true,
+
+		// extension: vim pre shortcut keys
+		"vim.handleKeys": {
+			"<C-n>": false,
+			"<C-j>": false,
+			"<C-k>": false,
+			"<C-p>": false,
+			"<C-d>": true,
+			":": true,
+			";": true
+		},
+		"vim.normalModeKeyBindings": [
+			// pressing ; or : acts as pressing : for replace/find commands
+			{
+				"before": [":"],
+				"after": [":"]
+			},
+			{
+				"before": [";"],
+				"after": [":"],
+			}
+		]
 	}
 }
