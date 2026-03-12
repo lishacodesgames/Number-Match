@@ -1,11 +1,14 @@
 #include <Precompiled.h>
 #include "Layers/OptionsLayer.h"
 
+#include <raylib.h>
+#include <array>
 #include "Event.h"
 #include "App.h"
 
 static constexpr int PANEL_HEIGHT = 35;
 static constexpr float BANNER_HEIGHT = 32;
+static constexpr Color LIGHTERGRAY = {230, 230, 230, 255};
 
 OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
       m_bounds({
@@ -22,9 +25,9 @@ OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
 
    // banners
 
-   float originX = m_bounds.x + m_bounds.width * (15.0f/100.0f)/2.0f; // half of 15%
+   float originX = m_bounds.x + m_bounds.width * 0.16f/2; // half of 16%
    float originY = m_bounds.y + PANEL_HEIGHT * 1.5f;
-   Vector2 size = {m_bounds.width * 0.85f, BANNER_HEIGHT};
+   Vector2 size = {m_bounds.width * 0.85f, BANNER_HEIGHT}; // 85% of popup
 
    constexpr float spacing = BANNER_HEIGHT + 23; // Space between the top and 2 bottom banners (ref: settings.jpg)
 
@@ -68,10 +71,16 @@ void OptionsLayer::OnUpdate() {
 
 void OptionsLayer::OnRender() {
    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), {80, 80, 80, 180}); // to make the bg darker
+   DrawRectangleRounded(m_bounds, 0.1f, 6, LIGHTERGRAY);  // main popup
 
-   DrawRectangleRounded(m_bounds, 0.1f, 6, LIGHTGRAY); // main popup
-   
-#pragma region Top panel
+   renderTopPanel();
+   renderBlankBanners();
+   renderBannerContent();
+}
+
+#pragma region Render helpers
+
+void OptionsLayer::renderTopPanel() {
    Rectangle panel = m_bounds;
    panel.height = PANEL_HEIGHT;
    
@@ -86,11 +95,11 @@ void OptionsLayer::OnRender() {
       {m_bounds.x + m_bounds.width/2 - 30, m_bounds.y + 7}, 
       20, 1, BLACK
    );
+
    m_doneButton.Draw();
-#pragma endregion
+}
 
-#pragma region Banners
-
+void OptionsLayer::renderBlankBanners() {
    // base banner shape
    for(Rectangle banner : m_banners)
       DrawRectangleRounded(banner, 0.5f, 4, WHITE);
@@ -110,7 +119,7 @@ void OptionsLayer::OnRender() {
          m_banners.at(i).y + m_banners.at(i).height,
          m_banners.at(i).x + m_banners.at(i).width, 
          m_banners.at(i).y + m_banners.at(i).height,
-         LIGHTGRAY
+         LIGHTERGRAY
       );
 
    // right arrow icon on all except last 2
@@ -121,6 +130,10 @@ void OptionsLayer::OnRender() {
          m_banners.at(i).y + 10, 
          LIGHTGRAY
       );
+}
+
+void OptionsLayer::renderBannerContent() {
+   
+}
 
 #pragma endregion
-}

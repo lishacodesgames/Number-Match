@@ -23,4 +23,9 @@ private:
 
    enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, RIGHTS, PREFS, MATH, REMOVE_ADS};
    std::array<Rectangle, 8> m_banners;
+
+   // render helpers
+   void renderTopPanel();
+   void renderBlankBanners();
+   void renderBannerContent();
 };
