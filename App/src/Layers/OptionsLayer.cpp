@@ -76,9 +76,9 @@ void OptionsLayer::OnEvent(Event& e) {
 void OptionsLayer::OnUpdate() {
    SetTraceLogLevel(LOG_DEBUG);
    if(m_bounds.y > BOUNDS_TARGETY) {
-      m_bounds.y -= 0.1f * BOUNDS_TARGETY;
-      if(m_bounds.y < BOUNDS_TARGETY)
-         m_bounds.y = BOUNDS_TARGETY;
+      m_bounds.y -= 0.2f * (m_bounds.y - BOUNDS_TARGETY); // move 20% of remaining distance. Fake easing function
+      if((m_bounds.y - BOUNDS_TARGETY) < 10) // within 10 pixels
+         m_bounds.y = BOUNDS_TARGETY; // snap to target, since %-based approach is an asymptote
       
       setBannerPositions(m_bounds.y);
       m_doneButton.setOrigin({m_doneButton.getOrigin().x, m_bounds.y + 7});
