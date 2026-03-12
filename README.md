@@ -25,9 +25,6 @@ The only keybinding is: `Q` to go back to home from the game
 ```bash
 cmake --preset Release
 cmake --build --preset Release
-
-./build/Release/App/NumberMatch
-OR
 cd build/Release/App
 ./NumberMatch
 ```
