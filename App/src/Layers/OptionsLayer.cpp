@@ -2,8 +2,6 @@
 #include "Layers/OptionsLayer.h"
 
 #include <raylib.h>
-#include <chrono>
-#include <thread>
 #include <array>
 #include "Event.h"
 #include "App.h"
@@ -76,14 +74,17 @@ void OptionsLayer::OnEvent(Event& e) {
 void OptionsLayer::OnUpdate() {
    SetTraceLogLevel(LOG_DEBUG);
    if(m_bounds.y > BOUNDS_TARGETY) {
-      m_bounds.y -= 0.2f * (m_bounds.y - BOUNDS_TARGETY); // move 20% of remaining distance. Fake easing function
-      if((m_bounds.y - BOUNDS_TARGETY) < 10) // within 10 pixels
+      double dt = GetFrameTime(); // for a delay
+      double speed = 160;
+      double diff = m_bounds.y - BOUNDS_TARGETY;
+
+      m_bounds.y -= 0.1f * diff * speed * dt; // move 10% of remaining distance with delay and lag buffer
+      if(diff < 1.5) // within 1.5 pixels
          m_bounds.y = BOUNDS_TARGETY; // snap to target, since %-based approach is an asymptote
       
       setBannerPositions(m_bounds.y);
       m_doneButton.setOrigin({m_doneButton.getOrigin().x, m_bounds.y + 7});
 
-      std::this_thread::sleep_for(std::chrono::milliseconds(2));
       TraceLog(LOG_DEBUG, "LISHA SAYS: bounds = %f, target = %f", m_bounds.y, BOUNDS_TARGETY);
       return;
    }
@@ -198,8 +199,8 @@ void OptionsLayer::renderBannerContent() {
       DrawTextureEx(icon, iconPos, 0, 0.98f, WHITE); // new scaled height = 23.52
       DrawTextEx(
          App::font_semibold, name.c_str(),
-         {iconPos.x + icon.width + 15, iconPos.y},
-         22, 1, DARKGRAY
+         {iconPos.x + icon.width + 15, iconPos.y + 2},
+         20, 1, DARKGRAY
       );
    }
 }
