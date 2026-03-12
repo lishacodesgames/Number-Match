@@ -4,6 +4,7 @@
 #include "Layer.h"
 
 #include <raylib.h>
+#include <string>
 #include <array>
 
 class OptionsLayer : public Layer {
@@ -24,6 +25,7 @@ private:
    enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, PRIVACY, PREFS, MATH, NO_ADS}; /// simply for more readability when looping over parts of the banners' arrays
    std::array<Rectangle, 8> m_banners;
    std::array<Texture, 8> m_bannerIcons;
+   std::array<std::string, 8> m_bannerNames;
 
    // render helpers
    void renderTopPanel();

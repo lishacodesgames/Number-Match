@@ -56,6 +56,16 @@ OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
    for(int i = SETTINGS; i <= NO_ADS; i++)
       if(!IsTextureValid(m_bannerIcons.at(i)))
          TraceLog(LOG_ERROR, "LISHA SAYS: Banner icon at index %d failed to load!", i);
+
+   // banner names, no map bcz i wanna use indices in iteration
+   m_bannerNames[SETTINGS] = "Settings";
+   m_bannerNames[HOW_TO] = "How To Play";
+   m_bannerNames[HELP] = "Help";
+   m_bannerNames[ABOUT] = "About Game";
+   m_bannerNames[PRIVACY] = "Privacy Rights";
+   m_bannerNames[PREFS] = "Privacy Preferences";
+   m_bannerNames[MATH] = "Math Puzzle";
+   m_bannerNames[NO_ADS] = "Remove Ads";
 }
 
 OptionsLayer::~OptionsLayer() {
@@ -153,12 +163,23 @@ void OptionsLayer::renderBlankBanners() {
 }
 
 void OptionsLayer::renderBannerContent() {
+   Texture icon;
+   Rectangle banner;
+   std::string name;
+   float padding;
+   
    for(int i = SETTINGS; i <= NO_ADS; i++) {
-      float padding = (BANNER_HEIGHT - m_bannerIcons.at(i).height)/2;
-      DrawTextureEx(
-         m_bannerIcons.at(i),
-         {m_banners.at(i).x + padding * 1.5f, m_banners.at(i).y + padding},
-         0, 0.98f, WHITE // new scaled height = 23.52
+      icon = m_bannerIcons.at(i);
+      banner = m_banners.at(i);
+      name = m_bannerNames.at(i);
+      padding = (BANNER_HEIGHT - icon.height)/2;
+
+      Vector2 iconPos = {banner.x + padding * 1.5f, banner.y + padding};
+      DrawTextureEx(icon, iconPos, 0, 0.98f, WHITE); // new scaled height = 23.52
+      DrawTextEx(
+         App::font_semibold, name.c_str(),
+         {iconPos.x + icon.width + 15, iconPos.y},
+         22, 1, DARKGRAY
       );
    }
 }
