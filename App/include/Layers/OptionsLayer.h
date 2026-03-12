@@ -21,6 +21,6 @@ private:
    Rectangle m_bounds;
    Button m_doneButton;
 
-   enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, RIGHTS, PREFS, PUZZLE, REMOVE_ADS};
+   enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, RIGHTS, PREFS, MATH, REMOVE_ADS};
    std::array<Rectangle, 8> m_banners;
 };

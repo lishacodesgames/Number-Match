@@ -36,7 +36,7 @@ OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
    m_banners[RIGHTS] = {originX, originY + spacing + BANNER_HEIGHT*3, size.x, size.y};
    m_banners[PREFS] = {originX, originY + spacing + BANNER_HEIGHT*4, size.x, size.y};
 
-   m_banners[PUZZLE] = {originX, originY + spacing*2 + BANNER_HEIGHT*4, size.x, size.y};
+   m_banners[MATH] = {originX, originY + spacing*2 + BANNER_HEIGHT*4, size.x, size.y};
    m_banners[REMOVE_ADS] = {originX, originY + spacing*3 + BANNER_HEIGHT*4, size.x, size.y};
 }
 
@@ -118,7 +118,7 @@ void OptionsLayer::OnRender() {
       DrawTexture(
          m_rightArrowTexture, 
          m_banners.at(i).x + m_banners.at(i).width - 10*2,
-         m_banners.at(i).y + 7, 
+         m_banners.at(i).y + 10, 
          LIGHTGRAY
       );
 
