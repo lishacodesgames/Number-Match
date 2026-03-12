@@ -15,9 +15,9 @@ GameLayer::GameLayer() : Layer("Game Layer"),
       settingsButton({0, 0}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0})
 {
    TraceLog(LOG_DEBUG, "LISHA SAYS: Constructing GameLayer...");
-   gobackButton.setIcon("assets/icons/goback_18x24.png");
+   gobackButton.setIcon("assets/icons/game/goback_18x24.png");
     
-   settingsButton.setIcon("assets/icons/settings_30x30.png");
+   settingsButton.setIcon("assets/icons/game/settings_30x30.png");
    settingsButton.setOrigin(GetScreenWidth() - 45, 15);
 }
 

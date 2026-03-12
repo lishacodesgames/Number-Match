@@ -28,8 +28,8 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
 {
    m_backgroundTexture = LoadTexture("assets/backgrounds/home_background_800x1417.jpg");
 
-   m_coinTexture = LoadTexture("assets/icons/coin_20x20.png");
-   m_trophyTexture = LoadTexture("assets/icons/trophy_30x30.png");
+   m_coinTexture = LoadTexture("assets/icons/game/coin_20x20.png");
+   m_trophyTexture = LoadTexture("assets/icons/menus/trophy_30x30.png");
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 
@@ -65,6 +65,7 @@ void HomeLayer::OnUpdate() {
 }
 
 Vector2 operator+(const Vector2& vec, const float& fl) { return {vec.x+fl, vec.y+fl}; }
+
 void HomeLayer::OnRender() {
    DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 30}); // background
 

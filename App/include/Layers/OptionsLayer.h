@@ -9,7 +9,7 @@
 class OptionsLayer : public Layer {
 public:
    OptionsLayer();
-   ~OptionsLayer() override = default;
+   ~OptionsLayer() override;
 
    void OnAttach() override;
    void OnEvent(Event& e) override;
@@ -21,8 +21,9 @@ private:
    Rectangle m_bounds;
    Button m_doneButton;
 
-   enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, RIGHTS, PREFS, MATH, REMOVE_ADS};
+   enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, PRIVACY, PREFS, MATH, NO_ADS}; /// simply for more readability when looping over parts of the banners' arrays
    std::array<Rectangle, 8> m_banners;
+   std::array<Texture, 8> m_bannerIcons;
 
    // render helpers
    void renderTopPanel();

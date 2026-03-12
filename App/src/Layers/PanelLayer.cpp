@@ -41,9 +41,9 @@ PanelLayer::PanelLayer() : Layer("Panel Layer", true),
    dailyButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING, 0});
    meButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING * 2.7f, 0});
 
-   homeButton.setIcon("assets/icons/home_20x20.png");
-   dailyButton.setIcon("assets/icons/daily_20x20.png");
-   meButton.setIcon("assets/icons/me_20x20.png");
+   homeButton.setIcon("assets/icons/menus/home_20x20.png");
+   dailyButton.setIcon("assets/icons/menus/daily_20x20.png");
+   meButton.setIcon("assets/icons/menus/me_20x20.png");
 }
 PanelLayer::~PanelLayer() { s_instance = nullptr; }
 

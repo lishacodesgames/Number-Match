@@ -21,7 +21,7 @@ OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
          {0, 0}, "Done", BLANK, BLUE, 20, {0, 0}, App::font_semibold
       )
 {
-   m_rightArrowTexture = LoadTexture("assets/icons/rightarrow_10x13.png");
+   m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
 
    // banners
 
@@ -36,16 +36,36 @@ OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
    m_banners[HOW_TO] = {originX, originY + spacing, size.x, size.y};
    m_banners[HELP] = {originX, originY + spacing + BANNER_HEIGHT, size.x, size.y};
    m_banners[ABOUT] = {originX, originY + spacing + BANNER_HEIGHT*2, size.x, size.y};
-   m_banners[RIGHTS] = {originX, originY + spacing + BANNER_HEIGHT*3, size.x, size.y};
+   m_banners[PRIVACY] = {originX, originY + spacing + BANNER_HEIGHT*3, size.x, size.y};
    m_banners[PREFS] = {originX, originY + spacing + BANNER_HEIGHT*4, size.x, size.y};
 
    m_banners[MATH] = {originX, originY + spacing*2 + BANNER_HEIGHT*4, size.x, size.y};
-   m_banners[REMOVE_ADS] = {originX, originY + spacing*3 + BANNER_HEIGHT*4, size.x, size.y};
+   m_banners[NO_ADS] = {originX, originY + spacing*3 + BANNER_HEIGHT*4, size.x, size.y};
+
+   // banner icons
+   m_bannerIcons[SETTINGS] = LoadTexture("assets/icons/options/settings_24x24.png");
+   m_bannerIcons[HOW_TO] = LoadTexture("assets/icons/options/howto_24x24.png");
+   m_bannerIcons[HELP] = LoadTexture("assets/icons/options/help_24x24.png");
+   m_bannerIcons[ABOUT] = LoadTexture("assets/icons/options/about_24x24.png");
+   m_bannerIcons[PRIVACY] = LoadTexture("assets/icons/options/privacy_24x24.png");
+   m_bannerIcons[PREFS] = LoadTexture("assets/icons/options/prefs_24x24.png");
+   m_bannerIcons[MATH] = LoadTexture("assets/icons/options/math_24x24.png");
+   m_bannerIcons[NO_ADS] = LoadTexture("assets/icons/options/noads_24x24.png");
+
+   // verification
+   for(int i = SETTINGS; i <= NO_ADS; i++)
+      if(!IsTextureValid(m_bannerIcons.at(i)))
+         TraceLog(LOG_ERROR, "LISHA SAYS: Banner icon at index %d failed to load!", i);
+}
+
+OptionsLayer::~OptionsLayer() {
+   for(Texture icon : m_bannerIcons)
+      UnloadTexture(icon);
 }
 
 void OptionsLayer::OnAttach() {
-   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   Layer::OnAttach();
+  SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+  Layer::OnAttach();
 }
 
 void OptionsLayer::OnEvent(Event& e) {
@@ -133,7 +153,14 @@ void OptionsLayer::renderBlankBanners() {
 }
 
 void OptionsLayer::renderBannerContent() {
-   
+   for(int i = SETTINGS; i <= NO_ADS; i++) {
+      float padding = (BANNER_HEIGHT - m_bannerIcons.at(i).height)/2;
+      DrawTextureEx(
+         m_bannerIcons.at(i),
+         {m_banners.at(i).x + padding * 1.5f, m_banners.at(i).y + padding},
+         0, 0.98f, WHITE // new scaled height = 23.52
+      );
+   }
 }
 
 #pragma endregion
