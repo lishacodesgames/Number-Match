@@ -16,6 +16,8 @@ public:
    void OnUpdate() override;
    void OnRender() override;
 private:
+   Texture m_rightArrowTexture = {0};
+
    Rectangle m_bounds;
    Button m_doneButton;
 

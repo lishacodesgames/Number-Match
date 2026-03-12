@@ -5,7 +5,7 @@
 #include "App.h"
 
 static constexpr int PANEL_HEIGHT = 35;
-static constexpr float BANNER_HEIGHT = 30;
+static constexpr float BANNER_HEIGHT = 32;
 
 OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
       m_bounds({
@@ -18,11 +18,15 @@ OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
          {0, 0}, "Done", BLANK, BLUE, 20, {0, 0}, App::font_semibold
       )
 {
+   m_rightArrowTexture = LoadTexture("assets/icons/rightarrow_10x13.png");
+
+   // banners
+
    float originX = m_bounds.x + m_bounds.width * (15.0f/100.0f)/2.0f; // half of 15%
    float originY = m_bounds.y + PANEL_HEIGHT * 1.5f;
    Vector2 size = {m_bounds.width * 0.85f, BANNER_HEIGHT};
 
-   constexpr float spacing = BANNER_HEIGHT + 20;
+   constexpr float spacing = BANNER_HEIGHT + 23; // Space between the top and 2 bottom banners (ref: settings.jpg)
 
    m_banners[SETTINGS] = {originX, originY, size.x, size.y};
 
@@ -56,6 +60,10 @@ void OptionsLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+
+   for(Rectangle banner : m_banners)
+      if(CheckCollisionPointRec(GetMousePosition(), banner))
+         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
 }
 
 void OptionsLayer::OnRender() {
@@ -63,7 +71,7 @@ void OptionsLayer::OnRender() {
 
    DrawRectangleRounded(m_bounds, 0.1f, 6, LIGHTGRAY); // main popup
    
-   // top panel
+#pragma region Top panel
    Rectangle panel = m_bounds;
    panel.height = PANEL_HEIGHT;
    
@@ -79,10 +87,40 @@ void OptionsLayer::OnRender() {
       20, 1, BLACK
    );
    m_doneButton.Draw();
+#pragma endregion
 
-   // banners
-   for(Rectangle banner : m_banners) {
-      DrawRectangleRounded(banner, 0.85f, 4, WHITE);
-      DrawRectangleRoundedLines(banner, 0.85f, 4, GRAY);
-   }
+#pragma region Banners
+
+   // base banner shape
+   for(Rectangle banner : m_banners)
+      DrawRectangleRounded(banner, 0.5f, 4, WHITE);
+
+   // sharp rectangle to cover touching rounded corners
+   Rectangle secondBanner = m_banners.at(HOW_TO);
+   DrawRectangleV(
+      {secondBanner.x, secondBanner.y + secondBanner.height/2},
+      {secondBanner.width, BANNER_HEIGHT*4}, // 5 rectangles but cutting out half a rect from top and bottom
+      WHITE
+   );
+
+   // lines between big block
+   for(int i = HOW_TO; i < PREFS; i++)
+      DrawLine(
+         m_banners.at(i).x, 
+         m_banners.at(i).y + m_banners.at(i).height,
+         m_banners.at(i).x + m_banners.at(i).width, 
+         m_banners.at(i).y + m_banners.at(i).height,
+         LIGHTGRAY
+      );
+
+   // right arrow icon on all except last 2
+   for(int i = SETTINGS; i <= PREFS; i++)
+      DrawTexture(
+         m_rightArrowTexture, 
+         m_banners.at(i).x + m_banners.at(i).width - 10*2,
+         m_banners.at(i).y + 7, 
+         LIGHTGRAY
+      );
+
+#pragma endregion
 }

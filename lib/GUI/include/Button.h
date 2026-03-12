@@ -62,7 +62,7 @@ public:
    // ---- PUBLIC MEMBERS ----
    // ------------------------
 
-   Texture2D icon = {0}; // optional
+   Texture icon = {0}; // optional
    std::string text; // compulsory
 
    Color buttonColor = BLACK, contentColor = WHITE;
@@ -76,7 +76,7 @@ public:
    // ---- GETS & SETS ----
    // ---------------------
 
-   void setIcon(Texture2D icon);
+   void setIcon(Texture icon);
    void setIcon(const char* filepath, Vector2 dimensions = {0, 0}); /// @param dimensions default = {0, 0}, keeps original dimensions of texture
    
    void setOrigin(Vector2 origin);

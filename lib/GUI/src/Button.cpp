@@ -120,7 +120,7 @@ Button::Button (
 #pragma endregion
 
 #pragma region Setters
-void Button::setIcon(Texture2D icon) {
+void Button::setIcon(Texture icon) {
    this->icon = icon;
    setPadding(m_horizontalPadding, m_verticalPadding);
 }
