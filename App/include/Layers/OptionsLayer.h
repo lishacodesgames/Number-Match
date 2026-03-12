@@ -27,7 +27,8 @@ private:
    std::array<Texture, 8> m_bannerIcons;
    std::array<std::string, 8> m_bannerNames;
 
-   // render helpers
+   // helpers
+   void setBannerPositions(float boundsY);
    void renderTopPanel();
    void renderBlankBanners();
    void renderBannerContent();

@@ -2,6 +2,8 @@
 #include "Layers/OptionsLayer.h"
 
 #include <raylib.h>
+#include <chrono>
+#include <thread>
 #include <array>
 #include "Event.h"
 #include "App.h"
@@ -9,10 +11,11 @@
 static constexpr int PANEL_HEIGHT = 35;
 static constexpr float BANNER_HEIGHT = 32;
 static constexpr Color LIGHTERGRAY = {230, 230, 230, 255};
+static constexpr float BOUNDS_TARGETY = 100;
 
 OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
       m_bounds({
-         200, 100, 
+         200, static_cast<float>(GetScreenHeight()), // to be animated to target height
          static_cast<float>(GetScreenWidth()) / 2, 
          static_cast<float>(GetScreenHeight()) / 2 + 100
       }),
@@ -24,23 +27,7 @@ OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
 
    // banners
-
-   float originX = m_bounds.x + m_bounds.width * 0.16f/2; // half of 16%
-   float originY = m_bounds.y + PANEL_HEIGHT * 1.5f;
-   Vector2 size = {m_bounds.width * 0.85f, BANNER_HEIGHT}; // 85% of popup
-
-   constexpr float spacing = BANNER_HEIGHT + 23; // Space between the top and 2 bottom banners (ref: settings.jpg)
-
-   m_banners[SETTINGS] = {originX, originY, size.x, size.y};
-
-   m_banners[HOW_TO] = {originX, originY + spacing, size.x, size.y};
-   m_banners[HELP] = {originX, originY + spacing + BANNER_HEIGHT, size.x, size.y};
-   m_banners[ABOUT] = {originX, originY + spacing + BANNER_HEIGHT*2, size.x, size.y};
-   m_banners[PRIVACY] = {originX, originY + spacing + BANNER_HEIGHT*3, size.x, size.y};
-   m_banners[PREFS] = {originX, originY + spacing + BANNER_HEIGHT*4, size.x, size.y};
-
-   m_banners[MATH] = {originX, originY + spacing*2 + BANNER_HEIGHT*4, size.x, size.y};
-   m_banners[NO_ADS] = {originX, originY + spacing*3 + BANNER_HEIGHT*4, size.x, size.y};
+   setBannerPositions(m_bounds.y);
 
    // banner icons
    m_bannerIcons[SETTINGS] = LoadTexture("assets/icons/options/settings_24x24.png");
@@ -74,8 +61,8 @@ OptionsLayer::~OptionsLayer() {
 }
 
 void OptionsLayer::OnAttach() {
-  SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-  Layer::OnAttach();
+   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+   Layer::OnAttach();
 }
 
 void OptionsLayer::OnEvent(Event& e) {
@@ -87,6 +74,20 @@ void OptionsLayer::OnEvent(Event& e) {
 }
 
 void OptionsLayer::OnUpdate() {
+   SetTraceLogLevel(LOG_DEBUG);
+   if(m_bounds.y > BOUNDS_TARGETY) {
+      m_bounds.y -= 0.1f * BOUNDS_TARGETY;
+      if(m_bounds.y < BOUNDS_TARGETY)
+         m_bounds.y = BOUNDS_TARGETY;
+      
+      setBannerPositions(m_bounds.y);
+      m_doneButton.setOrigin({m_doneButton.getOrigin().x, m_bounds.y + 7});
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(2));
+      TraceLog(LOG_DEBUG, "LISHA SAYS: bounds = %f, target = %f", m_bounds.y, BOUNDS_TARGETY);
+      return;
+   }
+
    m_doneButton.Update(); 
 
    if(m_doneButton.isHovered)
@@ -108,21 +109,40 @@ void OptionsLayer::OnRender() {
    renderBannerContent();
 }
 
-#pragma region Render helpers
+#pragma region Helpers
+
+void OptionsLayer::setBannerPositions(float boundsY) {
+   float originX = m_bounds.x + m_bounds.width * 0.16f/2; // half of 16%
+   float originY = boundsY + PANEL_HEIGHT * 1.5f;
+   Vector2 size = {m_bounds.width * 0.85f, BANNER_HEIGHT}; // 85% of popup
+
+   constexpr float spacing = BANNER_HEIGHT + 23; // Space between the top and 2 bottom banners (ref: settings.jpg)
+
+   m_banners[SETTINGS] = {originX, originY, size.x, size.y};
+
+   m_banners[HOW_TO] = {originX, originY + spacing, size.x, size.y};
+   m_banners[HELP] = {originX, originY + spacing + BANNER_HEIGHT, size.x, size.y};
+   m_banners[ABOUT] = {originX, originY + spacing + BANNER_HEIGHT*2, size.x, size.y};
+   m_banners[PRIVACY] = {originX, originY + spacing + BANNER_HEIGHT*3, size.x, size.y};
+   m_banners[PREFS] = {originX, originY + spacing + BANNER_HEIGHT*4, size.x, size.y};
+
+   m_banners[MATH] = {originX, originY + spacing*2 + BANNER_HEIGHT*4, size.x, size.y};
+   m_banners[NO_ADS] = {originX, originY + spacing*3 + BANNER_HEIGHT*4, size.x, size.y};
+}
 
 void OptionsLayer::renderTopPanel() {
    Rectangle panel = m_bounds;
    panel.height = PANEL_HEIGHT;
-   
+
    Rectangle panelSharpBottom = panel;
-   panelSharpBottom.y += PANEL_HEIGHT/2;
-   panelSharpBottom.height = PANEL_HEIGHT/2;
+   panelSharpBottom.y += PANEL_HEIGHT / 2;
+   panelSharpBottom.height = PANEL_HEIGHT / 2;
 
    DrawRectangleRounded(panel, 0.8f, 6, WHITE);
    DrawRectangleRec(panelSharpBottom, WHITE);
    DrawTextEx(
       App::font_semibold, "Options", 
-      {m_bounds.x + m_bounds.width/2 - 30, m_bounds.y + 7}, 
+      {m_bounds.x + m_bounds.width / 2 - 30, m_bounds.y + 7}, 
       20, 1, BLACK
    );
 
@@ -167,7 +187,7 @@ void OptionsLayer::renderBannerContent() {
    Rectangle banner;
    std::string name;
    float padding;
-   
+
    for(int i = SETTINGS; i <= NO_ADS; i++) {
       icon = m_bannerIcons.at(i);
       banner = m_banners.at(i);
