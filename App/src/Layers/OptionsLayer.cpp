@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 #include <array>
+#include "Layers/HomeLayer.h"
 #include "Event.h"
 #include "App.h"
 
@@ -66,8 +67,18 @@ void OptionsLayer::OnAttach() {
 void OptionsLayer::OnEvent(Event& e) {
    e.Handled = true; // don't want any events to pass through to gamelayer
    if(e.GetEventType() == EventType::MouseClicked && m_doneButton.isHovered) {
-      App::GetLayerByName("Game Layer")->OnResume(); // we're sure that game exists bc OptionsLayer only exists in its context
       App::QueueLayerPop(this);
+
+      // we're sure that game exists bc OptionsLayer only exists in its context
+      App::GetLayerByName("Game Layer")->OnResume();
+      e.Handled = true;
+   } else if(e.GetEventType() == EventType::KeyPressed) {
+      char key = static_cast<KeyPressedEvent&>(e).key;
+      if(key == 'q' || key == 'Q') {
+         App::GetLayerByName("Game Layer")->OnSuspend();
+         App::QueueLayerSwap(this, new HomeLayer());
+         e.Handled = true;
+      }
    }
 }
 
