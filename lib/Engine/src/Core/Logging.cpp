@@ -7,8 +7,6 @@
 void LishaLogger(int msgType, const char* text, va_list args) {
    // prefix text
    switch(msgType) {
-      case LOG_NONE: return;
-
       // raylib calls
       case LOG_TRACE: printf("[TRACE]: "); break;
       case LOG_DEBUG: printf("[DEBUG]: "); break;
