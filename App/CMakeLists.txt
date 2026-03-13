@@ -13,6 +13,13 @@ target_sources(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE Engine)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+# Change debug logging based on preset
+if(_DEBUGGING)
+   target_compile_definitions(${PROJECT_NAME} PRIVATE _DEBUGGING=1)
+else()
+   target_compile_definitions(${PROJECT_NAME} PRIVATE _DEBUGGING=0)
+endif()
+
 # (MSVC has different warning flags)
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
    # turn on all warnings for better debugging

@@ -19,14 +19,16 @@
          "name": "Debug",
          "inherits": "base",
          "cacheVariables": {
-            "CMAKE_BUILD_TYPE": "Debug"
+            "CMAKE_BUILD_TYPE": "Debug",
+            "_DEBUGGING": "ON"
          }
       },
       {
          "name": "Release",
          "inherits": "base",
          "cacheVariables": {
-            "CMAKE_BUILD_TYPE": "Release"
+            "CMAKE_BUILD_TYPE": "Release",
+            "_DEBUGGING": "OFF"
          }
       }
    ],

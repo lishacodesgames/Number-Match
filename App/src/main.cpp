@@ -2,7 +2,11 @@
 #include "Core/Logging.h"
 
 int main() {
-   SetTraceLogCallback(LishaLogger);
+   if(_DEBUGGING) {
+      SetTraceLogCallback(LishaLogger);
+      SetTraceLogLevel(LOG_DEBUG);
+   } else
+      SetTraceLogLevel(LOG_NONE);
 
    App game("Number Match");
    game.Run();
