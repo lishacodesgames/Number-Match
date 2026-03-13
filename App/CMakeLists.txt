@@ -25,8 +25,8 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
    # turn on all warnings for better debugging
    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 
-   # disable missing struct initializers warnings
-   target_compile_options(${PROJECT_NAME} PRIVATE -Wno-missing-field-initializers) 
+   # disable harmless warnings
+   target_compile_options(${PROJECT_NAME} PRIVATE -Wno-missing-field-initializers -Wno-unused-result) 
 endif()
 
 # copy assets/ into build/ to remove dependencies and weird paths in code
