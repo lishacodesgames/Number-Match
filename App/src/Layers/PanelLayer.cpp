@@ -1,4 +1,4 @@
-#include <Precompiled.h>
+#include <pch/Precompiled.h>
 #include "Layers/PanelLayer.h"
 
 #include <raymath.h>
@@ -6,8 +6,8 @@
 #include "Layers/DailyLayer.h"
 #include "Layers/HomeLayer.h"
 #include "Layers/MeLayer.h"
-#include "Button.h"
-#include "Event.h"
+#include "Core/Event.h"
+#include "GUI/Button.h"
 #include "App.h"
 
 static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function

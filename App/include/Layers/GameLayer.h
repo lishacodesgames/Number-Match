@@ -1,6 +1,6 @@
 #pragma once
-#include "Button.h"
-#include "Layer.h"
+#include "Core/Layer.h"
+#include "GUI/Button.h"
 
 class GameLayer : public Layer {
 public:

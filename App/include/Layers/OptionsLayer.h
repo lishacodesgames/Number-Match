@@ -1,7 +1,7 @@
 #pragma once
-#include "Button.h"
-#include "Event.h"
-#include "Layer.h"
+#include "Core/Event.h"
+#include "Core/Layer.h"
+#include "GUI/Button.h"
 
 #include <raylib.h>
 #include <string>

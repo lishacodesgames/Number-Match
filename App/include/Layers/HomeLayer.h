@@ -1,8 +1,8 @@
 #pragma once
 #include <raylib.h>
 #include "Layers/PanelLayer.h"
-#include "Button.h"
-#include "Layer.h"
+#include "Core/Layer.h"
+#include "GUI/Button.h"
 
 class HomeLayer : public Layer {
 public:

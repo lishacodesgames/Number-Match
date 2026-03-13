@@ -1,7 +1,7 @@
 #pragma once
-#include "Button.h"
-#include "Layer.h"
-#include "Event.h" 
+#include "Core/Event.h" 
+#include "Core/Layer.h"
+#include "GUI/Button.h"
 
 enum class Menu {None, Home, Daily, Me};
 

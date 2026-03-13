@@ -10,14 +10,16 @@ target_sources(${PROJECT_NAME} PRIVATE
    src/main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE GUI Core raylib)
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib/pch include)
-target_precompile_headers( ${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib/pch/Precompiled.h )
+target_link_libraries(${PROJECT_NAME} PRIVATE Engine)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# turn on warnings for better debugging
-# (but not for MSVC, which has different warning flags)
+# (MSVC has different warning flags)
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+   # turn on all warnings for better debugging
    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+
+   # disable missing struct initializers warnings
+   target_compile_options(${PROJECT_NAME} PRIVATE -Wno-missing-field-initializers) 
 endif()
 
 # copy assets/ into build/ to remove dependencies and weird paths in code

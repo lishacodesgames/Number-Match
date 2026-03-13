@@ -1,10 +1,10 @@
-#include <Precompiled.h>
+#include <pch/Precompiled.h>
 #include "Layers/OptionsLayer.h"
 
 #include <raylib.h>
 #include <array>
 #include "Layers/HomeLayer.h"
-#include "Event.h"
+#include "Core/Event.h"
 #include "App.h"
 
 static constexpr int PANEL_HEIGHT = 35;

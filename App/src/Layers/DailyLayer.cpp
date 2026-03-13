@@ -1,9 +1,9 @@
-#include <Precompiled.h>
+#include <pch/Precompiled.h>
 #include "Layers/DailyLayer.h"
 
 #include <raylib.h>
-#include "Event.h"
-#include "Layer.h"
+#include "Core/Event.h"
+#include "Core/Layer.h"
 #include "App.h"
 
 DailyLayer::DailyLayer() : Layer("Daily Layer") {}

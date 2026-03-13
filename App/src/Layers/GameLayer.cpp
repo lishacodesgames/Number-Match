@@ -1,4 +1,4 @@
-#include <Precompiled.h>
+#include <pch/Precompiled.h>
 #include "Layers/GameLayer.h"
 
 #include <raymath.h>
@@ -7,7 +7,7 @@
 #include "Layers/PanelLayer.h"
 #include "Layers/GameLayer.h"
 #include "Layers/HomeLayer.h"
-#include "Layer.h"
+#include "Core/Layer.h"
 #include "App.h"
 
 GameLayer::GameLayer() : Layer("Game Layer"),
