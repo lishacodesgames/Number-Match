@@ -6,7 +6,7 @@
 /** Constructor parameters' organisation
  * 
  *  -- compulsory --
- * Rectangle (Rectangle or origin+padding)
+ * Bounds (Rectangle or origin+padding)
  * text -- set "" if not wanted
  * bg color & text+icon color
  * 
@@ -75,12 +75,14 @@ public:
    // ---------------------
    // ---- GETS & SETS ----
    // ---------------------
-
+   
+   /// @param dimensions default = {0, 0}, keeps original dimensions of texture
+   void setIcon(const char* filepath, Vector2 dimensions = {0, 0}); 
    void setIcon(Texture icon);
-   void setIcon(const char* filepath, Vector2 dimensions = {0, 0}); /// @param dimensions default = {0, 0}, keeps original dimensions of texture
    
    void setOrigin(Vector2 origin);
    void setOrigin(int x, int y);
+
    void setSize(Vector2 size);
    void setBounds(Rectangle bounds);
    void setPadding(Vector2 horizPadding, Vector2 vertPadding);
@@ -94,9 +96,9 @@ public:
    // ---- FLAGS ----
    // ---------------
 
-   bool isHovered = false; // is button being hovered
-   bool isActive = false; // is button being clicked
-   bool isFocused = false; // set by user. Has button been clicked
+   bool isHovered = false; /// is button being hovered
+   bool isActive = false; /// is button being clicked
+   bool isFocused = false; /// set by user. Has button been clicked
    
 private: 
    // -------------------------
@@ -104,8 +106,8 @@ private:
    // -------------------------
 
    Rectangle m_bounds;
-   Vector2 m_horizontalPadding; // {left, right}
-   Vector2 m_verticalPadding;   // {top, bottom}
+   Vector2 m_horizontalPadding; /// {left, right}
+   Vector2 m_verticalPadding;   /// {top, bottom}
 
    // -------------------
    // ---- OPERATORS ----

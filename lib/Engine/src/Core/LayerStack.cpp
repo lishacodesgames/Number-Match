@@ -43,9 +43,9 @@ std::vector<Layer*>::reverse_iterator LayerStack::rend() { return m_layers.rend(
 bool LayerStack::empty() const { return m_layers.empty(); }
 
 void LayerStack::Delete() {
-   for(int i = 0; i < m_layers.size(); i++) {
+   for(int i = 0; i < m_layers.size(); i++)
       delete m_layers[i];
-   }
+      
    m_layers.clear();
    m_layerInsertIndex = 0;
 }

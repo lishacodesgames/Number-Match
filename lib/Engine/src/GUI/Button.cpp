@@ -46,7 +46,7 @@ void Button::Draw() {
    bool iconExists = IsTextureValid(icon);
    Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 1);
 
-   float iconSpace = icon.width * (iconExists && text != "" ? ICON_PAD_MULTIPLIER : 1);
+   float iconSpace = icon.width * (iconExists && !text.empty() ? ICON_PAD_MULTIPLIER : 1);
    float contentWidth = textSize.x + iconSpace;
 
    // center X
@@ -161,7 +161,7 @@ void Button::setPadding(Vector2 horizPadding, Vector2 vertPadding) {
 
    Vector2 size = MeasureTextEx(font, text.c_str(), fontSize, 1);
    if(IsTextureValid(icon)) {
-      size.x += icon.width * (text == ""? 1:ICON_PAD_MULTIPLIER);
+      size.x += icon.width * (text.empty()? 1 : ICON_PAD_MULTIPLIER);
       size.y = std::max(size.y, static_cast<float>(icon.height));
    }
 
