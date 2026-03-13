@@ -1,6 +1,7 @@
 #include <pch/Precompiled.h>
 #include "Layers/OptionsLayer.h"
 
+#include <algorithm>
 #include <raylib.h>
 #include <array>
 #include "Layers/HomeLayer.h"
@@ -83,9 +84,8 @@ void OptionsLayer::OnEvent(Event& e) {
 }
 
 void OptionsLayer::OnUpdate() {
-   SetTraceLogLevel(LOG_DEBUG);
    if(m_bounds.y > BOUNDS_TARGETY) {
-      double dt = GetFrameTime(); // for a delay
+      double dt = std::min(GetFrameTime(), 0.033f); // for a delay of atleast 33ms
       double speed = 160;
       double diff = m_bounds.y - BOUNDS_TARGETY;
 
@@ -96,9 +96,11 @@ void OptionsLayer::OnUpdate() {
       setBannerPositions(m_bounds.y);
       m_doneButton.setOrigin({m_doneButton.getOrigin().x, m_bounds.y + 7});
 
+      SetTraceLogLevel(LOG_DEBUG);
       TraceLog(LOG_DEBUG, "LISHA SAYS: bounds = %f, target = %f", m_bounds.y, BOUNDS_TARGETY);
       return;
    }
+   SetTraceLogLevel(LOG_INFO);
 
    m_doneButton.Update(); 
 
