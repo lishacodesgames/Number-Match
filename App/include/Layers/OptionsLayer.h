@@ -22,10 +22,12 @@ private:
    Rectangle m_bounds;
    Button m_doneButton;
 
-   enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, PRIVACY, PREFS, MATH, NO_ADS}; /// simply for more readability when looping over parts of the banners' arrays
    std::array<Rectangle, 8> m_banners;
    std::array<Texture, 8> m_bannerIcons;
    std::array<std::string, 8> m_bannerNames;
+
+   /// simply for more readability when looping over parts of the banners' arrays
+   enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, PRIVACY, PREFS, MATH, NO_ADS}; 
 
    // helpers
    void setBannerPositions(float boundsY);

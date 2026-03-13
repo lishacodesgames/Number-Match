@@ -12,6 +12,10 @@ public:
    void OnEvent(Event& e) override;
    void OnRender() override;
 private:
-   Button gobackButton;
-   Button settingsButton;
+   Button m_gobackButton;
+   Button m_settingsButton;
+   Button m_plusButton;
+
+   // --- helpers ---
+   Button* findHoveredButton();
 };
