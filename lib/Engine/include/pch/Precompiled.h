@@ -14,14 +14,15 @@
 #include <raylib.h>
 
 // ---- TYPES AND...STUFF ----
-#include <utility>
 #include <typeinfo>
+#include <stdarg.h>
+#include <utility>
 
 // ---- THREADS, TIME, RANDOM ----
+#include <random>
 #include <thread>
 #include <chrono>
 #include <ctime>
-#include <random>
 
 // ---- OTHER ----
 #include <algorithm>

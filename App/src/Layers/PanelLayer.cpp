@@ -132,7 +132,7 @@ Button* PanelLayer::findFocusedButton() {
    else if(meButton.isFocused)
       return &meButton;
    else {
-      TraceLog(LOG_ERROR, "LISHA SAYS: No panel button is focused!");
+      TraceLog(LOG_ERROR, "No panel button is focused!");
       return nullptr;
    }
  }

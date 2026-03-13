@@ -4,6 +4,7 @@ target_sources(Engine PRIVATE
    src/Core/Event.cpp
    src/Core/Layer.cpp
    src/Core/LayerStack.cpp
+   src/Core/Logging.cpp
 
    # GUI
    src/GUI/Button.cpp

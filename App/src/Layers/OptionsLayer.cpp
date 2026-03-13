@@ -42,7 +42,7 @@ OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
    // verification
    for(int i = SETTINGS; i <= NO_ADS; i++)
       if(!IsTextureValid(m_bannerIcons.at(i)))
-         TraceLog(LOG_ERROR, "LISHA SAYS: Banner icon at index %d failed to load!", i);
+         TraceLog(LOG_ERROR, "Banner icon at index %d failed to load!", i);
 
    // banner names, no map bcz i wanna use indices in iteration
    m_bannerNames[SETTINGS] = "Settings";
@@ -97,7 +97,7 @@ void OptionsLayer::OnUpdate() {
       m_doneButton.setOrigin({m_doneButton.getOrigin().x, m_bounds.y + 7});
 
       SetTraceLogLevel(LOG_DEBUG);
-      TraceLog(LOG_DEBUG, "LISHA SAYS: bounds = %f, target = %f", m_bounds.y, BOUNDS_TARGETY);
+      TraceLog(LOG_DEBUG, "bounds = %f, target = %f", m_bounds.y, BOUNDS_TARGETY);
       return;
    }
    SetTraceLogLevel(LOG_INFO);

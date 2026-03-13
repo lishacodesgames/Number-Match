@@ -5,8 +5,8 @@
 #include <raylib.h>
 #include "Layers/OptionsLayer.h"
 #include "Layers/PanelLayer.h"
-#include "Layers/GameLayer.h"
 #include "Layers/HomeLayer.h"
+#include "Core/Logging.h"
 #include "Core/Layer.h"
 #include "App.h"
 
@@ -55,7 +55,7 @@ void GameLayer::OnEvent(Event& e) {
          App::QueueLayerPush(new OptionsLayer());
          e.Handled = true;
       } else if (activeButton == &m_plusButton) {
-         TraceLog(LOG_INFO, "PLUS"); // temp
+         TraceLog(LISHA_SAYS, "PLUS"); // temp
       }
    }
 }

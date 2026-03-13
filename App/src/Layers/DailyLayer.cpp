@@ -2,6 +2,7 @@
 #include "Layers/DailyLayer.h"
 
 #include <raylib.h>
+#include "Core/Logging.h"
 #include "Core/Event.h"
 #include "Core/Layer.h"
 #include "App.h"
@@ -14,9 +15,9 @@ void DailyLayer::OnAttach() {
 
 void DailyLayer::OnEvent(Event& e) {
    if(e.GetEventType() == EventType::KeyPressed)
-      TraceLog(LOG_INFO, "LISHA SAYS: The '%c' key was pressed", static_cast<KeyPressedEvent&>(e).key);
+      TraceLog(LISHA_SAYS, "The '%c' key was pressed", static_cast<KeyPressedEvent&>(e).key);
    else if(e.GetEventType() == EventType::MouseClicked)
-      TraceLog(LOG_INFO, "LISHA SAYS: Mouse was clicked");
+      TraceLog(LISHA_SAYS, "Mouse was clicked");
 }
 
 void DailyLayer::OnUpdate() {
