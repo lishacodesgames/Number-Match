@@ -7,20 +7,20 @@
 #include <string>
 #include <array>
 
-class OptionsLayer : public Layer {
+class OptionsLayer : public Core::Layer {
 public:
    OptionsLayer();
    ~OptionsLayer() override;
 
    void OnAttach() override;
-   void OnEvent(Event& e) override;
+   void OnEvent(Core::Event& e) override;
    void OnUpdate() override;
    void OnRender() override;
 private:
    Texture m_rightArrowTexture = {0};
 
    Rectangle m_bounds;
-   Button m_doneButton;
+   GUI::Button m_doneButton;
 
    std::array<Rectangle, 8> m_banners;
    std::array<Texture, 8> m_bannerIcons;

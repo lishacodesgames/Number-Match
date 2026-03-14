@@ -2,20 +2,20 @@
 #include "Core/Layer.h"
 #include "GUI/Button.h"
 
-class GameLayer : public Layer {
+class GameLayer : public Core::Layer {
 public:
    GameLayer();
    ~GameLayer() = default;
 
    void OnAttach() override;
    void OnUpdate() override;
-   void OnEvent(Event& e) override;
+   void OnEvent(Core::Event& e) override;
    void OnRender() override;
 private:
-   Button m_gobackButton;
-   Button m_settingsButton;
-   Button m_plusButton;
+   GUI::Button m_gobackButton;
+   GUI::Button m_settingsButton;
+   GUI::Button m_plusButton;
 
    // --- helpers ---
-   Button* findHoveredButton();
+   GUI::Button* findHoveredButton();
 };

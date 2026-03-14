@@ -1,12 +1,12 @@
 #include <pch/Precompiled.h>
-#include "Layers/HomeLayer.h"
+#include "HomeLayer.h"
 
 #include <raymath.h>
 #include <raylib.h>
-#include "Layers/PanelLayer.h"
-#include "Layers/DailyLayer.h"
-#include "Layers/GameLayer.h"
-#include "Layers/MeLayer.h"
+#include "PanelLayer.h"
+#include "DailyLayer.h"
+#include "GameLayer.h"
+#include "MeLayer.h"
 #include "App.h"
 
 static constexpr Vector2 buttonBounds = {350, 35};
@@ -33,18 +33,18 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 
-void HomeLayer::OnEvent(Event &e) {
-   if(e.GetEventType() == EventType::MouseClicked) {
-      Button* activeButton = findHoveredButton();
+void HomeLayer::OnEvent(Core::Event &e) {
+   if(e.GetEventType() == Core::EventType::MouseClicked) {
+      GUI::Button* activeButton = findHoveredButton();
       if(!activeButton) {
          e.Handled = false;
          return;
       }
       
-      PanelLayer::PopInstance();         
+      PanelLayer::PopInstance();    
       App::QueueLayerPop(this);
 
-      Layer* game = App::GetLayerByName("Game Layer");
+      Core::Layer* game = App::GetLayerByName("Game Layer");
       if(activeButton == &m_continueButton && game) // continue pressed & previous game exists
          game->OnResume();
       else // new pressed or continue pressed but there was no previous game (hence suspended is false) 
@@ -96,7 +96,7 @@ void HomeLayer::OnRender() {
    m_continueButton.Draw();
 }
 
-Button* HomeLayer::findHoveredButton() {
+GUI::Button* HomeLayer::findHoveredButton() {
    if(m_newButton.isHovered)
       return &m_newButton;
    else if(m_continueButton.isHovered)

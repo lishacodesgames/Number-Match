@@ -1,10 +1,10 @@
 #include <pch/Precompiled.h>
-#include "Layers/OptionsLayer.h"
+#include "OptionsLayer.h"
 
 #include <algorithm>
 #include <raylib.h>
 #include <array>
-#include "Layers/HomeLayer.h"
+#include "HomeLayer.h"
 #include "Core/Event.h"
 #include "App.h"
 
@@ -13,7 +13,7 @@ static constexpr float BANNER_HEIGHT = 32;
 static constexpr Color LIGHTERGRAY = {230, 230, 230, 255};
 static constexpr float BOUNDS_TARGETY = 100;
 
-OptionsLayer::OptionsLayer() : Layer("Options Layer", true),
+OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
       m_bounds({
          200, static_cast<float>(GetScreenHeight()), // to be animated to target height
          static_cast<float>(GetScreenWidth()) / 2, 
@@ -62,19 +62,19 @@ OptionsLayer::~OptionsLayer() {
 
 void OptionsLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   Layer::OnAttach();
+   Core::Layer::OnAttach();
 }
 
-void OptionsLayer::OnEvent(Event& e) {
+void OptionsLayer::OnEvent(Core::Event& e) {
    e.Handled = true; // don't want any events to pass through to gamelayer
-   if(e.GetEventType() == EventType::MouseClicked && m_doneButton.isHovered) {
+   if(e.GetEventType() == Core::EventType::MouseClicked && m_doneButton.isHovered) {
       App::QueueLayerPop(this);
 
       // we're sure that game exists bc OptionsLayer only exists in its context
       App::GetLayerByName("Game Layer")->OnResume();
       e.Handled = true;
-   } else if(e.GetEventType() == EventType::KeyPressed) {
-      char key = static_cast<KeyPressedEvent&>(e).key;
+   } else if(e.GetEventType() == Core::EventType::KeyPressed) {
+      char key = static_cast<Core::KeyPressedEvent&>(e).key;
       if(key == 'q' || key == 'Q') {
          App::GetLayerByName("Game Layer")->OnSuspend();
          App::QueueLayerSwap(this, new HomeLayer());

@@ -1,13 +1,13 @@
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
-   src/Layers/DailyLayer.cpp
-   src/Layers/GameLayer.cpp
-   src/Layers/HomeLayer.cpp
-   src/Layers/MeLayer.cpp
-   src/Layers/OptionsLayer.cpp
-   src/Layers/PanelLayer.cpp
    src/App.cpp
+   src/DailyLayer.cpp
+   src/GameLayer.cpp
+   src/HomeLayer.cpp
    src/main.cpp
+   src/MeLayer.cpp
+   src/OptionsLayer.cpp
+   src/PanelLayer.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Engine)

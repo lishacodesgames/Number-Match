@@ -1,15 +1,15 @@
 #pragma once
 #include <raylib.h>
-#include "Layers/PanelLayer.h"
+#include "PanelLayer.h"
 #include "Core/Layer.h"
 #include "GUI/Button.h"
 
-class HomeLayer : public Layer {
+class HomeLayer : public Core::Layer {
 public:
    HomeLayer();
    ~HomeLayer() override;
    void OnUpdate() override;
-   void OnEvent(Event &e) override;
+   void OnEvent(Core::Event &e) override;
    void OnRender() override;
 
 private:
@@ -17,8 +17,8 @@ private:
    Texture m_coinTexture = {0};
    Texture m_trophyTexture = {0};
 
-   Button m_newButton;
-   Button m_continueButton;
+   GUI::Button m_newButton;
+   GUI::Button m_continueButton;
 
-   Button* findHoveredButton();
+   GUI::Button* findHoveredButton();
 };

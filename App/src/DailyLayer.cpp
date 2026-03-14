@@ -1,5 +1,5 @@
 #include <pch/Precompiled.h>
-#include "Layers/DailyLayer.h"
+#include "DailyLayer.h"
 
 #include <raylib.h>
 #include "Core/Logging.h"
@@ -10,13 +10,13 @@
 DailyLayer::DailyLayer() : Layer("Daily Layer") {}
 void DailyLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   Layer::OnAttach();
+   Core::Layer::OnAttach();
 }
 
-void DailyLayer::OnEvent(Event& e) {
-   if(e.GetEventType() == EventType::KeyPressed)
-      TraceLog(LISHA_SAYS, "The '%c' key was pressed", static_cast<KeyPressedEvent&>(e).key);
-   else if(e.GetEventType() == EventType::MouseClicked)
+void DailyLayer::OnEvent(Core::Event& e) {
+   if(e.GetEventType() == Core::EventType::KeyPressed)
+      TraceLog(LISHA_SAYS, "The '%c' key was pressed", static_cast<Core::KeyPressedEvent&>(e).key);
+   else if(e.GetEventType() == Core::EventType::MouseClicked)
       TraceLog(LISHA_SAYS, "Mouse was clicked");
 }
 

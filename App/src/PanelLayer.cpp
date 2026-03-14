@@ -1,11 +1,11 @@
 #include <pch/Precompiled.h>
-#include "Layers/PanelLayer.h"
+#include "PanelLayer.h"
 
 #include <raymath.h>
 #include <raylib.h>
-#include "Layers/DailyLayer.h"
-#include "Layers/HomeLayer.h"
-#include "Layers/MeLayer.h"
+#include "DailyLayer.h"
+#include "HomeLayer.h"
+#include "MeLayer.h"
 #include "Core/Event.h"
 #include "GUI/Button.h"
 #include "App.h"
@@ -23,7 +23,7 @@ void PanelLayer::PopInstance() {
       App::QueueLayerPop(s_instance);
 }
 
-PanelLayer::PanelLayer() : Layer("Panel Layer", true),
+PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
       homeButton(
          {0, 0}, {0, 0}, "Main", BLANK, BLUE, 30, {0.0f, 0}, App::font_semibold
       ),
@@ -47,13 +47,13 @@ PanelLayer::PanelLayer() : Layer("Panel Layer", true),
 }
 PanelLayer::~PanelLayer() { s_instance = nullptr; }
 
-void PanelLayer::OnEvent(Event& e) {
-   if(e.GetEventType() == EventType::MouseClicked) {
-      Button* activeButton = findHoveredButton();
+void PanelLayer::OnEvent(Core::Event& e) {
+   if(e.GetEventType() == Core::EventType::MouseClicked) {
+      GUI::Button* activeButton = findHoveredButton();
       if(!activeButton)
          return;
 
-      Layer* newLayer = nullptr;
+      Core::Layer* newLayer = nullptr;
       if(activeButton == &homeButton && currentPage != Menu::Home) {
          newLayer = new HomeLayer();
          currentPage = Menu::Home;
@@ -79,11 +79,11 @@ void PanelLayer::OnUpdate() {
    dailyButton.Update();
    meButton.Update();
 
-   Button* focusedButton = findFocusedButton();
+   GUI::Button* focusedButton = findFocusedButton();
    resetAllFocus();
    focusedButton->setFocus(true, BLANK, BLUE);
 
-   Button* hoveredButton = findHoveredButton();
+   GUI::Button* hoveredButton = findHoveredButton();
    if (hoveredButton) {
       hoveredButton->contentColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
@@ -102,7 +102,7 @@ void PanelLayer::OnRender() {
    meButton.Draw();
 }
 
-Button* PanelLayer::findHoveredButton() {
+GUI::Button* PanelLayer::findHoveredButton() {
    if (homeButton.isHovered)
       return &homeButton;
    else if (dailyButton.isHovered)
@@ -113,7 +113,7 @@ Button* PanelLayer::findHoveredButton() {
       return nullptr;
 }
 
-Button* PanelLayer::findActiveButton() {
+GUI::Button* PanelLayer::findActiveButton() {
    if(homeButton.isActive)
       return &homeButton;
    else if(dailyButton.isActive)
@@ -124,7 +124,7 @@ Button* PanelLayer::findActiveButton() {
       return nullptr;
 }
 
-Button* PanelLayer::findFocusedButton() {
+GUI::Button* PanelLayer::findFocusedButton() {
    if(homeButton.isFocused)
       return &homeButton;
    else if(dailyButton.isFocused)
@@ -135,10 +135,10 @@ Button* PanelLayer::findFocusedButton() {
       TraceLog(LOG_ERROR, "No panel button is focused!");
       return nullptr;
    }
- }
+}
 
- void PanelLayer::resetAllFocus() {
+void PanelLayer::resetAllFocus() {
    homeButton.setFocus(false, BLANK, GRAY);
    dailyButton.setFocus(false, BLANK, GRAY);
    meButton.setFocus(false, BLANK, GRAY);
- }
+}

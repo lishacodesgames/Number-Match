@@ -1,21 +1,21 @@
 #include <pch/Precompiled.h>
-#include "Layers/MeLayer.h"
+#include "MeLayer.h"
 
 #include <raylib.h>
 #include "Core/Logging.h"
 #include "Core/Layer.h"
 #include "App.h"
 
-MeLayer::MeLayer() : Layer("Me Layer") {}
+MeLayer::MeLayer() : Core::Layer("Me Layer") {}
 void MeLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   Layer::OnAttach();
+   Core::Layer::OnAttach();
 }
 
-void MeLayer::OnEvent(Event& e) {
-   if (e.GetEventType() == EventType::KeyPressed)
-      TraceLog(LISHA_SAYS, "The '%c' key was pressed", static_cast<KeyPressedEvent&>(e).key);
-   else if (e.GetEventType() == EventType::MouseClicked)
+void MeLayer::OnEvent(Core::Event& e) {
+   if (e.GetEventType() == Core::EventType::KeyPressed)
+      TraceLog(LISHA_SAYS, "The '%c' key was pressed", static_cast<Core::KeyPressedEvent&>(e).key);
+   else if (e.GetEventType() == Core::EventType::MouseClicked)
       TraceLog(LISHA_SAYS, "Mouse was clicked");
 }
 

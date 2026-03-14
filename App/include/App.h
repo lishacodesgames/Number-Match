@@ -15,20 +15,20 @@ public:
    
    void Run();
    
-   static void QueueLayerSwap(Layer* pop, Layer* push);
-   static void QueueLayerPush(Layer* layer);
-   static void QueueLayerPop(Layer* layer);
+   static void QueueLayerSwap(Core::Layer* pop, Core::Layer* push);
+   static void QueueLayerPush(Core::Layer* layer);
+   static void QueueLayerPop(Core::Layer* layer);
    
-   static Layer* GetLayerByName(const std::string& name);
+   static Core::Layer* GetLayerByName(const std::string& name);
 
    static Font font_semibold;
    static Font font_black;
 private:
-   void OnEvent(Event& e);
+   void OnEvent(Core::Event& e);
 
-   LayerStack m_layerStack;
+   Core::LayerStack m_layerStack;
 
    // memory management for pending layer changes, to be applied at the end of the current frame
-   std::vector<Layer*> m_pendingPushes{};
-   std::vector<Layer*> m_pendingPops{};
+   std::vector<Core::Layer*> m_pendingPushes{};
+   std::vector<Core::Layer*> m_pendingPops{};
 };

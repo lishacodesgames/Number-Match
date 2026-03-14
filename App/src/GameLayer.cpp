@@ -1,16 +1,16 @@
 #include <pch/Precompiled.h>
-#include "Layers/GameLayer.h"
+#include "GameLayer.h"
 
 #include <raymath.h>
 #include <raylib.h>
-#include "Layers/OptionsLayer.h"
-#include "Layers/PanelLayer.h"
-#include "Layers/HomeLayer.h"
+#include "OptionsLayer.h"
+#include "PanelLayer.h"
+#include "HomeLayer.h"
 #include "Core/Logging.h"
 #include "Core/Layer.h"
 #include "App.h"
 
-GameLayer::GameLayer() : Layer("Game Layer"),
+GameLayer::GameLayer() : Core::Layer("Game Layer"),
       m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
       m_settingsButton(
          {static_cast<float>(GetScreenWidth()) - 45, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}
@@ -27,23 +27,23 @@ GameLayer::GameLayer() : Layer("Game Layer"),
 
 void GameLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   Layer::OnAttach();   
+   Core::Layer::OnAttach();   
 }
 
-void GameLayer::OnEvent(Event& e) {
+void GameLayer::OnEvent(Core::Event& e) {
    if(isSuspended && !suspended_event)
       return;
 
-   if(e.GetEventType() == EventType::KeyPressed) {
-      char key = static_cast<KeyPressedEvent&>(e).key;
+   if(e.GetEventType() == Core::EventType::KeyPressed) {
+      char key = static_cast<Core::KeyPressedEvent&>(e).key;
       if(key == 'q' || key == 'Q') {
          OnSuspend();
          App::QueueLayerPush(new HomeLayer());
          App::QueueLayerPush(new PanelLayer());
          e.Handled = true;
       }
-   } else if(e.GetEventType() == EventType::MouseClicked) {
-      Button* activeButton = findHoveredButton();
+   } else if(e.GetEventType() == Core::EventType::MouseClicked) {
+      GUI::Button* activeButton = findHoveredButton();
 
       if(activeButton == &m_gobackButton) {
          OnSuspend();
@@ -85,7 +85,7 @@ void GameLayer::OnRender() {
 
 #pragma region Helpers
 
-Button* GameLayer::findHoveredButton() {
+GUI::Button* GameLayer::findHoveredButton() {
    if(m_gobackButton.isHovered)
       return &m_gobackButton;
    else if(m_settingsButton.isHovered)

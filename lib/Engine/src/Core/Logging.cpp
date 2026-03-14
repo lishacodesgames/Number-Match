@@ -4,7 +4,7 @@
 #include <raylib.h>
 #include <cstdio>
 
-void LishaLogger(int msgType, const char* text, va_list args) {
+void Core::LishaLogger(int msgType, const char* text, va_list args) {
    // prefix text
    switch(msgType) {
       // raylib calls

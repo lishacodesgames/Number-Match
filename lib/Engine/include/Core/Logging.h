@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include <stdarg.h>
 
+// LOG_NONE = 7
 #define LISHA_SAYS 8
 
-void LishaLogger(int msgType, const char* text, va_list args);
+namespace Core { void LishaLogger(int msgType, const char* text, va_list args); }

@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <typeinfo>
 #include <raylib.h>
-#include "Layers/PanelLayer.h"
-#include "Layers/HomeLayer.h"
 #include "Core/Logging.h"
+#include "PanelLayer.h"
+#include "HomeLayer.h"
 
 Font App::font_semibold = GetFontDefault(); // font must be loaded after InitWindow()
 Font App::font_black = GetFontDefault();
@@ -40,29 +40,29 @@ App::~App() {
    TraceLog(LISHA_SAYS, "GOODBYE!\n");
 }
 
-void App::QueueLayerSwap(Layer* pop, Layer* push) {
+void App::QueueLayerSwap(Core::Layer* pop, Core::Layer* push) {
    QueueLayerPop(pop);
    QueueLayerPush(push);
 }
 
-void App::QueueLayerPush(Layer* layer) {
-   for(Layer* existing : s_instance->m_layerStack)
+void App::QueueLayerPush(Core::Layer* layer) {
+   for(Core::Layer* existing : s_instance->m_layerStack)
       if(typeid(*existing) == typeid(*layer)) // duplicate layers
          QueueLayerPop(existing);
 
    s_instance->m_pendingPushes.push_back(layer);
 }
-void App::QueueLayerPop(Layer* layer) { s_instance->m_pendingPops.push_back(layer); }
+void App::QueueLayerPop(Core::Layer* layer) { s_instance->m_pendingPops.push_back(layer); }
 
-Layer* App::GetLayerByName(const std::string& name) {
-   for(Layer* layer : s_instance->m_layerStack)
+Core::Layer* App::GetLayerByName(const std::string& name) {
+   for(Core::Layer* layer : s_instance->m_layerStack)
       if(layer->GetName() == name)
          return layer;
    
    return nullptr;
 }
 
-void App::OnEvent(Event& e) {
+void App::OnEvent(Core::Event& e) {
    // TOPMOST (last) layer must get the event FIRST
    for(auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it) {
       (*it)->OnEvent(e);
@@ -79,14 +79,14 @@ void App::Run() {
       // 1. apply pending layer changes at the start of the current frame
       // to avoid mid-frame changes that could cause bugs
       // ---------------------------
-      for(Layer* layer : m_pendingPops) {
+      for(Core::Layer* layer : m_pendingPops) {
          layer->isOverlay? m_layerStack.PopOverlay(layer) : m_layerStack.PopLayer(layer);
          delete layer; // free memory of popped layer
          layer = nullptr;
       }
       m_pendingPops.clear();
 
-      for(Layer* layer : m_pendingPushes) {
+      for(Core::Layer* layer : m_pendingPushes) {
          layer->isOverlay? m_layerStack.PushOverlay(layer): m_layerStack.PushLayer(layer);
          layer = nullptr;
       }
@@ -99,14 +99,14 @@ void App::Run() {
       // key event
       int key = GetKeyPressed();
       while(key != 0) {
-         KeyPressedEvent e(key);
+         Core::KeyPressedEvent e(key);
          OnEvent(e);
          key = GetKeyPressed();
       }
 
       // mouse event
       if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-         MouseClickedEvent e(true);
+         Core::MouseClickedEvent e(true);
          OnEvent(e);
       }
 
@@ -116,7 +116,7 @@ void App::Run() {
       // (eg. pause menu can override gameplay input)
       // ---------------------------
       
-      for(Layer* layer : m_layerStack)
+      for(Core::Layer* layer : m_layerStack)
          layer->OnUpdate();
       
       // ---------------------------
@@ -127,7 +127,7 @@ void App::Run() {
       BeginDrawing();
       ClearBackground(RAYWHITE);
 
-      for(Layer* layer : m_layerStack)
+      for(Core::Layer* layer : m_layerStack)
          layer->OnRender();
 
       EndDrawing();
