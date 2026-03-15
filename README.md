@@ -21,13 +21,22 @@ The only keybinding is: `Q` to go back to home from the game
 **If you forgot, do:** <br>
 `git submodule update --init --recursive` after regular `git clone`
 
-### Build
+## Build
 ```bash
 cmake --preset Release
 cmake --build --preset Release
-cd build/Release/App
-./NumberMatch
 ```
+
+#### Run on Windows
+```bash
+"C:\Users\<your-username>\build\Number-Match\Release\App\NumberMatch.exe"
+```
+
+#### Run on Linux
+```bash
+/home/<your-username>/build/Number-Match/Release/App/NumberMatch
+```
+
 **Note:** <br> 
 - for Windows, omit the `./` and add `.exe` at the end
 - Make sure you're running from the repo directory `Number-Match/`
