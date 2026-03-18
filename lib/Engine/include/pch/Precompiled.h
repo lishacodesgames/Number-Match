@@ -12,6 +12,7 @@
 
 // ---- RAYLIB ----
 #include <raylib.h>
+#include <raymath.h>
 
 // ---- TYPES AND...STUFF ----
 #include <typeinfo>
