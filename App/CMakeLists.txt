@@ -1,7 +1,7 @@
 set(BIN ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 file(GLOB_RECURSE NM_SOURCES 
-   ${CMAKE_CURRENT_SOURCE_DIR}/src/**.cpp 
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/**.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp 
+   ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
 )
 
 add_executable(${PROJECT_NAME} ${NM_SOURCES})
@@ -27,4 +27,9 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 # copy assets/ into bin/ to remove dependencies and weird paths in code
-file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${BIN})
+add_custom_target(copy_assets ALL
+   COMMAND ${CMAKE_COMMAND} -E copy_directory
+   ${CMAKE_SOURCE_DIR}/assets ${BIN}/assets
+   COMMENT "Copying assets to output directory"
+)
+add_dependencies(${PROJECT_NAME} copy_assets)

@@ -81,14 +81,11 @@ void App::Run() {
       for(Core::Layer* layer : m_pendingPops) {
          layer->isOverlay? m_layerStack.PopOverlay(layer) : m_layerStack.PopLayer(layer);
          delete layer; // free memory of popped layer
-         layer = nullptr;
       }
       m_pendingPops.clear();
 
-      for(Core::Layer* layer : m_pendingPushes) {
+      for(Core::Layer* layer : m_pendingPushes)
          layer->isOverlay? m_layerStack.PushOverlay(layer): m_layerStack.PushLayer(layer);
-         layer = nullptr;
-      }
       m_pendingPushes.clear();
 
       // ---------------------------

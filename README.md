@@ -3,7 +3,7 @@
 ![Status Badge](https://img.shields.io/badge/Status-In_Development-yellow)
 
 ## Overview
-The origin Number match is a fun mobile game where you match up pairs of numbers that are the same or that add up to 10. Clearing rows and levels, and winning points and money. There's also tournaments you can participate in, though the game is entirely singleplayer.
+The original Number match is a fun mobile game where you match up pairs of numbers that are the same or that add up to 10. Clearing rows and levels, and winning points and coins. There's also tournaments you can participate in, though the game is entirely singleplayer.
 
 My version is desktop-friendly, has no ads, and is just as addicting.
 
@@ -20,12 +20,11 @@ The only keybinding is: `Q` to go back to home from the game
 
 ### Clone
 `git clone --recursive` to get the raylib submodule local
-<br>
 
 **If you forgot, do:** <br>
 `git submodule update --init --recursive` after regular `git clone`
 
-## Build & Run
+### Build & Run
 ```bash
 cmake --preset Release
 cmake --build --preset Release
@@ -56,5 +55,4 @@ sudo apt install \
 
 ## Requirements
 * CMake 3.20+
-* C++ compiler: GCC 13.3 / Clang
 * Ninja (not *required*, but it's what the presets use)

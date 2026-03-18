@@ -6,7 +6,7 @@
          "name": "base",
          "hidden": true,
          "generator": "Ninja",
-         "binaryDir": "${sourceDir}/build/${sourceDirName}/${presetName}",
+         "binaryDir": "${sourceDir}/build/${presetName}",
          "cacheVariables": {
             "CMAKE_C_STANDARD": "99",
             "CMAKE_CXX_STANDARD": "20",
