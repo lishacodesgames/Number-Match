@@ -1,8 +1,6 @@
 #include <pch/Precompiled.h>
 #include "HomeLayer.h"
 
-#include <raymath.h>
-#include <raylib.h>
 #include "PanelLayer.h"
 #include "DailyLayer.h"
 #include "GameLayer.h"
@@ -27,8 +25,6 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
       )
 {
    m_backgroundTexture = LoadTexture("assets/backgrounds/home_background_800x1417.jpg");
-
-   m_coinTexture = LoadTexture("assets/icons/game/coin_20x20.png");
    m_trophyTexture = LoadTexture("assets/icons/menus/trophy_30x30.png");
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
@@ -68,12 +64,6 @@ Vector2 operator+(const Vector2& vec, const float& fl) { return {vec.x+fl, vec.y
 
 void HomeLayer::OnRender() {
    DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 30}); // background
-
-   // coins display. @todo add changeability
-   Rectangle coinBox = {static_cast<float>(GetScreenWidth())/2-48, 20, 100, 40};
-   DrawRectangleRounded(coinBox, 5.0f, 5, WHITE);
-   DrawTexture(m_coinTexture, coinBox.x+10.0f, coinBox.y+10.0f, WHITE);
-   DrawTextEx(App::font_semibold, "1,343", {coinBox.x+34.0f, coinBox.y+5.85f}, 27.3f, 1.5f, {0, 0, 0, 175});
 
    // title
    const char* gameName = "Number Match";

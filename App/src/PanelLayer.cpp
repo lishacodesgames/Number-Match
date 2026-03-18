@@ -1,13 +1,11 @@
 #include <pch/Precompiled.h>
 #include "PanelLayer.h"
 
-#include <raymath.h>
-#include <raylib.h>
 #include "DailyLayer.h"
-#include "HomeLayer.h"
-#include "MeLayer.h"
 #include "Core/Event.h"
 #include "GUI/Button.h"
+#include "HomeLayer.h"
+#include "MeLayer.h"
 #include "App.h"
 
 static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function
@@ -18,6 +16,8 @@ static Vector2 buttonsOrigin() { // must be compuled after window exists, hence 
 }
 
 PanelLayer* PanelLayer::s_instance = nullptr;
+Menu PanelLayer::currentPage = Menu::None;
+
 void PanelLayer::PopInstance() {
    if(s_instance)
       App::QueueLayerPop(s_instance);
@@ -36,6 +36,7 @@ PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
 {
    s_instance = this;
    homeButton.setFocus(true, BLANK, BLUE);
+   currentPage = Menu::Home;
 
    homeButton.setOrigin(buttonsOrigin());
    dailyButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING, 0});
@@ -45,7 +46,10 @@ PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
    dailyButton.setIcon("assets/icons/menus/daily_20x20.png");
    meButton.setIcon("assets/icons/menus/me_20x20.png");
 }
-PanelLayer::~PanelLayer() { s_instance = nullptr; }
+PanelLayer::~PanelLayer() {
+   currentPage = Menu::None;
+   s_instance = nullptr; 
+}
 
 void PanelLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::MouseClicked) {

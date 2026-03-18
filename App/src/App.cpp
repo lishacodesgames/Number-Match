@@ -1,12 +1,10 @@
 #include <pch/Precompiled.h>
 #include "App.h"
 
-#include <algorithm>
-#include <typeinfo>
-#include <raylib.h>
 #include "Core/Logging.h"
 #include "PanelLayer.h"
 #include "HomeLayer.h"
+#include "CoinLayer.h"
 
 Font App::font_semibold = GetFontDefault(); // font must be loaded after InitWindow()
 Font App::font_black = GetFontDefault();
@@ -28,8 +26,9 @@ App::App(const std::string& name) {
    m_layerStack.PushLayer(home);
    PanelLayer* panel = new PanelLayer();
    m_layerStack.PushOverlay(panel);
-
    panel->currentLayer = home;
+   
+   m_layerStack.PushOverlay(new CoinLayer());
    TraceLog(LISHA_SAYS, "App Loaded!");
 }
 

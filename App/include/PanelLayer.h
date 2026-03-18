@@ -23,7 +23,7 @@ public:
    GUI::Button dailyButton;
    GUI::Button meButton;
 
-   Menu currentPage;
+   static Menu currentPage;
    Core::Layer* currentLayer;
 
    GUI::Button* findHoveredButton();

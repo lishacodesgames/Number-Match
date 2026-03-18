@@ -14,7 +14,6 @@ public:
 
 private:
    Texture m_backgroundTexture = {0};   
-   Texture m_coinTexture = {0};
    Texture m_trophyTexture = {0};
 
    GUI::Button m_newButton;
