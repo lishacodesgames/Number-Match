@@ -12,9 +12,11 @@ public:
    void OnEvent(Core::Event& e) override;
    void OnRender() override;
 private:
+   // --- buttons ---
    GUI::Button m_gobackButton;
    GUI::Button m_settingsButton;
    GUI::Button m_plusButton;
+   GUI::Button m_hintButton;
 
    // --- helpers ---
    GUI::Button* findHoveredButton();

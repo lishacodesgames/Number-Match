@@ -1,14 +1,14 @@
 #include <pch/Precompiled.h>
 #include "GameLayer.h"
 
-#include <raymath.h>
-#include <raylib.h>
+#include "Core/Logging.h"
 #include "OptionsLayer.h"
+#include "Core/Layer.h"
 #include "PanelLayer.h"
 #include "HomeLayer.h"
-#include "Core/Logging.h"
-#include "Core/Layer.h"
 #include "App.h"
+
+#define LIGHT_CYAN Color{102, 191, 225, 200}
 
 GameLayer::GameLayer() : Core::Layer("Game Layer"),
       m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
@@ -16,13 +16,18 @@ GameLayer::GameLayer() : Core::Layer("Game Layer"),
          {static_cast<float>(GetScreenWidth()) - 45, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}
       ),
       m_plusButton(
-         {static_cast<float>(GetScreenWidth()) / 2 - 12, static_cast<float>(GetScreenHeight()) - 40}, // oiginr
-         {5, 5}, "", {102, 191, 255, 200}, BLUE, 25, {1.0f, 8} // cyanish bg, circle
+         {static_cast<float>(GetScreenWidth()) / 2 - 40, static_cast<float>(GetScreenHeight()) - 40}, // origin
+         {5, 5}, "", LIGHT_CYAN, BLUE, 25, {1.0f, 8} // cyanish bg, circle
+      ),
+      m_hintButton(
+         {static_cast<float>(GetScreenWidth()) / 2 + 5, static_cast<float>(GetScreenHeight()) - 40}, // origin
+         {5, 5}, "", LIGHT_CYAN, WHITE, 25, {1.0f, 8}
       )
 {      
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
    m_settingsButton.setIcon("assets/icons/game/settings_30x30.png");
    m_plusButton.setIcon("assets/icons/game/plus_24x24.png");
+   m_hintButton.setIcon("assets/icons/game/lightbulb_24x24.png");
 }
 
 void GameLayer::OnAttach() {
@@ -31,7 +36,7 @@ void GameLayer::OnAttach() {
 }
 
 void GameLayer::OnEvent(Core::Event& e) {
-   if(isSuspended && !suspended_event)
+   if(isSuspended && !eventSuspended)
       return;
 
    if(e.GetEventType() == Core::EventType::KeyPressed) {
@@ -54,19 +59,22 @@ void GameLayer::OnEvent(Core::Event& e) {
          OnSuspend(true); // suspend but render
          App::QueueLayerPush(new OptionsLayer());
          e.Handled = true;
-      } else if (activeButton == &m_plusButton) {
+      } else if(activeButton == &m_plusButton) {
          TraceLog(LISHA_SAYS, "PLUS"); // temp
+      } else if(activeButton == &m_hintButton) {
+         TraceLog(LISHA_SAYS, "HINT"); // temp
       }
    }
 }
 
 void GameLayer::OnUpdate() {
-   if(isSuspended && !suspended_update)
+   if(isSuspended && !updateSuspended)
       return;
    
    m_gobackButton.Update();
    m_settingsButton.Update();
    m_plusButton.Update();
+   m_hintButton.Update();
 
    if(findHoveredButton())
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
@@ -75,12 +83,13 @@ void GameLayer::OnUpdate() {
 }
 
 void GameLayer::OnRender() {
-   if(isSuspended && !suspended_render)
+   if(isSuspended && !renderSuspended)
       return;
 
    m_gobackButton.Draw();
    m_settingsButton.Draw();
    m_plusButton.Draw();
+   m_hintButton.Draw();
 }
 
 #pragma region Helpers
@@ -92,6 +101,8 @@ GUI::Button* GameLayer::findHoveredButton() {
       return &m_settingsButton;
    else if(m_plusButton.isHovered)
       return &m_plusButton;
+   else if(m_hintButton.isHovered)
+      return &m_hintButton;   
    else
       return nullptr;
 }

@@ -13,7 +13,7 @@ namespace Core {
 
       Layer( /// called when new layer pointer made with "new"
          const std::string& name, bool isOverlay = false, 
-         bool suspended_render = false, bool suspended_update = false, bool suspended_event = false
+         bool renderSuspended = false, bool updateSuspended = false, bool eventSuspended = false
       );
       virtual ~Layer() = default; /// called with "delete" keyword
 
@@ -30,9 +30,9 @@ namespace Core {
       virtual void OnSuspend(bool render = false, bool update = false, bool event = false);
       virtual void OnResume();
       bool isSuspended = false;
-      bool suspended_event = false;
-      bool suspended_update = false;
-      bool suspended_render = false;
+      bool eventSuspended = false;
+      bool updateSuspended = false;
+      bool renderSuspended = false;
 
       // ---- Getters ----
       const std::string& GetName() const;

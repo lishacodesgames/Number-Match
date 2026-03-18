@@ -6,8 +6,8 @@
 namespace Core {
    Layer::Layer(
       const std::string& name, bool isOverlay,
-      bool suspended_render, bool suspended_update, bool suspended_event
-   ) : m_name(name), isOverlay(isOverlay), suspended_render(suspended_render), suspended_update(suspended_update), suspended_event(suspended_event)
+      bool renderSuspended, bool updateSuspended, bool eventSuspended
+   ) : m_name(name), isOverlay(isOverlay), renderSuspended(renderSuspended), updateSuspended(updateSuspended), eventSuspended(eventSuspended)
    {}
 
    void Layer::OnAttach() { TraceLog(LISHA_SAYS, "%s ATTACHED", m_name.c_str()); }
@@ -15,9 +15,9 @@ namespace Core {
 
    void Layer::OnSuspend(bool render, bool update, bool event) {
       isSuspended = true;
-      suspended_render = render;
-      suspended_update = update;
-      suspended_event = event;
+      renderSuspended = render;
+      updateSuspended = update;
+      eventSuspended = event;
 
       TraceLog(LISHA_SAYS, "%s SUSPENDED", m_name.c_str()); 
    }
