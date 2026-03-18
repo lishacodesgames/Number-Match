@@ -6,6 +6,7 @@
 The origin Number match is a fun mobile game where you match up pairs of numbers that are the same or that add up to 10. Clearing rows and levels, and winning points and money. There's also tournaments you can participate in, though the game is entirely singleplayer.
 
 My version is desktop-friendly, has no ads, and is just as addicting.
+
 ### Controls
 The main game relies on mouse clicks only. <br>
 The only keybinding is: `Q` to go back to home from the game 
@@ -13,28 +14,23 @@ The only keybinding is: `Q` to go back to home from the game
 ### Tech Stack
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white) 
 ![RayLib](https://img.shields.io/badge/RAYLIB-FFFFFF?style=for-the-badge&logo=raylib&logoColor=black)
+![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)
 
-## How to Clone
+## How to use
+
+### Clone
 `git clone --recursive` to get the raylib submodule local
 <br>
 
 **If you forgot, do:** <br>
 `git submodule update --init --recursive` after regular `git clone`
 
-## Build
+## Build & Run
 ```bash
 cmake --preset Release
 cmake --build --preset Release
-```
 
-#### Run on Windows
-```bash
-"C:\Users\<your-username>\build\Number-Match\Release\App\NumberMatch.exe"
-```
-
-#### Run on Linux
-```bash
-/home/<your-username>/build/Number-Match/Release/App/NumberMatch
+./bin/Release/NumberMatch
 ```
 
 **Note:** <br> 

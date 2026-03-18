@@ -1,16 +1,13 @@
-add_executable(${PROJECT_NAME})
-target_sources(${PROJECT_NAME} PRIVATE
-   src/App.cpp
-   src/DailyLayer.cpp
-   src/GameLayer.cpp
-   src/HomeLayer.cpp
-   src/main.cpp
-   src/MeLayer.cpp
-   src/OptionsLayer.cpp
-   src/PanelLayer.cpp
+set(BIN ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+file(GLOB NM_SOURCES 
+   ${CMAKE_CURRENT_SOURCE_DIR}/src/**.cpp 
+   ${CMAKE_CURRENT_SOURCE_DIR}/include/**.h
 )
 
+add_executable(${PROJECT_NAME} ${NM_SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Engine)
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN})
+
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Change debug logging based on preset
@@ -29,10 +26,5 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
    target_compile_options(${PROJECT_NAME} PRIVATE -Wno-missing-field-initializers -Wno-unused-result) 
 endif()
 
-# copy assets/ into build/ to remove dependencies and weird paths in code
-add_custom_command(
-   TARGET ${PROJECT_NAME} POST_BUILD
-   COMMAND ${CMAKE_COMMAND} -E copy_directory
-         ${CMAKE_SOURCE_DIR}/assets
-         $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
-)
+# copy assets/ into bin/ to remove dependencies and weird paths in code
+file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${BIN})
