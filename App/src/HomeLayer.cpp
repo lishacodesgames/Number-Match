@@ -24,7 +24,7 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
          "Continue Game", BLUE, WHITE, 25, {0.8f, 8}, App::font_semibold
       )
 {
-   m_backgroundTexture = LoadTexture("assets/backgrounds/home_background_800x1417.jpg");
+   m_backgroundTexture = LoadTexture("assets/backgrounds/home_background_800x1417.png");
    m_trophyTexture = LoadTexture("assets/icons/menus/trophy_30x30.png");
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
