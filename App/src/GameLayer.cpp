@@ -90,6 +90,10 @@ void GameLayer::OnRender() {
    m_settingsButton.Draw();
    m_plusButton.Draw();
    m_hintButton.Draw();
+
+   // Box
+   Rectangle box = {80, 130, GetScreenWidth() * 0.8f, GetScreenHeight() * 0.67f};
+   DrawRectangleLinesEx(box, 3, ColorAlpha(DARKGRAY, 0.8f));
 }
 
 #pragma region Helpers
