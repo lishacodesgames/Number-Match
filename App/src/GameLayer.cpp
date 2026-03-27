@@ -11,6 +11,7 @@
 static constexpr Vector2 helperPadding = {8, 8};
 
 GameLayer::GameLayer() : Core::Layer("Game Layer"),
+      m_grid(9, {0, 0, 0, 0, 0, 0, 0, 0, 0}), // 9 rows of all blank cells
       m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
       m_settingsButton(
          {static_cast<float>(GetScreenWidth()) - 45, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}
@@ -28,6 +29,8 @@ GameLayer::GameLayer() : Core::Layer("Game Layer"),
    m_settingsButton.setIcon("assets/icons/game/settings_30x30.png");
    m_plusButton.setIcon("assets/icons/game/plus_35x35.png");
    m_hintButton.setIcon("assets/icons/game/hint_35x35.png");
+
+   initGrid();
 }
 
 void GameLayer::OnAttach() {
@@ -91,24 +94,53 @@ void GameLayer::OnRender() {
    m_plusButton.Draw();
    m_hintButton.Draw();
 
+   // Grid
+   Rectangle box = {(float)(GetScreenWidth())/2 - 202.5f, 130, 405, 405};
+   constexpr float cellSize = 45; // 405 / 9 = 45
+   std::string num;
+   Vector2 numSize;
+   Rectangle square;
+   for(unsigned int row = 0; row < m_grid.size(); row++) {
+      for(unsigned int col = 0; col < m_grid.at(row).size(); col++) {
+         num = std::to_string(m_grid[row][col]);
+         numSize = MeasureTextEx(App::font_semibold, num.c_str(), 40, 1);
+         square = {box.x + col * cellSize, box.y + row * cellSize, cellSize, cellSize};
+
+         DrawRectangleLinesEx(square, 1, ColorAlpha(LIGHTGRAY, 0.65f));
+         DrawTextEx(
+            App::font_semibold, num.c_str(),
+            {square.x + square.width/2 - numSize.x/2, square.y + square.height/2 - numSize.y/2},
+            40, 1, BLACK
+         );
+      }
+   }
+
    // Box
-   Rectangle box = {80, 130, GetScreenWidth() * 0.8f, GetScreenHeight() * 0.67f};
    DrawRectangleLinesEx(box, 3, ColorAlpha(DARKGRAY, 0.8f));
+}
+
+void GameLayer::initGrid() {
+   srand(time(0));
+   for(auto& row : m_grid) {
+      for(int& cell : row) {
+         cell = 1 + rand() % 8;
+      }
+   }
 }
 
 #pragma region Helpers
 
 GUI::Button* GameLayer::findHoveredButton() {
-   if(m_gobackButton.isHovered)
-      return &m_gobackButton;
-   else if(m_settingsButton.isHovered)
-      return &m_settingsButton;
-   else if(m_plusButton.isHovered)
-      return &m_plusButton;
-   else if(m_hintButton.isHovered)
-      return &m_hintButton;   
-   else
-      return nullptr;
+    if (m_gobackButton.isHovered)
+        return &m_gobackButton;
+    else if (m_settingsButton.isHovered)
+        return &m_settingsButton;
+    else if (m_plusButton.isHovered)
+        return &m_plusButton;
+    else if (m_hintButton.isHovered)
+        return &m_hintButton;
+    else
+        return nullptr;
 }
 
 #pragma endregion
