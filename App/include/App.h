@@ -6,6 +6,8 @@
 #include "Core/Event.h"
 #include "Core/Layer.h"
 
+constexpr Color LIGHTERGRAY = {230, 230, 230, 255}; /// A more aesthetically pleasing lightgray
+
 /// Static class that manages the game loop and all game states (menu, gameplay, pause, etc.) 
 class App {
    static App* s_instance; // so App's statics and members can speak to each other

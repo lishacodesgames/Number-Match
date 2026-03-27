@@ -8,7 +8,7 @@
 #include "HomeLayer.h"
 #include "App.h"
 
-#define LIGHT_CYAN Color{102, 191, 225, 200}
+static constexpr Vector2 helperPadding = {8, 8};
 
 GameLayer::GameLayer() : Core::Layer("Game Layer"),
       m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
@@ -16,18 +16,18 @@ GameLayer::GameLayer() : Core::Layer("Game Layer"),
          {static_cast<float>(GetScreenWidth()) - 45, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}
       ),
       m_plusButton(
-         {static_cast<float>(GetScreenWidth()) / 2 - 40, static_cast<float>(GetScreenHeight()) - 40}, // origin
-         {5, 5}, "", LIGHT_CYAN, BLUE, 25, {1.0f, 8} // cyanish bg, circle
+         {static_cast<float>(GetScreenWidth()) / 2 - 49, static_cast<float>(GetScreenHeight()) - 60}, // origin
+         helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}
       ),
       m_hintButton(
-         {static_cast<float>(GetScreenWidth()) / 2 + 5, static_cast<float>(GetScreenHeight()) - 40}, // origin
-         {5, 5}, "", LIGHT_CYAN, WHITE, 25, {1.0f, 8}
+         {static_cast<float>(GetScreenWidth()) / 2 + 14, static_cast<float>(GetScreenHeight()) - 60}, // origin
+         helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}
       )
 {      
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
    m_settingsButton.setIcon("assets/icons/game/settings_30x30.png");
-   m_plusButton.setIcon("assets/icons/game/plus_24x24.png");
-   m_hintButton.setIcon("assets/icons/game/lightbulb_24x24.png");
+   m_plusButton.setIcon("assets/icons/game/plus_35x35.png");
+   m_hintButton.setIcon("assets/icons/game/hint_35x35.png");
 }
 
 void GameLayer::OnAttach() {

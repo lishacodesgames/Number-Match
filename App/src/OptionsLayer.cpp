@@ -10,7 +10,7 @@
 
 static constexpr int PANEL_HEIGHT = 35;
 static constexpr float BANNER_HEIGHT = 32;
-static constexpr Color LIGHTERGRAY = {230, 230, 230, 255};
+
 static constexpr float BOUNDS_TARGETY = 100;
 
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
