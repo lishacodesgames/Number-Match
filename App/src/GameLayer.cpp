@@ -12,6 +12,7 @@ static constexpr Vector2 helperPadding = {8, 8};
 
 GameLayer::GameLayer() : Core::Layer("Game Layer"),
       m_grid(9, {0, 0, 0, 0, 0, 0, 0, 0, 0}), // 9 rows of all blank cells
+      m_gridBox({(float)(GetScreenWidth())/2 - 202.5f, 130, 405, 405}),
       m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
       m_settingsButton(
          {static_cast<float>(GetScreenWidth()) - 45, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}
@@ -79,7 +80,7 @@ void GameLayer::OnUpdate() {
    m_plusButton.Update();
    m_hintButton.Update();
 
-   if(findHoveredButton())
+   if(findHoveredButton() || CheckCollisionPointRec(GetMousePosition(), m_gridBox))
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -95,7 +96,6 @@ void GameLayer::OnRender() {
    m_hintButton.Draw();
 
    // Grid
-   Rectangle box = {(float)(GetScreenWidth())/2 - 202.5f, 130, 405, 405};
    constexpr float cellSize = 45; // 405 / 9 = 45
    std::string num;
    Vector2 numSize;
@@ -104,7 +104,7 @@ void GameLayer::OnRender() {
       for(unsigned int col = 0; col < m_grid.at(row).size(); col++) {
          num = std::to_string(m_grid[row][col]);
          numSize = MeasureTextEx(App::font_semibold, num.c_str(), 40, 1);
-         square = {box.x + col * cellSize, box.y + row * cellSize, cellSize, cellSize};
+         square = {m_gridBox.x + col * cellSize, m_gridBox.y + row * cellSize, cellSize, cellSize};
 
          DrawRectangleLinesEx(square, 1, ColorAlpha(LIGHTGRAY, 0.65f));
          DrawTextEx(
@@ -116,7 +116,7 @@ void GameLayer::OnRender() {
    }
 
    // Box
-   DrawRectangleLinesEx(box, 3, ColorAlpha(DARKGRAY, 0.8f));
+   DrawRectangleLinesEx(m_gridBox, 3, ColorAlpha(DARKGRAY, 0.8f));
 }
 
 void GameLayer::initGrid() {
@@ -131,16 +131,16 @@ void GameLayer::initGrid() {
 #pragma region Helpers
 
 GUI::Button* GameLayer::findHoveredButton() {
-    if (m_gobackButton.isHovered)
-        return &m_gobackButton;
-    else if (m_settingsButton.isHovered)
-        return &m_settingsButton;
-    else if (m_plusButton.isHovered)
-        return &m_plusButton;
-    else if (m_hintButton.isHovered)
-        return &m_hintButton;
-    else
-        return nullptr;
+   if (m_gobackButton.isHovered)
+      return &m_gobackButton;
+   else if (m_settingsButton.isHovered)
+      return &m_settingsButton;
+   else if (m_plusButton.isHovered)
+      return &m_plusButton;
+   else if (m_hintButton.isHovered)
+      return &m_hintButton;
+   else
+      return nullptr;
 }
 
 #pragma endregion

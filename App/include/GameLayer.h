@@ -16,6 +16,7 @@ public:
 private:
    // --- grid ---
    std::vector<std::array<int, 9>> m_grid; /// Vector of 9-length arrays, each with number 0-9. 0 = empty cell. 
+   Rectangle m_gridBox;
    void initGrid();
 
    // --- buttons ---
