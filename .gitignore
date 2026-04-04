@@ -4,5 +4,6 @@ bin/
 *.o
 *.obj
 *.dll
-.vscode/
+.vscode/launch.json
+.vscode/tasks.json
 .DS_Store

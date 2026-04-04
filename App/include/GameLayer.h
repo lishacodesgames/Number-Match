@@ -1,8 +1,16 @@
 #pragma once
-#include <array>
+#include <utility>
 #include <vector>
+#include <array>
 #include "Core/Layer.h"
 #include "GUI/Button.h"
+
+struct GridCell {
+   static constexpr float size = 45.0f;
+
+   int value; /// 0 for empty, 1-9 otherwise
+   Rectangle cell;
+};
 
 class GameLayer : public Core::Layer {
 public:
@@ -15,7 +23,7 @@ public:
    void OnRender() override;
 private:
    // --- grid ---
-   std::vector<std::array<int, 9>> m_grid; /// Vector of 9-length arrays, each with number 0-9. 0 = empty cell. 
+   std::vector<std::array<GridCell, 9>> m_grid; /// Vector of 9-length arrays 
    Rectangle m_gridBox;
    void initGrid();
 

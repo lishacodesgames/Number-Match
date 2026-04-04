@@ -12,6 +12,13 @@
 		}
 	],
 	"settings": {
-		"cmake.sourceDirectory": "${workspaceFolder:repo}"
+		"cmake.sourceDirectory": "${workspaceFolder:repo}",
+
+		"search.exclude": {
+			"**/build/**": true,
+			"**/bin/**": true,
+			"**/obj/**": true,
+			"**/raylib/**": true
+		}
 	} 
 }

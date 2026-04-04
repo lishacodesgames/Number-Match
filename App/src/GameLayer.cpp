@@ -96,20 +96,19 @@ void GameLayer::OnRender() {
    m_hintButton.Draw();
 
    // Grid
-   constexpr float cellSize = 45; // 405 / 9 = 45
    std::string num;
    Vector2 numSize;
-   Rectangle square;
-   for(unsigned int row = 0; row < m_grid.size(); row++) {
-      for(unsigned int col = 0; col < m_grid.at(row).size(); col++) {
-         num = std::to_string(m_grid[row][col]);
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         GridCell cell = m_grid.at(row).at(col);
+         num = cell.value ? std::to_string(cell.value) : ""; // empty string if value is 0 (empty cell)
          numSize = MeasureTextEx(App::font_semibold, num.c_str(), 40, 1);
-         square = {m_gridBox.x + col * cellSize, m_gridBox.y + row * cellSize, cellSize, cellSize};
 
-         DrawRectangleLinesEx(square, 1, ColorAlpha(LIGHTGRAY, 0.65f));
+         DrawRectangleRec(cell.cell, RAYWHITE);
+         DrawRectangleLinesEx(cell.cell, 1, ColorAlpha(LIGHTGRAY, 0.65f));
          DrawTextEx(
             App::font_semibold, num.c_str(),
-            {square.x + square.width/2 - numSize.x/2, square.y + square.height/2 - numSize.y/2},
+            {cell.cell.x + cell.cell.width/2 - numSize.x/2, cell.cell.y + cell.cell.height/2 - numSize.y/2},
             40, 1, BLACK
          );
       }
@@ -121,9 +120,16 @@ void GameLayer::OnRender() {
 
 void GameLayer::initGrid() {
    srand(time(0));
-   for(auto& row : m_grid) {
-      for(int& cell : row) {
-         cell = 1 + rand() % 8;
+
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         if(row < 3 || (row == 3 && col < 5))
+            m_grid[row][col].value = 1 + rand() % 8;
+         else
+            m_grid[row][col].value = 0;
+
+         GridCell& cell = m_grid[row][col];
+         cell.cell = {m_gridBox.x + col * GridCell::size, m_gridBox.y + row * GridCell::size, GridCell::size, GridCell::size};
       }
    }
 }
