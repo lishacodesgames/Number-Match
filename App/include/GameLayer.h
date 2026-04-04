@@ -10,6 +10,7 @@ struct GridCell {
 
    int value; /// 0 for empty, 1-9 otherwise
    Rectangle cell;
+   bool isHovered = false;
 };
 
 class GameLayer : public Core::Layer {
@@ -35,4 +36,5 @@ private:
 
    // --- helpers ---
    GUI::Button* findHoveredButton();
+   void highlightHoveredCell();
 };

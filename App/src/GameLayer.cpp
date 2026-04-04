@@ -80,6 +80,8 @@ void GameLayer::OnUpdate() {
    m_plusButton.Update();
    m_hintButton.Update();
 
+   highlightHoveredCell();
+
    if(findHoveredButton() || CheckCollisionPointRec(GetMousePosition(), m_gridBox))
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
@@ -98,13 +100,15 @@ void GameLayer::OnRender() {
    // Grid
    std::string num;
    Vector2 numSize;
+   Color cellColor;
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          GridCell cell = m_grid.at(row).at(col);
          num = cell.value ? std::to_string(cell.value) : ""; // empty string if value is 0 (empty cell)
+         cellColor = cell.isHovered ? ColorAlpha(SKYBLUE, 0.5f) : RAYWHITE;
          numSize = MeasureTextEx(App::font_semibold, num.c_str(), 40, 1);
 
-         DrawRectangleRec(cell.cell, RAYWHITE);
+         DrawRectangleRec(cell.cell, cellColor);
          DrawRectangleLinesEx(cell.cell, 1, ColorAlpha(LIGHTGRAY, 0.65f));
          DrawTextEx(
             App::font_semibold, num.c_str(),
@@ -130,6 +134,7 @@ void GameLayer::initGrid() {
 
          GridCell& cell = m_grid[row][col];
          cell.cell = {m_gridBox.x + col * GridCell::size, m_gridBox.y + row * GridCell::size, GridCell::size, GridCell::size};
+         cell.isHovered = false;
       }
    }
 }
@@ -147,6 +152,17 @@ GUI::Button* GameLayer::findHoveredButton() {
       return &m_hintButton;
    else
       return nullptr;
+}
+
+void GameLayer::highlightHoveredCell() {
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         if(CheckCollisionPointRec(GetMousePosition(), m_grid.at(row).at(col).cell))
+            m_grid[row][col].isHovered = true;
+         else
+            m_grid[row][col].isHovered = false;
+      }
+   }
 }
 
 #pragma endregion
