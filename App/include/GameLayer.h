@@ -7,10 +7,11 @@
 
 struct GridCell {
    static constexpr float size = 45.0f;
+   static Color activeColor, hoverColor, restColor;
 
    int value; /// 0 for empty, 1-9 otherwise
    Rectangle cell;
-   bool isHovered = false;
+   Color bgColor = RAYWHITE;
 };
 
 class GameLayer : public Core::Layer {
@@ -36,5 +37,5 @@ private:
 
    // --- helpers ---
    GUI::Button* findHoveredButton();
-   void highlightHoveredCell();
+   GridCell* findHoveredGridCell(); /// @return hovered cell
 };
