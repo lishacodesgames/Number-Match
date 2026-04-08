@@ -102,14 +102,14 @@ void GameLayer::OnUpdate() {
    GridCell* hoveredCell = findHoveredGridCell();
    GridCell* focusedCell = findFocusedGridCell();
 
-   if(hoveredCell && hoveredCell != previousCell) { // a new cell is hovered
-      if(hoveredCell != focusedCell) // don't override focused cell
+   if(hoveredCell != previousCell) { // a new cell is hovered
+      if(hoveredCell && hoveredCell != focusedCell) // don't override focused cell
          hoveredCell->state = GridCellState::Hovered;
 
       if(previousCell && previousCell != focusedCell) // reset previous cell's color, unless it's focused
          previousCell->state = GridCellState::Rest;
    }
-      previousCell = hoveredCell;
+   previousCell = hoveredCell;
 
    if(hoveredCell || findHoveredButton())
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
