@@ -195,7 +195,7 @@ void GameLayer::initGrid() {
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          if(row < 3 || (row == 3 && col < 5))
-            m_grid[row][col].value = 1 + rand() % 8;
+            m_grid[row][col].value = 1 + rand() % 9;
          else
             m_grid[row][col].value = 0;
 
