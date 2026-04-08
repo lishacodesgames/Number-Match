@@ -1,9 +1,5 @@
 build/
 bin/
-*.exe
-*.o
-*.obj
-*.dll
 .vscode/launch.json
 .vscode/tasks.json
 .DS_Store

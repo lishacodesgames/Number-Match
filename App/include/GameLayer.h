@@ -5,13 +5,18 @@
 #include "Core/Layer.h"
 #include "GUI/Button.h"
 
+enum class GridCellState { Rest, Hovered, Focused };
+
 struct GridCell {
+   GridCell(int value = 0) : value(value), cell({0, 0, 0, 0}) {}
+
    static constexpr float size = 45.0f;
-   static Color activeColor, hoverColor, restColor;
+   static constexpr Color restColor = RAYWHITE;
+   static Color hoverColor, focusedColor;
 
    int value; /// 0 for empty, 1-9 otherwise
    Rectangle cell;
-   Color bgColor = RAYWHITE;
+   GridCellState state = GridCellState::Rest;
 };
 
 class GameLayer : public Core::Layer {
@@ -36,6 +41,8 @@ private:
    GUI::Button m_hintButton;
 
    // --- helpers ---
-   GUI::Button* findHoveredButton();
-   GridCell* findHoveredGridCell(); /// @return hovered cell
+   GUI::Button* findHoveredButton(); /// @return any of the 4 member buttons OR nullptr
+
+   GridCell* findHoveredGridCell();
+   GridCell* findFocusedGridCell();
 };

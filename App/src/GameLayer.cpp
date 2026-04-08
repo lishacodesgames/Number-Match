@@ -10,9 +10,8 @@
 
 static constexpr Vector2 helperPadding = {8, 8};
 
-Color GridCell::activeColor = ColorAlpha(BLUE, 0.5f);
+Color GridCell::focusedColor = ColorAlpha(BLUE, 0.5f);
 Color GridCell::hoverColor = ColorAlpha(SKYBLUE, 0.5f);
-Color GridCell::restColor = RAYWHITE;
 
 GameLayer::GameLayer() : Core::Layer("Game Layer"),
       m_grid(9, {0, 0, 0, 0, 0, 0, 0, 0, 0}), // 9 rows of all blank cells
@@ -56,20 +55,36 @@ void GameLayer::OnEvent(Core::Event& e) {
          e.Handled = true;
       }
    } else if(e.GetEventType() == Core::EventType::MouseClicked) {
+      // check if a button has been clicked
       GUI::Button* activeButton = findHoveredButton();
-      if(activeButton == &m_gobackButton) {
-         OnSuspend();
-         App::QueueLayerPush(new HomeLayer());
-         App::QueueLayerPush(new PanelLayer());
+      if(activeButton) {
+         if(activeButton == &m_gobackButton) {
+            OnSuspend();
+            App::QueueLayerPush(new HomeLayer());
+            App::QueueLayerPush(new PanelLayer());
+         } else if(activeButton == &m_settingsButton) {
+            OnSuspend(true); // suspend but render
+            App::QueueLayerPush(new OptionsLayer());
+         } else if(activeButton == &m_plusButton) {
+            TraceLog(LISHA_SAYS, "PLUS"); // temp
+         } else if(activeButton == &m_hintButton) {
+            TraceLog(LISHA_SAYS, "HINT"); // temp
+         }
          e.Handled = true;
-      } else if(activeButton == &m_settingsButton) {
-         OnSuspend(true); // suspend but render
-         App::QueueLayerPush(new OptionsLayer());
+         return;
+      }
+
+      // check if a grid cell has been clicked
+      GridCell* activeCell = findHoveredGridCell();
+      if(activeCell) {
+         GridCell* focusedCell = findFocusedGridCell();
+         if(focusedCell && focusedCell != activeCell) // if another cell was already focused, reset it
+            focusedCell->state = GridCellState::Rest;
+
+         activeCell->state = GridCellState::Focused;
+         
          e.Handled = true;
-      } else if(activeButton == &m_plusButton) {
-         TraceLog(LISHA_SAYS, "PLUS"); // temp
-      } else if(activeButton == &m_hintButton) {
-         TraceLog(LISHA_SAYS, "HINT"); // temp
+         return;
       }
    }
 }
@@ -85,17 +100,16 @@ void GameLayer::OnUpdate() {
 
    static GridCell* previousCell = nullptr; // to reset color back to restColor
    GridCell* hoveredCell = findHoveredGridCell();
+   GridCell* focusedCell = findFocusedGridCell();
 
-   if(hoveredCell) {
-      if(IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-         hoveredCell->bgColor = GridCell::activeColor;
-      else
-         hoveredCell->bgColor = GridCell::hoverColor;
+   if(hoveredCell && hoveredCell != previousCell) { // a new cell is hovered
+      if(hoveredCell != focusedCell) // don't override focused cell
+         hoveredCell->state = GridCellState::Hovered;
+
+      if(previousCell && previousCell != focusedCell) // reset previous cell's color, unless it's focused
+         previousCell->state = GridCellState::Rest;
    }
-      
-   if(previousCell && previousCell != hoveredCell)
-      previousCell->bgColor = GridCell::restColor;
-   previousCell = hoveredCell;
+      previousCell = hoveredCell;
 
    if(hoveredCell || findHoveredButton())
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
@@ -115,13 +129,21 @@ void GameLayer::OnRender() {
    // Grid
    std::string num;
    Vector2 numSize;
+   Color bgColor;
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          GridCell cell = m_grid.at(row).at(col);
          num = cell.value ? std::to_string(cell.value) : ""; // empty string if value is 0 (empty cell)
          numSize = MeasureTextEx(App::font_semibold, num.c_str(), 40, 1);
 
-         DrawRectangleRec(cell.cell, cell.bgColor);
+         if(cell.state == GridCellState::Focused)
+            bgColor = GridCell::focusedColor;
+         else if(cell.state == GridCellState::Hovered)
+            bgColor = GridCell::hoverColor;
+         else
+            bgColor = GridCell::restColor;
+
+         DrawRectangleRec(cell.cell, bgColor);
          DrawRectangleLinesEx(cell.cell, 1, ColorAlpha(LIGHTGRAY, 0.65f));
          DrawTextEx(
             App::font_semibold, num.c_str(),
@@ -147,7 +169,7 @@ void GameLayer::initGrid() {
 
          GridCell& cell = m_grid[row][col];
          cell.cell = {m_gridBox.x + col * GridCell::size, m_gridBox.y + row * GridCell::size, GridCell::size, GridCell::size};
-         cell.bgColor = GridCell::restColor;
+         cell.state = GridCellState::Rest;
       }
    }
 }
@@ -168,10 +190,20 @@ GUI::Button* GameLayer::findHoveredButton() {
 }
 
 GridCell* GameLayer::findHoveredGridCell() {
-   for(size_t row = 0; row < m_grid.size(); row++) {
-      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
-         if(CheckCollisionPointRec(GetMousePosition(), m_grid.at(row).at(col).cell))
-            return &m_grid[row][col];
+   for(auto& row : m_grid) { // Not const because we want to return a non-const pointer
+      for(GridCell& cell : row) {
+         if(CheckCollisionPointRec(GetMousePosition(), cell.cell))
+            return &cell;
+      }
+   }
+   return nullptr;
+}
+
+GridCell* GameLayer::findFocusedGridCell() {
+   for(auto& row : m_grid) { // Not const because we want to return a non-const pointer
+      for(GridCell& cell : row) {
+         if(cell.state == GridCellState::Focused)
+            return &cell;
       }
    }
    return nullptr;
