@@ -95,8 +95,6 @@ void OptionsLayer::OnUpdate() {
       
       setBannerPositions(m_bounds.y);
       m_doneButton.setOrigin({m_doneButton.getOrigin().x, m_bounds.y + 7});
-
-      TraceLog(LOG_DEBUG, "bounds = %f", m_bounds.y);
       return;
    }
 
