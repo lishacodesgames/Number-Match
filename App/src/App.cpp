@@ -16,6 +16,7 @@ App::App(const std::string& name) {
 
    TraceLog(LISHA_SAYS, "Loading App...");
 
+   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
    InitWindow(800, 650, name.c_str());
    SetTargetFPS(60);
 
