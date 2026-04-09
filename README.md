@@ -24,16 +24,24 @@ The only keybinding is: `Q` to go back to home from the game
 **If you forgot, do:** <br>
 `git submodule update --init --recursive` after regular `git clone`
 
-### Build & Run
+### Build
 ```bash
 cmake --preset Release
 cmake --build --preset Release
+```
 
+### Run
+**Windows**
+```bash
+"bin\Release\NumberMatch.exe"
+```
+
+**Mac/Linux**
+```bash
 ./bin/Release/NumberMatch
 ```
 
 **Note:** <br> 
-- for Windows, omit the `./` and add `.exe` at the end
 - Make sure you're running from the repo directory `Number-Match/`
 - Make sure you have cmake and ninja in your path variables
 
