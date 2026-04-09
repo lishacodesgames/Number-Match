@@ -59,14 +59,14 @@ void PanelLayer::OnEvent(Core::Event& e) {
 
       Core::Layer* newLayer = nullptr;
       if(activeButton == &homeButton && currentPage != Menu::Home) {
-         newLayer = new HomeLayer();
          currentPage = Menu::Home;
+         newLayer = new HomeLayer();
       } else if(activeButton == &dailyButton && currentPage != Menu::Daily) {
-         newLayer = new DailyLayer();
          currentPage = Menu::Daily;
+         newLayer = new DailyLayer();
       } else if(activeButton == &meButton && currentPage != Menu::Me) {
-         newLayer = new MeLayer();
          currentPage = Menu::Me;
+         newLayer = new MeLayer();
       }
 
       if(newLayer) {

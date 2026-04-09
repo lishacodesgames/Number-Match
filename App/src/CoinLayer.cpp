@@ -11,14 +11,17 @@ CoinLayer::CoinLayer() : Core::Layer("Coin Layer", true) {
 
 CoinLayer::~CoinLayer() { UnloadTexture(m_coinTexture); }
 
-void CoinLayer::OnEvent(Core::Event& e) {
-   if(e.GetEventType() == Core::EventType::MouseClicked) {
-      if(PanelLayer::currentPage == Menu::Daily || PanelLayer::currentPage == Menu::Me) 
-         App::QueueLayerPop(this);
-   }
-}
+void CoinLayer::OnEvent([[maybe_unused]] Core::Event& e) {}
 
-void CoinLayer::OnUpdate() { Storage::load(); }
+void CoinLayer::OnUpdate() {
+   // cannot be in OnEvent since CoinLayer is sometimes on top of PanelLayer so the coin's check happens before layer is switched
+   // causing coins to not update when switching from Home to Daily/Me, since PanelLayer is popped after the click event is processed
+   // leads to buggy mess lol
+   if(PanelLayer::currentPage == Menu::Daily || PanelLayer::currentPage == Menu::Me) 
+      App::QueueLayerPop(this);
+      
+   Storage::load();
+}
 
 void CoinLayer::OnRender() {
    std::string coins = Storage::formatCoins();
