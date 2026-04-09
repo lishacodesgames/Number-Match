@@ -4,6 +4,7 @@
 #include "PanelLayer.h"
 #include "DailyLayer.h"
 #include "GameLayer.h"
+#include "CoinLayer.h"
 #include "MeLayer.h"
 #include "Storage.h"
 #include "App.h"
@@ -27,6 +28,9 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
 {
    m_backgroundTexture = LoadTexture("assets/backgrounds/home_background_800x1417.png");
    m_trophyTexture = LoadTexture("assets/icons/menus/trophy_30x30.png");
+
+   if(!App::GetLayerByName("Coin Layer"))
+      App::QueueLayerPush(new CoinLayer());
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 

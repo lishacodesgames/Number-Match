@@ -11,14 +11,14 @@ CoinLayer::CoinLayer() : Core::Layer("Coin Layer", true) {
 
 CoinLayer::~CoinLayer() { UnloadTexture(m_coinTexture); }
 
-void CoinLayer::OnEvent([[maybe_unused]] Core::Event& e) {}
-
-void CoinLayer::OnUpdate() {
-   if(PanelLayer::currentPage == Menu::Daily || PanelLayer::currentPage == Menu::Me) 
-      App::QueueLayerPop(this);
-
-   Storage::load();
+void CoinLayer::OnEvent(Core::Event& e) {
+   if(e.GetEventType() == Core::EventType::MouseClicked) {
+      if(PanelLayer::currentPage == Menu::Daily || PanelLayer::currentPage == Menu::Me) 
+         App::QueueLayerPop(this);
+   }
 }
+
+void CoinLayer::OnUpdate() { Storage::load(); }
 
 void CoinLayer::OnRender() {
    std::string coins = Storage::formatCoins();
