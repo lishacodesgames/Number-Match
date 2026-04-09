@@ -1,5 +1,6 @@
 // ---- STL ----
 #include <unordered_map>
+#include <string>
 #include <vector>
 #include <array>
 
@@ -8,6 +9,7 @@
 
 // ---- LOGGING ----
 #include <iostream>
+#include <iomanip>
 #include <cstdio>
 
 // ---- RAYLIB ----
@@ -18,6 +20,7 @@
 #include <typeinfo>
 #include <stdarg.h>
 #include <utility>
+#include <sstream>
 
 // ---- THREADS, TIME, RANDOM ----
 #include <random>

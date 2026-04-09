@@ -5,6 +5,7 @@
 #include "DailyLayer.h"
 #include "GameLayer.h"
 #include "MeLayer.h"
+#include "Storage.h"
 #include "App.h"
 
 static constexpr Vector2 buttonBounds = {350, 35};
@@ -75,11 +76,16 @@ void HomeLayer::OnRender() {
    DrawTextEx(App::font_black, gameName, titleOrigin, 60, 3.0f, DARKBLUE);
 
    // score
+   Storage::load();
+      
    DrawTextEx(
       App::font_semibold, "All-Time Best Score", {titleOrigin.x+90, titleOrigin.y+58}, 23, 1.5f, {125, 125, 125, 255}
    );
    DrawTexture(m_trophyTexture, titleOrigin.x+105, titleOrigin.y+84, WHITE);
-   DrawTextEx(App::font_semibold, "32,582", {titleOrigin.x+140, titleOrigin.y+78}, 40, 2.0f, {60, 60, 60, 255});
+   DrawTextEx(
+      App::font_semibold, Storage::getBestScore().c_str(), 
+      {titleOrigin.x + 140, titleOrigin.y + 78}, 40, 2.0f, {60, 60, 60, 255}
+   );
    
    // game buttons
    m_newButton.Draw();
