@@ -59,6 +59,8 @@ void HomeLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+
+   Storage::load();
 }
 
 Vector2 operator+(const Vector2& vec, const float& fl) { return {vec.x+fl, vec.y+fl}; }
@@ -76,8 +78,6 @@ void HomeLayer::OnRender() {
    DrawTextEx(App::font_black, gameName, titleOrigin, 60, 3.0f, DARKBLUE);
 
    // score
-   Storage::load();
-      
    DrawTextEx(
       App::font_semibold, "All-Time Best Score", {titleOrigin.x+90, titleOrigin.y+58}, 23, 1.5f, {125, 125, 125, 255}
    );
