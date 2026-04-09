@@ -16,7 +16,7 @@ App::App(const std::string& name) {
 
    TraceLog(LISHA_SAYS, "Loading App...");
 
-   InitWindow(800, 600, name.c_str());
+   InitWindow(800, 650, name.c_str());
    SetTargetFPS(60);
 
    font_semibold = LoadFontEx("assets/fonts/RedHatDisplay-SemiBold.ttf", 40, NULL, 0);
