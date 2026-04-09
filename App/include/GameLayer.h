@@ -11,7 +11,7 @@ enum class GridCellState { Rest, Hovered, Focused };
 struct GridCell {
    GridCell(int value = 0) : value(value), cell({0, 0, 0, 0}) {}
 
-   static constexpr float size = 45.0f;
+   static float size;
    static constexpr Color restColor = RAYWHITE;
    static Color hoverColor, focusedColor;
 
@@ -31,7 +31,7 @@ public:
    void OnRender() override;
 private:
    // --- grid ---
-   Rectangle m_gridBox;
+   Rectangle m_gridBox{};
 
    std::vector<std::array<GridCell, 9>> m_grid; /// Vector of 9-length arrays 
    std::pair<GridCell*, GridCell*> m_focusedCells;
@@ -49,6 +49,10 @@ private:
    GUI::Button m_hintButton;
 
    // --- helpers ---
+   void setButtonsOrigin();
+   void setGridBox();
+   void setGridCells();
+
    GUI::Button* findHoveredButton(); /// @return any of the 4 member buttons OR nullptr
    GridCell* findHoveredGridCell();
    inline bool isFocused(GridCell* cell) const {

@@ -11,28 +11,18 @@
 
 static constexpr Vector2 helperPadding = {8, 8};
 
+float GridCell::size = 45.0f; 
 Color GridCell::focusedColor = ColorAlpha(BLUE, 0.5f);
 Color GridCell::hoverColor = ColorAlpha(SKYBLUE, 0.5f);
 
 GameLayer::GameLayer() : Core::Layer("Game Layer"),
-      m_gridBox({(float)(GetScreenWidth())/2 - 202.5f, 130, 405, 405}),
       m_grid(9, {0, 0, 0, 0, 0, 0, 0, 0, 0}), // 9 rows of all blank cells
       m_focusedCells{nullptr, nullptr},
       m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
-      m_settingsButton(
-         {static_cast<float>(GetScreenWidth()) - 45, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}
-      ),
-      m_plusButton(
-         {static_cast<float>(GetScreenWidth()) / 2 - 49, static_cast<float>(GetScreenHeight()) - 60}, // origin
-         helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}
-      ),
-      m_hintButton(
-         {static_cast<float>(GetScreenWidth()) / 2 + 14, static_cast<float>(GetScreenHeight()) - 60}, // origin
-         helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}
-      )
-{      
-   initGrid();
-
+      m_settingsButton({0, 0}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
+      m_plusButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}),
+      m_hintButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8})
+{
    m_trophyTexture = LoadTexture("assets/icons/game/trophy_16x16.png");
    m_tickTexture = LoadTexture("assets/icons/game/tick_16x16.png");
 
@@ -40,6 +30,10 @@ GameLayer::GameLayer() : Core::Layer("Game Layer"),
    m_settingsButton.setIcon("assets/icons/game/settings_30x30.png");
    m_plusButton.setIcon("assets/icons/game/plus_35x35.png");
    m_hintButton.setIcon("assets/icons/game/hint_35x35.png");
+
+   setButtonsOrigin();
+   setGridBox();
+   initGrid();
 }
 
 void GameLayer::OnAttach() {
@@ -153,6 +147,12 @@ void GameLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 
    Storage::load();
+
+   if(IsWindowResized()) {
+      setButtonsOrigin();
+      setGridBox();
+      setGridCells();
+   }
 }
 
 void GameLayer::OnRender() {
@@ -253,14 +253,39 @@ void GameLayer::initGrid() {
          else
             m_grid[row][col].value = 0;
 
-         GridCell& cell = m_grid[row][col];
-         cell.cell = {m_gridBox.x + col * GridCell::size, m_gridBox.y + row * GridCell::size, GridCell::size, GridCell::size};
-         cell.state = GridCellState::Rest;
+         m_grid[row][col].state = GridCellState::Rest;
       }
    }
+   setGridCells();
 }
 
 #pragma region Helpers
+
+void GameLayer::setButtonsOrigin() {
+   m_settingsButton.setOrigin(GetScreenWidth() - 45, 15);
+   
+   int gameButtonsY = GetScreenHeight() - 60;
+   m_plusButton.setOrigin(GetScreenWidth() / 2 - m_plusButton.getSize().x - 10, gameButtonsY);
+   m_hintButton.setOrigin(GetScreenWidth() / 2 + 10, gameButtonsY);
+}
+
+void GameLayer::setGridBox() {
+   GridCell::size = std::min(GetScreenWidth()*0.6f / 9, 50.0f); // since there are 9 cells in a row
+
+   Vector2 boxOrigin = {((float)GetScreenWidth() - GridCell::size * 9) / 2, 130};
+   m_gridBox = {boxOrigin.x, boxOrigin.y, GridCell::size * 9, GridCell::size * 9};
+}
+
+void GameLayer::setGridCells() {
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         m_grid[row][col].cell = {
+            m_gridBox.x + col * GridCell::size, m_gridBox.y + row * GridCell::size,
+            GridCell::size, GridCell::size
+         };
+      }
+   }
+}
 
 GUI::Button* GameLayer::findHoveredButton() {
    if (m_gobackButton.isHovered)
