@@ -16,7 +16,7 @@ public:
    void OnUpdate() override;
    void OnRender() override;
    
-   static constexpr float HEIGHT = 50.0f;
+   static constexpr int HEIGHT = 50;
    static constexpr float BUTTON_SPACING = 192.0f;
 
    GUI::Button homeButton;
@@ -31,4 +31,5 @@ public:
    GUI::Button* findFocusedButton();
 
    void resetAllFocus();
+   void setButtonsOrigin();
 };

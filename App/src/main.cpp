@@ -2,9 +2,9 @@
 #include "Core/Logging.h"
 
 #if _DEBUGGING
-   #define LOG_LEVEL LOG_WARNING
+   #define LOG_LEVEL LOG_INFO
 #else
-   #define LOG_LEVEL LISHA_SAYS
+   #define LOG_LEVEL LOG_WARNING
 #endif
 
 int main() {

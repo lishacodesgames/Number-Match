@@ -1,6 +1,7 @@
 #include <pch/Precompiled.h>
 #include "PanelLayer.h"
 
+#include "Core/Logging.h"
 #include "DailyLayer.h"
 #include "Core/Event.h"
 #include "GUI/Button.h"
@@ -38,9 +39,7 @@ PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
    homeButton.setFocus(true, BLANK, BLUE);
    currentPage = Menu::Home;
 
-   homeButton.setOrigin(buttonsOrigin());
-   dailyButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING, 0});
-   meButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING * 2.7f, 0});
+   setButtonsOrigin();
 
    homeButton.setIcon("assets/icons/menus/home_20x20.png");
    dailyButton.setIcon("assets/icons/menus/daily_20x20.png");
@@ -92,6 +91,11 @@ void PanelLayer::OnUpdate() {
       hoveredButton->contentColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } // else case will be handled by below layers, since this one is an overlay
+
+   if(IsWindowResized()) {
+      setButtonsOrigin();
+      TraceLog(LOG_INFO, "Window Resized: %d, %d", GetScreenWidth(), GetScreenHeight());
+   }
 }
 
 void PanelLayer::OnRender() {
@@ -145,4 +149,10 @@ void PanelLayer::resetAllFocus() {
    homeButton.setFocus(false, BLANK, GRAY);
    dailyButton.setFocus(false, BLANK, GRAY);
    meButton.setFocus(false, BLANK, GRAY);
+}
+
+void PanelLayer::setButtonsOrigin() {
+   homeButton.setOrigin(buttonsOrigin());
+   dailyButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING, 0});
+   meButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING * 2.7f, 0});
 }

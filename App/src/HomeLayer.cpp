@@ -64,6 +64,9 @@ void HomeLayer::OnUpdate() {
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 
+   if(IsWindowResized())
+      setButtonsOrigin();
+
    Storage::load();
 }
 
@@ -103,4 +106,9 @@ GUI::Button* HomeLayer::findHoveredButton() {
       return &m_continueButton;
    else
       return nullptr;
+}
+
+void HomeLayer::setButtonsOrigin() {
+   m_newButton.setOrigin(buttonOrigin());
+   m_continueButton.setOrigin({buttonOrigin().x, buttonOrigin().y-buttonBounds.y-10});
 }

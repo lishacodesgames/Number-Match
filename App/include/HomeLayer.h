@@ -20,4 +20,5 @@ private:
    GUI::Button m_continueButton;
 
    GUI::Button* findHoveredButton();
+   void setButtonsOrigin();
 };
