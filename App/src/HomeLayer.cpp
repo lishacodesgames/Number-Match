@@ -83,7 +83,7 @@ void HomeLayer::OnRender() {
    );
    DrawTexture(m_trophyTexture, titleOrigin.x+105, titleOrigin.y+84, WHITE);
    DrawTextEx(
-      App::font_semibold, Storage::getBestScore().c_str(), 
+      App::font_semibold, Storage::formatBestScore().c_str(), 
       {titleOrigin.x + 140, titleOrigin.y + 78}, 40, 2.0f, {60, 60, 60, 255}
    );
    
