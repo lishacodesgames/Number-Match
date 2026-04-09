@@ -2,9 +2,9 @@
 #include "Core/Logging.h"
 
 #if _DEBUGGING
-   #define LOG_LEVEL LOG_DEBUG
+   #define LOG_LEVEL LOG_INFO
 #else
-   #define LOG_LEVEL 10 // out of range, no log will print.
+   #define LOG_LEVEL LISHA_SAYS // out of range, no log will print.
 #endif
 
 int main() {
