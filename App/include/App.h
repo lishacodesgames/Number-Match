@@ -7,6 +7,7 @@
 #include "Core/Layer.h"
 
 constexpr Color LIGHTERGRAY = {230, 230, 230, 255}; /// A more aesthetically pleasing lightgray
+constexpr Color MEDIUMGRAY = {180, 180, 180, 255}; /// Between raylib's LIGHTGRAY and GRAY
 
 /// Static class that manages the game loop and all game states (menu, gameplay, pause, etc.) 
 class App {

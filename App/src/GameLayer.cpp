@@ -6,6 +6,7 @@
 #include "Core/Layer.h"
 #include "PanelLayer.h"
 #include "HomeLayer.h"
+#include "Storage.h"
 #include "App.h"
 
 static constexpr Vector2 helperPadding = {8, 8};
@@ -30,12 +31,15 @@ GameLayer::GameLayer() : Core::Layer("Game Layer"),
          helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}
       )
 {      
+   initGrid();
+
+   m_trophyTexture = LoadTexture("assets/icons/game/trophy_16x16.png");
+   m_tickTexture = LoadTexture("assets/icons/game/tick_16x16.png");
+
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
    m_settingsButton.setIcon("assets/icons/game/settings_30x30.png");
    m_plusButton.setIcon("assets/icons/game/plus_35x35.png");
    m_hintButton.setIcon("assets/icons/game/hint_35x35.png");
-
-   initGrid();
 }
 
 void GameLayer::OnAttach() {
@@ -147,6 +151,8 @@ void GameLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+
+   Storage::load();
 }
 
 void GameLayer::OnRender() {
@@ -187,6 +193,54 @@ void GameLayer::OnRender() {
 
    // Box
    DrawRectangleLinesEx(m_gridBox, 3, ColorAlpha(DARKGRAY, 0.8f));
+
+   // Game info
+   int tagFontSize = 5;
+   float tagY = m_gridBox.y - 30;
+
+   int infoFontSize = 17;
+   float infoFontSpacing = 0.98f;
+   float infoY = m_gridBox.y - 20; 
+
+   DrawText("Stage", m_gridBox.x, tagY, tagFontSize, GRAY);
+   DrawTextEx(App::font_semibold, std::to_string(Storage::stage).c_str(), {m_gridBox.x + 5, infoY}, infoFontSize + 3, infoFontSpacing, DARKGRAY);
+
+   int scoreTagWidth = MeasureText("Best Score", tagFontSize);
+   int scoreTagX = m_gridBox.x + m_gridBox.width - scoreTagWidth;
+   int scoreValueWidth = MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), infoFontSize, infoFontSpacing).x;
+   int scoreInfoX = m_gridBox.x + m_gridBox.width - scoreValueWidth - m_trophyTexture.width - 2;
+
+   DrawText("Best Score", scoreTagX, tagY, tagFontSize, GRAY);
+   DrawTexture(m_trophyTexture, scoreInfoX, infoY, DARKGRAY);
+   DrawTextEx(
+      App::font_semibold, Storage::formatBestScore().c_str(),
+      {(float)scoreInfoX + m_trophyTexture.width + 2, infoY},
+      infoFontSize, infoFontSpacing, DARKGRAY
+   );
+
+   int numbersTagWidth = MeasureText("Numbers Cleared", tagFontSize);
+   int numbersTagX = m_gridBox.x + m_gridBox.width/2 - numbersTagWidth/2;
+   // int numbersWidth = MeasureTextEx(App::font_semibold, "1 2 3 4 5 6 7 8 9", infoFontSize, infoFontSpacing).x;
+   // int numbersX = m_gridBox.x + m_gridBox.width/2 - numbersWidth/2;
+
+   DrawText("Numbers Cleared", numbersTagX, tagY, tagFontSize, GRAY);
+
+   int numWidth;
+   float numX;
+   for(uint32_t i = 0; i < Storage::numbersCleared.size(); i++) {
+      num = std::to_string(i + 1);
+      numX = m_gridBox.x + m_gridBox.width/2 - 60 + i * 15;
+
+      if(Storage::numbersCleared.at(i)) {
+         numWidth = m_tickTexture.width; // if number is cleared, we draw a tick mark at its position
+         numX -= numWidth/2; // center the tick mark at the number's position
+         DrawTexture(m_tickTexture, numX, infoY, GRAY);
+      } else {
+         numWidth = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, infoFontSpacing).x;
+         numX -= numWidth/2; // center the number in its position
+         DrawTextEx(App::font_semibold, num.c_str(), {numX, infoY}, infoFontSize, infoFontSpacing, DARKGRAY);
+      }
+   }
 }
 
 void GameLayer::initGrid() {

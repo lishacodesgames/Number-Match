@@ -1,4 +1,5 @@
 #pragma once
+#include <raylib.h>
 #include <utility>
 #include <vector>
 #include <array>
@@ -36,6 +37,10 @@ private:
    std::pair<GridCell*, GridCell*> m_focusedCells;
 
    void initGrid();
+
+   // --- game info ---
+   Texture m_trophyTexture = {0};
+   Texture m_tickTexture = {0};
 
    // --- buttons ---
    GUI::Button m_gobackButton;
