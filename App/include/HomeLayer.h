@@ -13,12 +13,16 @@ public:
    void OnRender() override;
 
 private:
-   Texture m_backgroundTexture = {0};   
+   Image m_backgroundImage = {0};
+   Texture m_backgroundTexture = {0};
    Texture m_trophyTexture = {0};
 
    GUI::Button m_newButton;
    GUI::Button m_continueButton;
-
    GUI::Button* findHoveredButton();
+
+   void resizeBackground();
    void setButtonsOrigin();
 };
+
+inline Vector2 operator+(const Vector2& vec, const float& fl) { return {vec.x+fl, vec.y+fl}; }

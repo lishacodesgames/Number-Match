@@ -12,9 +12,8 @@ static constexpr float BOUNDS_TARGETY = 100;
 
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
       m_bounds({
-         200, static_cast<float>(GetScreenHeight()), // to be animated to target height
-         static_cast<float>(GetScreenWidth()) / 2, 
-         static_cast<float>(GetScreenHeight()) / 2 + 100
+         (float)(GetScreenWidth()) / 4, (float)(GetScreenHeight()), // to be animated to target height
+         (float)(GetScreenWidth()) / 2, (float)(GetScreenHeight()) / 2 + 100
       }),
       m_doneButton(
          {m_bounds.x + m_bounds.width - 55, m_bounds.y + 7}, // origin 

@@ -26,7 +26,9 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
          "Continue Game", BLUE, WHITE, 25, {0.8f, 8}, App::font_semibold
       )
 {
-   m_backgroundTexture = LoadTexture("assets/backgrounds/home_background_800x1417.png");
+   m_backgroundImage = LoadImage("assets/backgrounds/home_background_800x1417.png"); 
+   resizeBackground();
+   m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
    m_trophyTexture = LoadTexture("assets/icons/menus/trophy_30x30.png");
 
    if(!App::GetLayerByName("Coin Layer"))
@@ -56,8 +58,10 @@ void HomeLayer::OnEvent(Core::Event &e) {
 }
 
 void HomeLayer::OnUpdate() {
-   if(IsWindowResized())
+   if(IsWindowResized()) {
+      resizeBackground();
       setButtonsOrigin();
+   }
 
    m_newButton.Update();
    m_continueButton.Update();
@@ -69,8 +73,6 @@ void HomeLayer::OnUpdate() {
 
    Storage::load();
 }
-
-Vector2 operator+(const Vector2& vec, const float& fl) { return {vec.x+fl, vec.y+fl}; }
 
 void HomeLayer::OnRender() {
    DrawTexture(m_backgroundTexture, 0, 0, {255, 255, 255, 30}); // background
@@ -108,7 +110,19 @@ GUI::Button* HomeLayer::findHoveredButton() {
       return nullptr;
 }
 
+void HomeLayer::resizeBackground() {
+   float aspectRatio = m_backgroundImage.width / (float)m_backgroundImage.height;
+
+   if(GetScreenWidth() > m_backgroundImage.width)
+      ImageResize(&m_backgroundImage, GetScreenWidth(), (int)(GetScreenWidth() / aspectRatio));
+   else if(GetScreenHeight() > m_backgroundImage.height)
+      ImageResize(&m_backgroundImage, (int)(GetScreenHeight() * aspectRatio), GetScreenHeight());
+
+   UnloadTexture(m_backgroundTexture);
+   m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
+}
+
 void HomeLayer::setButtonsOrigin() {
    m_newButton.setOrigin(buttonOrigin());
-   m_continueButton.setOrigin({buttonOrigin().x, buttonOrigin().y-buttonBounds.y-10});
+   m_continueButton.setOrigin({buttonOrigin().x, buttonOrigin().y - buttonBounds.y - 10});
 }
