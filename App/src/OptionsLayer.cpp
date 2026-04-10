@@ -1,9 +1,6 @@
 #include <pch/Precompiled.h>
 #include "OptionsLayer.h"
 
-#include <algorithm>
-#include <raylib.h>
-#include <array>
 #include "HomeLayer.h"
 #include "Core/Event.h"
 #include "App.h"
@@ -84,6 +81,11 @@ void OptionsLayer::OnEvent(Core::Event& e) {
 }
 
 void OptionsLayer::OnUpdate() {
+   if(IsWindowResized()) {
+      setPanel();
+      setBannerPositions(m_bounds.y);
+   }
+
    if(m_bounds.y > BOUNDS_TARGETY) {
       double dt = std::min(GetFrameTime(), 0.033f); // for a delay of atleast 33ms
       double speed = 160;
@@ -121,8 +123,17 @@ void OptionsLayer::OnRender() {
 
 #pragma region Helpers
 
+void OptionsLayer::setPanel() {
+   m_bounds = {
+      (float)GetScreenWidth() * 0.25f, BOUNDS_TARGETY,
+      (float)GetScreenWidth() * 0.5f, (float)GetScreenHeight() * 0.5f + 100
+   };
+
+   m_doneButton.setOrigin({m_bounds.x + m_bounds.width - 55, m_bounds.y + 7});
+}
+
 void OptionsLayer::setBannerPositions(float boundsY) {
-   float originX = m_bounds.x + m_bounds.width * 0.16f/2; // half of 16%
+   float originX = m_bounds.x + m_bounds.width * 0.16f / 2; // half of 16%
    float originY = boundsY + PANEL_HEIGHT * 1.5f;
    Vector2 size = {m_bounds.width * 0.85f, BANNER_HEIGHT}; // 85% of popup
 
@@ -132,12 +143,12 @@ void OptionsLayer::setBannerPositions(float boundsY) {
 
    m_banners[HOW_TO] = {originX, originY + spacing, size.x, size.y};
    m_banners[HELP] = {originX, originY + spacing + BANNER_HEIGHT, size.x, size.y};
-   m_banners[ABOUT] = {originX, originY + spacing + BANNER_HEIGHT*2, size.x, size.y};
-   m_banners[PRIVACY] = {originX, originY + spacing + BANNER_HEIGHT*3, size.x, size.y};
-   m_banners[PREFS] = {originX, originY + spacing + BANNER_HEIGHT*4, size.x, size.y};
+   m_banners[ABOUT] = {originX, originY + spacing + BANNER_HEIGHT * 2, size.x, size.y};
+   m_banners[PRIVACY] = {originX, originY + spacing + BANNER_HEIGHT * 3, size.x, size.y};
+   m_banners[PREFS] = {originX, originY + spacing + BANNER_HEIGHT * 4, size.x, size.y};
 
-   m_banners[MATH] = {originX, originY + spacing*2 + BANNER_HEIGHT*4, size.x, size.y};
-   m_banners[NO_ADS] = {originX, originY + spacing*3 + BANNER_HEIGHT*4, size.x, size.y};
+   m_banners[MATH] = {originX, originY + spacing * 2 + BANNER_HEIGHT * 4, size.x, size.y};
+   m_banners[NO_ADS] = {originX, originY + spacing * 3 + BANNER_HEIGHT * 4, size.x, size.y};
 }
 
 void OptionsLayer::renderTopPanel() {

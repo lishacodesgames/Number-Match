@@ -78,6 +78,11 @@ void PanelLayer::OnEvent(Core::Event& e) {
 }
 
 void PanelLayer::OnUpdate() {
+   if(IsWindowResized()) {
+      setButtonsOrigin();
+      TraceLog(LOG_INFO, "Window Resized: %d, %d", GetScreenWidth(), GetScreenHeight());
+   }
+
    homeButton.Update();
    dailyButton.Update();
    meButton.Update();
@@ -91,11 +96,6 @@ void PanelLayer::OnUpdate() {
       hoveredButton->contentColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } // else case will be handled by below layers, since this one is an overlay
-
-   if(IsWindowResized()) {
-      setButtonsOrigin();
-      TraceLog(LOG_INFO, "Window Resized: %d, %d", GetScreenWidth(), GetScreenHeight());
-   }
 }
 
 void PanelLayer::OnRender() {

@@ -30,7 +30,9 @@ private:
    enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, PRIVACY, PREFS, MATH, NO_ADS}; 
 
    // helpers
+   void setPanel();
    void setBannerPositions(float boundsY);
+
    void renderTopPanel();
    void renderBlankBanners();
    void renderBannerContent();

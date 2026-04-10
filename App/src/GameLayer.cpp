@@ -41,6 +41,14 @@ void GameLayer::OnAttach() {
    Core::Layer::OnAttach();   
 }
 
+void GameLayer::OnResume() {
+   setButtonsOrigin();
+   setGridBox();
+   setGridCells();
+   
+   Layer::OnResume();
+}
+
 void GameLayer::OnEvent(Core::Event& e) {
    if(isSuspended && !eventSuspended)
       return;
@@ -121,6 +129,12 @@ void GameLayer::OnEvent(Core::Event& e) {
 }
 
 void GameLayer::OnUpdate() {
+   if(IsWindowResized()) {
+      setButtonsOrigin();
+      setGridBox();
+      setGridCells();
+   }
+
    if(isSuspended && !updateSuspended)
       return;
    
@@ -147,12 +161,6 @@ void GameLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 
    Storage::load();
-
-   if(IsWindowResized()) {
-      setButtonsOrigin();
-      setGridBox();
-      setGridCells();
-   }
 }
 
 void GameLayer::OnRender() {

@@ -56,6 +56,9 @@ void HomeLayer::OnEvent(Core::Event &e) {
 }
 
 void HomeLayer::OnUpdate() {
+   if(IsWindowResized())
+      setButtonsOrigin();
+
    m_newButton.Update();
    m_continueButton.Update();
 
@@ -63,9 +66,6 @@ void HomeLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-
-   if(IsWindowResized())
-      setButtonsOrigin();
 
    Storage::load();
 }

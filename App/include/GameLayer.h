@@ -26,6 +26,7 @@ public:
    ~GameLayer() = default;
 
    void OnAttach() override;
+   void OnResume() override;
    void OnUpdate() override;
    void OnEvent(Core::Event& e) override;
    void OnRender() override;
