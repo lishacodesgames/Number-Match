@@ -44,14 +44,18 @@ void HomeLayer::OnEvent(Core::Event &e) {
          return;
       }
       
-      PanelLayer::PopInstance();    
+      PanelLayer::PopInstance();
       App::QueueLayerPop(this);
 
       Core::Layer* game = App::GetLayerByName("Game Layer");
-      if(activeButton == &m_continueButton && game) // continue pressed & previous game exists
-         game->OnResume();
+
+      if(activeButton == &m_continueButton) // continue pressed & previous game exists
+         if(game)
+            game->OnResume();
+         else
+            App::QueueLayerPush(new GameLayer(false));
       else // new pressed or continue pressed but there was no previous game (hence suspended is false) 
-         App::QueueLayerPush(new GameLayer());
+         App::QueueLayerPush(new GameLayer(true));
 
       e.Handled = true;
    }

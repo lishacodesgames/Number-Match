@@ -22,7 +22,7 @@ struct GridCell {
 
 class GameLayer : public Core::Layer {
 public:
-   GameLayer();
+   GameLayer(bool reset); /// @param reset : if true, resets the storage saves, otherwise loads game layer with existing info.
    ~GameLayer() = default;
 
    void OnAttach() override;

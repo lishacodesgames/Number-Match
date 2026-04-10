@@ -15,7 +15,7 @@ float GridCell::size = 45.0f;
 Color GridCell::focusedColor = ColorAlpha(BLUE, 0.5f);
 Color GridCell::hoverColor = ColorAlpha(SKYBLUE, 0.5f);
 
-GameLayer::GameLayer() : Core::Layer("Game Layer"),
+GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
       m_grid(9, {0, 0, 0, 0, 0, 0, 0, 0, 0}), // 9 rows of all blank cells
       m_focusedCells{nullptr, nullptr},
       m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
@@ -34,6 +34,9 @@ GameLayer::GameLayer() : Core::Layer("Game Layer"),
    setButtonsOrigin();
    setGridBox();
    initGrid();
+
+   if(reset)
+      Storage::save(1, {0, 0, 0, 0, 0, 0, 0, 0, 0}, 0); // reset storage to default values
 }
 
 void GameLayer::OnAttach() {

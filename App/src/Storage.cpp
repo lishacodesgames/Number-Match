@@ -30,9 +30,10 @@ void Storage::load() {
    std::ifstream file("assets/storage/storage.txt", std::ios::in);
    if(!file.is_open()) return; // if file doesn't exist, just return with default values
 
-   file >> coins >> bestScore >> stage;
+   file >> stage;
    for(int i = 0; i < 9; i++)
       file >> numbersCleared[i];
+   file >> coins >> bestScore >> currentScore;
    
    file.close();
 }
@@ -41,9 +42,18 @@ void Storage::save() {
    std::ofstream file("assets/storage/storage.txt", std::ios::out | std::ios::trunc); // overwrite file with new data
    if(!file.is_open()) return;
 
-   file << coins << "\n" << bestScore << "\n" << stage << "\n";
+   file << stage << "\n";
    for(int i = 0; i < 9; i++)
-      file << numbersCleared[i] << (i % 3 == 2 ? "\n" : " "); // new line after every 3 numbers for readability
+      file << numbersCleared[i] << (i % 3 == 2 ? "\n" : " "); // new line after every 3 numbers for readability   
+   file << coins << "\n" << bestScore << "\n" << currentScore << "\n";
 
    file.close();
+}
+
+void Storage::save(uint32_t stage, std::array<bool, 9> numbersCleared, uint32_t currentScore) {
+   Storage::stage = stage;
+   Storage::numbersCleared = numbersCleared;
+   Storage::currentScore = currentScore;
+
+   save(); // call default save to write updated storage info to file
 }
