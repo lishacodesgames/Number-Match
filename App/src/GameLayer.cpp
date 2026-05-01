@@ -92,13 +92,19 @@ void GameLayer::OnEvent(Core::Event& e) {
                m_focusedCells.first->state = GridCellState::Rest;
                m_focusedCells.second->state = GridCellState::Rest;
                m_focusedCells = {activeCell, nullptr};
-            } else { // either 1 or 0 focused cells
+            }
+            else { // either 1 or 0 focused cells
                bool firstFocusedCellIsCompatible = false; 
                if(m_focusedCells.first) {
                   firstFocusedCellIsCompatible = (
-                     *m_focusedCells.first + *activeCell == 10 || 
-                     (m_focusedCells.first->value == activeCell->value && activeCell->value != 0)
-                  ); // cells sum to 10 or are equal but are not empty.
+                     // cells sum to 10 or are equal but are not empty.
+                     ( *m_focusedCells.first + *activeCell == 10 || 
+                     (m_focusedCells.first->value == activeCell->value && activeCell->value != 0) )
+                     &&
+                     // cells are in the same row or column
+                     ( getCellPos(m_focusedCells.first).first == getCellPos(activeCell).first || 
+                     getCellPos(m_focusedCells.first).second == getCellPos(activeCell).second )
+                  );
                }
 
                if(firstFocusedCellIsCompatible)
@@ -319,6 +325,17 @@ GridCell* GameLayer::findHoveredGridCell() {
       }
    }
    return nullptr;
+}
+
+std::pair<int, int> GameLayer::getCellPos(GridCell* cell) const {
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         if(&m_grid[row][col] == cell)
+            return {row, col};
+      }
+   }
+
+   return {-1, -1}; // default case (should not happen)
 }
 
 #pragma endregion

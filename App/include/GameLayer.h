@@ -55,10 +55,10 @@ private:
    void setGridCells();
 
    GUI::Button* findHoveredButton(); /// @return any of the 4 member buttons OR nullptr
+
    GridCell* findHoveredGridCell();
-   inline bool isFocused(GridCell* cell) const {
-      return (cell == m_focusedCells.first || cell == m_focusedCells.second);
-   }
+   std::pair<int, int> getCellPos(GridCell* cell) const; /// @return {row, col} of cell in grid
+   inline bool isFocused(GridCell* cell) const { return (cell == m_focusedCells.first || cell == m_focusedCells.second); }
 };
 
 /// adding two gridcells adds their value
