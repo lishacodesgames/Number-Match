@@ -12,8 +12,9 @@
 static constexpr Vector2 helperPadding = {8, 8};
 
 float GridCell::size = 45.0f; 
-Color GridCell::focusedColor = ColorAlpha(BLUE, 0.5f);
 Color GridCell::hoverColor = ColorAlpha(SKYBLUE, 0.5f);
+Color GridCell::focusedColor = ColorAlpha(BLUE, 0.5f);
+Color GridCell::matchedColor = ColorAlpha(LIGHTGRAY, 0.5f);
 
 GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
       m_grid(9, {0, 0, 0, 0, 0, 0, 0, 0, 0}), // 9 rows of all blank cells
@@ -152,6 +153,11 @@ void GameLayer::OnUpdate() {
    m_plusButton.Update();
    m_hintButton.Update();
 
+   if(m_focusedCells.second) { // two cells are focused
+      m_focusedCells.first->state = GridCellState::Matched;
+      m_focusedCells.second->state = GridCellState::Matched;
+   }
+
    static GridCell* previousCell = nullptr; // to reset color back to restColor
    GridCell* hoveredCell = findHoveredGridCell();
 
@@ -195,6 +201,8 @@ void GameLayer::OnRender() {
             bgColor = GridCell::focusedColor;
          else if(cell.state == GridCellState::Hovered)
             bgColor = GridCell::hoverColor;
+         else if(cell.state == GridCellState::Matched)
+            bgColor = GridCell::matchedColor;
          else
             bgColor = GridCell::restColor;
 

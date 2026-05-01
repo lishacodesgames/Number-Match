@@ -6,14 +6,14 @@
 #include "Core/Layer.h"
 #include "GUI/Button.h"
 
-enum class GridCellState { Rest, Hovered, Focused };
+enum class GridCellState { Rest, Hovered, Focused, Matched };
 
 struct GridCell {
    GridCell(int value = 0) : value(value), cell({0, 0, 0, 0}) {}
 
    static float size;
    static constexpr Color restColor = RAYWHITE;
-   static Color hoverColor, focusedColor;
+   static Color hoverColor, focusedColor, matchedColor;
 
    int value; /// 0 for empty, 1-9 otherwise
    Rectangle cell;
