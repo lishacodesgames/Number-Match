@@ -9,6 +9,8 @@
 #include "Storage.h"
 #include "App.h"
 
+/// @todo make areCellsCompatible(GridCell*, GridCel*) function cuz things r gonna get complicated
+
 static constexpr Vector2 helperPadding = {8, 8};
 
 float GridCell::size = 45.0f; 
@@ -95,20 +97,24 @@ void GameLayer::OnEvent(Core::Event& e) {
                m_focusedCells = {activeCell, nullptr};
             }
             else { // either 1 or 0 focused cells
-               bool firstFocusedCellIsCompatible = false; 
+               bool isFirstFocusedCellCompatible = false; 
                if(m_focusedCells.first) {
-                  firstFocusedCellIsCompatible = (
-                     // cells sum to 10 or are equal but are not empty.
-                     ( *m_focusedCells.first + *activeCell == 10 || 
-                     (m_focusedCells.first->value == activeCell->value && activeCell->value != 0) )
-                     &&
-                     // cells are in the same row or column
-                     ( getCellPos(m_focusedCells.first).first == getCellPos(activeCell).first || 
-                     getCellPos(m_focusedCells.first).second == getCellPos(activeCell).second )
+                  bool areValuesCompatible = (// cells sum to 10 or are equal but are not empty.
+                     *m_focusedCells.first + *activeCell == 10 || 
+                     (m_focusedCells.first->value == activeCell->value && activeCell->value != 0)
                   );
+
+                  if(areValuesCompatible) {
+                     auto firstPos = getCellPos(m_focusedCells.first);
+                     auto activePos = getCellPos(activeCell);
+                     isFirstFocusedCellCompatible = (
+                        firstPos.first == activePos.first || // same row
+                        firstPos.second == activePos.second // same column
+                     );
+                  } // else not compatible, fall back to default false value
                }
 
-               if(firstFocusedCellIsCompatible)
+               if(isFirstFocusedCellCompatible)
                   m_focusedCells.second = activeCell;
                else { // reset the first focused cell and set the new one as the only focused cell
                   if(m_focusedCells.first)
