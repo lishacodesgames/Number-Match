@@ -40,6 +40,8 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
 
    if(reset)
       Storage::save(1, {0, 0, 0, 0, 0, 0, 0, 0, 0}, 0); // reset storage to default values
+   else
+      Storage::load();
 }
 
 void GameLayer::OnAttach() {
@@ -51,6 +53,7 @@ void GameLayer::OnResume() {
    setButtonsOrigin();
    setGridBox();
    setGridCells();
+   Storage::load();
    
    Layer::OnResume();
 }
@@ -181,7 +184,7 @@ void GameLayer::OnUpdate() {
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 
-   Storage::load();
+   /// @todo add Storage::smth timer so save system loads every 5-10s or smth
 }
 
 void GameLayer::OnRender() {

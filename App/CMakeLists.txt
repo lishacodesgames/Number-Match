@@ -8,7 +8,10 @@ add_executable(${PROJECT_NAME} ${NM_SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Engine)
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME} PRIVATE 
+   ${CMAKE_CURRENT_SOURCE_DIR}/include
+   ${CMAKE_SOURCE_DIR}/lib/nlohmann # json library
+)
 
 # Change debug logging based on preset
 if(_DEBUGGING)

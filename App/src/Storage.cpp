@@ -1,6 +1,9 @@
 #include <pch/Precompiled.h>
 #include "Storage.h"
 
+#include "json.hpp"
+using json = nlohmann::json;
+
 uint32_t Storage::coins = 0;
 uint32_t Storage::bestScore = 0;
 uint32_t Storage::currentScore = 0;
@@ -22,32 +25,38 @@ std::string Storage::format(uint32_t num) {
       return std::to_string(num); // if less than 1000, just return the number as is
 }
 
-std::string Storage::formatCoins() { return format(coins); }
-std::string Storage::formatBestScore() { return format(bestScore); }
-std::string Storage::formatCurrentScore() { return format(currentScore); }
-
 void Storage::load() {
-   std::ifstream file("assets/storage/storage.txt", std::ios::in);
-   if(!file.is_open()) return; // if file doesn't exist, just return with default values
-
-   file >> stage;
-   for(int i = 0; i < 9; i++)
-      file >> numbersCleared[i];
-   file >> coins >> bestScore >> currentScore;
+   std::ifstream save("assets/save.json");
+   if(!save.is_open()) return;
+   json j;
+   try {
+      save >> j;
+   } catch(const std::exception& e) {
+      TraceLog(LOG_ERROR, "Error parsing save file: %s", e.what());
+      return;
+   }
+   save.close();
    
-   file.close();
+   coins = j["coins"].get<uint32_t>();
+   bestScore = j["bestScore"].get<uint32_t>();
+   currentScore = j["currentScore"].get<uint32_t>();
+   stage = j["stage"].get<uint32_t>();
+   numbersCleared = j["numbersCleared"].get<std::array<bool, 9>>();
 }
 
 void Storage::save() { 
-   std::ofstream file("assets/storage/storage.txt", std::ios::out | std::ios::trunc); // overwrite file with new data
-   if(!file.is_open()) return;
+   json j;
 
-   file << stage << "\n";
-   for(int i = 0; i < 9; i++)
-      file << numbersCleared[i] << (i % 3 == 2 ? "\n" : " "); // new line after every 3 numbers for readability   
-   file << coins << "\n" << bestScore << "\n" << currentScore << "\n";
-
-   file.close();
+   j["coins"] = coins;
+   j["bestScore"] = bestScore;
+   j["currentScore"] = currentScore;
+   j["stage"] = stage;
+   j["numbersCleared"] = numbersCleared;
+   
+   std::ofstream save("assets/save.json");
+   if(!save.is_open()) return;
+   save << j.dump(3);
+   save.close();
 }
 
 void Storage::save(uint32_t stage, std::array<bool, 9> numbersCleared, uint32_t currentScore) {

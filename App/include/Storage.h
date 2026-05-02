@@ -9,9 +9,10 @@ struct Storage {
    static uint32_t bestScore;
    static uint32_t currentScore;
 
-   static std::string formatCoins();
-   static std::string formatBestScore();
-   static std::string formatCurrentScore();
+   inline static std::string formatCoins() { return format(coins); }
+   inline static std::string formatBestScore() { return format(bestScore); }
+   inline static std::string formatCurrentScore() { return format(currentScore); }
+
    
    static void load(); /// update score, numbersCleared and stage from file to storage
    static void save(); /// update file with score, numbersCleared and stage from storage
