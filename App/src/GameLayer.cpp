@@ -236,6 +236,7 @@ void GameLayer::OnRender() {
    float infoFontSpacing = 0.98f;
    float infoY = m_gridBox.y - 20; 
 
+   // Stage
    DrawText("Stage", m_gridBox.x, tagY, tagFontSize, GRAY);
    DrawTextEx(App::font_semibold, std::to_string(Storage::stage).c_str(), {m_gridBox.x + 5, infoY}, infoFontSize + 3, infoFontSpacing, DARKGRAY);
 
@@ -244,6 +245,7 @@ void GameLayer::OnRender() {
    int scoreValueWidth = MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), infoFontSize, infoFontSpacing).x;
    int scoreInfoX = m_gridBox.x + m_gridBox.width - scoreValueWidth - m_trophyTexture.width - 2;
 
+   // Best Score
    DrawText("Best Score", scoreTagX, tagY, tagFontSize, GRAY);
    DrawTexture(m_trophyTexture, scoreInfoX, infoY, DARKGRAY);
    DrawTextEx(
@@ -252,6 +254,7 @@ void GameLayer::OnRender() {
       infoFontSize, infoFontSpacing, DARKGRAY
    );
 
+   // Numbers Cleared
    int numbersTagWidth = MeasureText("Numbers Cleared", tagFontSize);
    int numbersTagX = m_gridBox.x + m_gridBox.width/2 - numbersTagWidth/2;
    // int numbersWidth = MeasureTextEx(App::font_semibold, "1 2 3 4 5 6 7 8 9", infoFontSize, infoFontSpacing).x;
@@ -275,6 +278,14 @@ void GameLayer::OnRender() {
          DrawTextEx(App::font_semibold, num.c_str(), {numX, infoY}, infoFontSize, infoFontSpacing, DARKGRAY);
       }
    }
+
+   // Current Score
+   int currentScoreWidth = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), 40, 1).x;
+   DrawTextEx(
+      App::font_black, Storage::formatCurrentScore().c_str(), 
+      {(float)GetScreenWidth()/2 - currentScoreWidth/2, 58}, 
+      40, 1, DARKERGRAY
+   );
 }
 
 void GameLayer::initGrid() {
