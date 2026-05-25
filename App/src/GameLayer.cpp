@@ -184,7 +184,7 @@ void GameLayer::OnUpdate() {
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 
-   /// @todo add Storage::smth timer so save system loads every 5-10s or smth
+   Storage::hotReload();
 }
 
 void GameLayer::OnRender() {

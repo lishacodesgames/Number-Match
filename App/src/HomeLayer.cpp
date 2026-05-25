@@ -33,6 +33,8 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
 
    if(!App::GetLayerByName("Coin Layer"))
       App::QueueLayerPush(new CoinLayer());
+
+   Storage::load();
 }
 HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 
@@ -74,8 +76,6 @@ void HomeLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-
-   Storage::load();
 }
 
 void HomeLayer::OnRender() {

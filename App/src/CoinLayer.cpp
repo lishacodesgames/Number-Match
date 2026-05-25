@@ -19,8 +19,6 @@ void CoinLayer::OnUpdate() {
    // leads to buggy mess lol
    if(PanelLayer::currentPage == Menu::Daily || PanelLayer::currentPage == Menu::Me) 
       App::QueueLayerPop(this);
-      
-   Storage::load();
 }
 
 void CoinLayer::OnRender() {
