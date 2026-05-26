@@ -6,7 +6,7 @@
 #include "Core/Layer.h"
 #include "GUI/Button.h"
 
-enum class GridCellState { Rest, Hovered, Focused, Matched };
+enum class CellState { Rest, Hovered, Focused, Matched };
 
 struct GridCell {
    GridCell(int value = 0) : value(value), cell({0, 0, 0, 0}) {}
@@ -17,7 +17,11 @@ struct GridCell {
 
    int value; /// 0 for empty, 1-9 otherwise
    Rectangle cell;
-   GridCellState state = GridCellState::Rest;
+
+   inline CellState getState() const { return state; }
+   void setState(CellState newState);
+private:
+   CellState state = CellState::Rest;
 };
 
 class GameLayer : public Core::Layer {

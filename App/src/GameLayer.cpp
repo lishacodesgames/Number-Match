@@ -9,9 +9,8 @@
 #include "Storage.h"
 #include "App.h"
 
-/// @bug Focusing overrides all states
 /// @bug matchability doesn't check if a cell is already matched
-/// @bug Focusing a matched cell then clicking off-grid resets it to Rest
+/// @todo make scoring system into an enum class (diagonal matches > non-adjacent matches > adjacent matches)
 
 static constexpr Vector2 helperPadding = { 8, 8 };
 
@@ -98,25 +97,26 @@ void GameLayer::OnEvent(Core::Event& e) {
       if(activeCell && activeCell != m_focusedCell) {  // new cell was clicked
          if(m_focusedCell) {                           // a cell already focused
             if(areCellsCompatible(getCellPos(m_focusedCell), getCellPos(activeCell))) {
-               m_focusedCell->state = GridCellState::Matched;
-               activeCell->state = GridCellState::Matched;
+               m_focusedCell->setState(CellState::Matched);
+               activeCell->setState(CellState::Matched);
                m_focusedCell = nullptr;
             } else {  // if not compatible, set the new one as the focused cell
-               m_focusedCell->state = GridCellState::Rest;
+               m_focusedCell->setState(CellState::Rest);
                m_focusedCell = activeCell;
-               activeCell->state = GridCellState::Focused;
+               activeCell->setState(CellState::Focused);
             }
          } else {  // no cell focused, so we set the clicked cell as the focused cell
             m_focusedCell = activeCell;
-            activeCell->state = GridCellState::Focused;
+            activeCell->setState(CellState::Focused);
          }
          e.Handled = true;
          return;
       } else if(!activeCell) {
-         // no grid cell was clicked, so we reset the focused cell, since clicking outside of the grid deselects the cells
+         // no grid cell was clicked, so we reset the focused cell
+         // since clicking outside of the grid or clicking a matched cell should deselect the cells
          // but we don't set e.Handled = true, in case the click has to be handled by another layer
          if(m_focusedCell) {
-            m_focusedCell->state = GridCellState::Rest;
+            m_focusedCell->setState(CellState::Rest);
             m_focusedCell = nullptr;
          }
       }
@@ -141,14 +141,14 @@ void GameLayer::OnUpdate() {
    static GridCell* previousCell = nullptr;  // to reset color back to restColor
    GridCell* hoveredCell = findHoveredGridCell();
    auto canOverride = [](GridCell* cell) -> bool {
-      return cell && cell->state != GridCellState::Focused && cell->state != GridCellState::Matched;
+      return cell && cell->getState() != CellState::Focused && cell->getState() != CellState::Matched;
    };  // helper lambda to check if we can override a cell's state (we can't override focused or matched cells)
 
    if(hoveredCell != previousCell) {  // a new cell is hovered
       if(canOverride(hoveredCell))
-         hoveredCell->state = GridCellState::Hovered;
+         hoveredCell->setState(CellState::Hovered);
       if(canOverride(previousCell))
-         previousCell->state = GridCellState::Rest;
+         previousCell->setState(CellState::Rest);
    }
    previousCell = hoveredCell;
 
@@ -179,14 +179,14 @@ void GameLayer::OnRender() {
          num = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
          numSize = MeasureTextEx(App::font_semibold, num.c_str(), 40, 1);
 
-         if(cell.state == GridCellState::Matched) {
+         if(cell.getState() == CellState::Matched) {
             numColor = LIGHTGRAY;
             bgColor = GridCell::matchedColor;
          } else {
             numColor = BLACK;
-            if(cell.state == GridCellState::Focused)
+            if(cell.getState() == CellState::Focused)
                bgColor = GridCell::focusedColor;
-            else if(cell.state == GridCellState::Hovered)
+            else if(cell.getState() == CellState::Hovered)
                bgColor = GridCell::hoverColor;
             else
                bgColor = GridCell::restColor;
@@ -272,7 +272,7 @@ void GameLayer::initGrid() {
          else
             m_grid[row][col].value = 0;
 
-         m_grid[row][col].state = GridCellState::Rest;
+         m_grid[row][col].setState(CellState::Rest);
       }
    }
    setGridCells();
@@ -341,6 +341,7 @@ std::pair<int, int> GameLayer::getCellPos(GridCell* cell) const {
 }
 
 bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int> pos2) const {
+/// @todo improve to be able to "see through" matched cells in row and column
    GridCell cell1 = m_grid.at(pos1.first).at(pos1.second);
    GridCell cell2 = m_grid.at(pos2.first).at(pos2.second);
 
@@ -359,3 +360,10 @@ bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int>
 }
 
 #pragma endregion
+
+void GridCell::setState(CellState newState) {
+   if(state == CellState::Matched)
+      return; // matched cells cannot be changed
+
+   state = newState;
+}
