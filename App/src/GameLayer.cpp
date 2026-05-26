@@ -341,13 +341,17 @@ std::pair<int, int> GameLayer::getCellPos(GridCell* cell) const {
 }
 
 bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int> pos2) const {
-/// @todo improve to be able to "see through" matched cells in row and column
+/// @todo improve to be able to "see through" matched cells in diagonals and wrap around rows
    GridCell cell1 = m_grid.at(pos1.first).at(pos1.second);
    GridCell cell2 = m_grid.at(pos2.first).at(pos2.second);
 
+   if(cell1.getState() == CellState::Matched || cell2.getState() == CellState::Matched)
+      return false;  // matched cells are not compatible with any cell
+
    bool areValuesCompatible = (  // cells sum to 10 or are equal but are not empty.
       cell1 + cell2 == 10 ||
-      (cell1.value == cell2.value && cell1.value != 0));
+      (cell1.value == cell2.value && cell1.value != 0)
+   );
 
    if(!areValuesCompatible)
       return false;
@@ -355,8 +359,31 @@ bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int>
    // check if cells are in the surrounding 8 cells of each other
    int rowDiff = std::abs(pos1.first - pos2.first);
    int colDiff = std::abs(pos1.second - pos2.second);
+   if(rowDiff <= 1 && colDiff <= 1)
+      return true;
 
-   return (rowDiff <= 1 && colDiff <= 1);  // true if cells are adjacent or diagonal, false otherwise
+   // check if cells share same row or column and there are only matched cells in between them
+   if(pos1.first == pos2.first) {  // same row
+      int row = pos1.first;
+      int colStart = std::min(pos1.second, pos2.second) + 1;
+      int colEnd = std::max(pos1.second, pos2.second);
+      for(int col = colStart; col < colEnd; col++) 
+         if(m_grid.at(row).at(col).getState() != CellState::Matched)
+            return false;  // if there is a non-matched cell in between, the cells are not compatible
+
+      return true;
+   } else if(pos1.second == pos2.second) {  // same column
+      int col = pos1.second;
+      int rowStart = std::min(pos1.first, pos2.first) + 1;
+      int rowEnd = std::max(pos1.first, pos2.first);
+      for(int row = rowStart; row < rowEnd; row++) 
+         if(m_grid.at(row).at(col).getState() != CellState::Matched)
+            return false;  // if there is a non-matched cell in between, the cells are not compatible
+
+      return true;
+   }
+      
+   return false;
 }
 
 #pragma endregion
