@@ -9,19 +9,21 @@
 #include "Storage.h"
 #include "App.h"
 
-/// @todo make areCellsCompatible(GridCell*, GridCell*) function cuz things r gonna get complicated
+/// @bug Focusing overrides all states
+/// @bug matchability doesn't check if a cell is already matched
+/// @bug Focusing a matched cell then clicking off-grid resets it to Rest
 
 static constexpr Vector2 helperPadding = { 8, 8 };
 
 float GridCell::size = 45.0f;
 Color GridCell::hoverColor = ColorAlpha(SKYBLUE, 0.5f);
 Color GridCell::focusedColor = ColorAlpha(BLUE, 0.5f);
-Color GridCell::matchedColor = ColorAlpha(LIGHTGRAY, 0.5f);
+Color GridCell::matchedColor = ColorAlpha(LIGHTERGRAY, 0.5f);
 
 // clang-format off
 GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
                m_grid(9, {0, 0, 0, 0, 0, 0, 0, 0, 0}),  // 9 rows of all blank cells
-               m_focusedCells{nullptr, nullptr},
+               m_focusedCell(nullptr),
                m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
                m_settingsButton({0, 0}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
                m_plusButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}),
@@ -93,53 +95,29 @@ void GameLayer::OnEvent(Core::Event& e) {
 
       // check if a grid cell has been clicked
       GridCell* activeCell = findHoveredGridCell();
-      if(activeCell) {                   // a cell was clicked
-         if(!isFocused(activeCell)) {    // new cell was clicked
-            if(m_focusedCells.second) {  // 2 cells already focused, reset both and set the new one as the only focused cell
-               m_focusedCells.first->state = GridCellState::Rest;
-               m_focusedCells.second->state = GridCellState::Rest;
-               m_focusedCells = { activeCell, nullptr };
-            } else {  // either 1 or 0 focused cells
-               bool isFirstFocusedCellCompatible = false;
-               if(m_focusedCells.first) {
-                  bool areValuesCompatible = (  // cells sum to 10 or are equal but are not empty.
-                     *m_focusedCells.first + *activeCell == 10 ||
-                     (m_focusedCells.first->value == activeCell->value && activeCell->value != 0));
-
-                  if(areValuesCompatible) {
-                     auto firstPos = getCellPos(m_focusedCells.first);
-                     auto activePos = getCellPos(activeCell);
-                     isFirstFocusedCellCompatible = (firstPos.first == activePos.first ||  // same row
-                                                     firstPos.second == activePos.second   // same column
-                     );
-                  }  // else not compatible, fall back to default false value
-               }
-
-               if(isFirstFocusedCellCompatible)
-                  m_focusedCells.second = activeCell;
-               else {  // reset the first focused cell and set the new one as the only focused cell
-                  if(m_focusedCells.first)
-                     m_focusedCells.first->state = GridCellState::Rest;
-                  m_focusedCells = { activeCell, nullptr };
-               }
+      if(activeCell && activeCell != m_focusedCell) {  // new cell was clicked
+         if(m_focusedCell) {                           // a cell already focused
+            if(areCellsCompatible(getCellPos(m_focusedCell), getCellPos(activeCell))) {
+               m_focusedCell->state = GridCellState::Matched;
+               activeCell->state = GridCellState::Matched;
+               m_focusedCell = nullptr;
+            } else {  // if not compatible, set the new one as the focused cell
+               m_focusedCell->state = GridCellState::Rest;
+               m_focusedCell = activeCell;
+               activeCell->state = GridCellState::Focused;
             }
-
+         } else {  // no cell focused, so we set the clicked cell as the focused cell
+            m_focusedCell = activeCell;
             activeCell->state = GridCellState::Focused;
-         }  // no change if a focused cell was clicked
-
+         }
          e.Handled = true;
          return;
-      }
-
-      // no grid cell was clicked, so we reset the focused cells to none, since clicking outside of the grid deselects the cells
-      // but we don't set e.Handled to true, in case the click has to be handled by another layer
-      if(m_focusedCells.first) {
-         m_focusedCells.first->state = GridCellState::Rest;
-         m_focusedCells.first = nullptr;
-
-         if(m_focusedCells.second) {  // second can't exist without first. If it does, this nesting helps weed out bugs
-            m_focusedCells.second->state = GridCellState::Rest;
-            m_focusedCells.second = nullptr;
+      } else if(!activeCell) {
+         // no grid cell was clicked, so we reset the focused cell, since clicking outside of the grid deselects the cells
+         // but we don't set e.Handled = true, in case the click has to be handled by another layer
+         if(m_focusedCell) {
+            m_focusedCell->state = GridCellState::Rest;
+            m_focusedCell = nullptr;
          }
       }
    }
@@ -160,19 +138,16 @@ void GameLayer::OnUpdate() {
    m_plusButton.Update();
    m_hintButton.Update();
 
-   if(m_focusedCells.second) {  // two cells are focused
-      m_focusedCells.first->state = GridCellState::Matched;
-      m_focusedCells.second->state = GridCellState::Matched;
-   }
-
    static GridCell* previousCell = nullptr;  // to reset color back to restColor
    GridCell* hoveredCell = findHoveredGridCell();
+   auto canOverride = [](GridCell* cell) -> bool {
+      return cell && cell->state != GridCellState::Focused && cell->state != GridCellState::Matched;
+   };  // helper lambda to check if we can override a cell's state (we can't override focused or matched cells)
 
-   if(hoveredCell != previousCell) {              // a new cell is hovered
-      if(hoveredCell && !isFocused(hoveredCell))  // don't override focused cells
+   if(hoveredCell != previousCell) {  // a new cell is hovered
+      if(canOverride(hoveredCell))
          hoveredCell->state = GridCellState::Hovered;
-
-      if(previousCell && !isFocused(previousCell))  // reset previous cell, unless it's focused
+      if(canOverride(previousCell))
          previousCell->state = GridCellState::Rest;
    }
    previousCell = hoveredCell;
@@ -205,7 +180,7 @@ void GameLayer::OnRender() {
          numSize = MeasureTextEx(App::font_semibold, num.c_str(), 40, 1);
 
          if(cell.state == GridCellState::Matched) {
-            numColor = GRAY;
+            numColor = LIGHTGRAY;
             bgColor = GridCell::matchedColor;
          } else {
             numColor = BLACK;
@@ -366,7 +341,21 @@ std::pair<int, int> GameLayer::getCellPos(GridCell* cell) const {
 }
 
 bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int> pos2) const {
-   return false;
+   GridCell cell1 = m_grid.at(pos1.first).at(pos1.second);
+   GridCell cell2 = m_grid.at(pos2.first).at(pos2.second);
+
+   bool areValuesCompatible = (  // cells sum to 10 or are equal but are not empty.
+      cell1 + cell2 == 10 ||
+      (cell1.value == cell2.value && cell1.value != 0));
+
+   if(!areValuesCompatible)
+      return false;
+
+   // check if cells are in the surrounding 8 cells of each other
+   int rowDiff = std::abs(pos1.first - pos2.first);
+   int colDiff = std::abs(pos1.second - pos2.second);
+
+   return (rowDiff <= 1 && colDiff <= 1);  // true if cells are adjacent or diagonal, false otherwise
 }
 
 #pragma endregion
