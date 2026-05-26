@@ -9,23 +9,24 @@
 #include "Storage.h"
 #include "App.h"
 
-/// @todo make areCellsCompatible(GridCell*, GridCel*) function cuz things r gonna get complicated
+/// @todo make areCellsCompatible(GridCell*, GridCell*) function cuz things r gonna get complicated
 
-static constexpr Vector2 helperPadding = {8, 8};
+static constexpr Vector2 helperPadding = { 8, 8 };
 
-float GridCell::size = 45.0f; 
+float GridCell::size = 45.0f;
 Color GridCell::hoverColor = ColorAlpha(SKYBLUE, 0.5f);
 Color GridCell::focusedColor = ColorAlpha(BLUE, 0.5f);
 Color GridCell::matchedColor = ColorAlpha(LIGHTGRAY, 0.5f);
 
+// clang-format off
 GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
-      m_grid(9, {0, 0, 0, 0, 0, 0, 0, 0, 0}), // 9 rows of all blank cells
-      m_focusedCells{nullptr, nullptr},
-      m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
-      m_settingsButton({0, 0}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
-      m_plusButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}),
-      m_hintButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8})
-{
+               m_grid(9, {0, 0, 0, 0, 0, 0, 0, 0, 0}),  // 9 rows of all blank cells
+               m_focusedCells{nullptr, nullptr},
+               m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
+               m_settingsButton({0, 0}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
+               m_plusButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}),
+               m_hintButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}) 
+{  // clang-format on
    m_trophyTexture = LoadTexture("assets/icons/game/trophy_16x16.png");
    m_tickTexture = LoadTexture("assets/icons/game/tick_16x16.png");
 
@@ -39,14 +40,14 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
    initGrid();
 
    if(reset)
-      Storage::save(1, {0, 0, 0, 0, 0, 0, 0, 0, 0}, 0); // reset storage to default values
+      Storage::save(1, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 0);  // reset storage to default values
    else
       Storage::load();
 }
 
 void GameLayer::OnAttach() {
    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   Core::Layer::OnAttach();   
+   Core::Layer::OnAttach();
 }
 
 void GameLayer::OnResume() {
@@ -54,7 +55,7 @@ void GameLayer::OnResume() {
    setGridBox();
    setGridCells();
    Storage::load();
-   
+
    Layer::OnResume();
 }
 
@@ -79,12 +80,12 @@ void GameLayer::OnEvent(Core::Event& e) {
             App::QueueLayerPush(new HomeLayer());
             App::QueueLayerPush(new PanelLayer());
          } else if(activeButton == &m_settingsButton) {
-            OnSuspend(true); // suspend but render
+            OnSuspend(true);  // suspend but render
             App::QueueLayerPush(new OptionsLayer());
          } else if(activeButton == &m_plusButton) {
-            TraceLog(LISHA_SAYS, "PLUS"); // temp
+            TraceLog(LISHA_SAYS, "PLUS");  // temp
          } else if(activeButton == &m_hintButton) {
-            TraceLog(LISHA_SAYS, "HINT"); // temp
+            TraceLog(LISHA_SAYS, "HINT");  // temp
          }
          e.Handled = true;
          return;
@@ -92,54 +93,51 @@ void GameLayer::OnEvent(Core::Event& e) {
 
       // check if a grid cell has been clicked
       GridCell* activeCell = findHoveredGridCell();
-      if(activeCell) { // a cell was clicked
-         if(!isFocused(activeCell)) { // new cell was clicked
-            if(m_focusedCells.second) { // 2 cells already focused, reset both and set the new one as the only focused cell
+      if(activeCell) {                   // a cell was clicked
+         if(!isFocused(activeCell)) {    // new cell was clicked
+            if(m_focusedCells.second) {  // 2 cells already focused, reset both and set the new one as the only focused cell
                m_focusedCells.first->state = GridCellState::Rest;
                m_focusedCells.second->state = GridCellState::Rest;
-               m_focusedCells = {activeCell, nullptr};
-            }
-            else { // either 1 or 0 focused cells
-               bool isFirstFocusedCellCompatible = false; 
+               m_focusedCells = { activeCell, nullptr };
+            } else {  // either 1 or 0 focused cells
+               bool isFirstFocusedCellCompatible = false;
                if(m_focusedCells.first) {
-                  bool areValuesCompatible = (// cells sum to 10 or are equal but are not empty.
-                     *m_focusedCells.first + *activeCell == 10 || 
-                     (m_focusedCells.first->value == activeCell->value && activeCell->value != 0)
-                  );
+                  bool areValuesCompatible = (  // cells sum to 10 or are equal but are not empty.
+                     *m_focusedCells.first + *activeCell == 10 ||
+                     (m_focusedCells.first->value == activeCell->value && activeCell->value != 0));
 
                   if(areValuesCompatible) {
                      auto firstPos = getCellPos(m_focusedCells.first);
                      auto activePos = getCellPos(activeCell);
-                     isFirstFocusedCellCompatible = (
-                        firstPos.first == activePos.first || // same row
-                        firstPos.second == activePos.second // same column
+                     isFirstFocusedCellCompatible = (firstPos.first == activePos.first ||  // same row
+                                                     firstPos.second == activePos.second   // same column
                      );
-                  } // else not compatible, fall back to default false value
+                  }  // else not compatible, fall back to default false value
                }
 
                if(isFirstFocusedCellCompatible)
                   m_focusedCells.second = activeCell;
-               else { // reset the first focused cell and set the new one as the only focused cell
+               else {  // reset the first focused cell and set the new one as the only focused cell
                   if(m_focusedCells.first)
                      m_focusedCells.first->state = GridCellState::Rest;
-                  m_focusedCells = {activeCell, nullptr};
+                  m_focusedCells = { activeCell, nullptr };
                }
             }
-            
+
             activeCell->state = GridCellState::Focused;
-         } // no change if a focused cell was clicked
-         
+         }  // no change if a focused cell was clicked
+
          e.Handled = true;
          return;
       }
-      
+
       // no grid cell was clicked, so we reset the focused cells to none, since clicking outside of the grid deselects the cells
       // but we don't set e.Handled to true, in case the click has to be handled by another layer
       if(m_focusedCells.first) {
          m_focusedCells.first->state = GridCellState::Rest;
          m_focusedCells.first = nullptr;
 
-         if(m_focusedCells.second) { // second can't exist without first. If it does, this nesting helps weed out bugs
+         if(m_focusedCells.second) {  // second can't exist without first. If it does, this nesting helps weed out bugs
             m_focusedCells.second->state = GridCellState::Rest;
             m_focusedCells.second = nullptr;
          }
@@ -156,25 +154,25 @@ void GameLayer::OnUpdate() {
 
    if(isSuspended && !updateSuspended)
       return;
-   
+
    m_gobackButton.Update();
    m_settingsButton.Update();
    m_plusButton.Update();
    m_hintButton.Update();
 
-   if(m_focusedCells.second) { // two cells are focused
+   if(m_focusedCells.second) {  // two cells are focused
       m_focusedCells.first->state = GridCellState::Matched;
       m_focusedCells.second->state = GridCellState::Matched;
    }
 
-   static GridCell* previousCell = nullptr; // to reset color back to restColor
+   static GridCell* previousCell = nullptr;  // to reset color back to restColor
    GridCell* hoveredCell = findHoveredGridCell();
 
-   if(hoveredCell != previousCell) { // a new cell is hovered
-      if(hoveredCell && !isFocused(hoveredCell)) // don't override focused cells
+   if(hoveredCell != previousCell) {              // a new cell is hovered
+      if(hoveredCell && !isFocused(hoveredCell))  // don't override focused cells
          hoveredCell->state = GridCellState::Hovered;
 
-      if(previousCell && !isFocused(previousCell)) // reset previous cell, unless it's focused
+      if(previousCell && !isFocused(previousCell))  // reset previous cell, unless it's focused
          previousCell->state = GridCellState::Rest;
    }
    previousCell = hoveredCell;
@@ -199,29 +197,32 @@ void GameLayer::OnRender() {
    // Grid
    std::string num;
    Vector2 numSize;
-   Color bgColor;
+   Color bgColor, numColor;
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          GridCell cell = m_grid.at(row).at(col);
-         num = cell.value ? std::to_string(cell.value) : ""; // empty string if value is 0 (empty cell)
+         num = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
          numSize = MeasureTextEx(App::font_semibold, num.c_str(), 40, 1);
 
-         if(cell.state == GridCellState::Focused)
-            bgColor = GridCell::focusedColor;
-         else if(cell.state == GridCellState::Hovered)
-            bgColor = GridCell::hoverColor;
-         else if(cell.state == GridCellState::Matched)
+         if(cell.state == GridCellState::Matched) {
+            numColor = GRAY;
             bgColor = GridCell::matchedColor;
-         else
-            bgColor = GridCell::restColor;
+         } else {
+            numColor = BLACK;
+            if(cell.state == GridCellState::Focused)
+               bgColor = GridCell::focusedColor;
+            else if(cell.state == GridCellState::Hovered)
+               bgColor = GridCell::hoverColor;
+            else
+               bgColor = GridCell::restColor;
+         }
 
          DrawRectangleRec(cell.cell, bgColor);
          DrawRectangleLinesEx(cell.cell, 1, ColorAlpha(LIGHTGRAY, 0.65f));
          DrawTextEx(
             App::font_semibold, num.c_str(),
-            {cell.cell.x + cell.cell.width/2 - numSize.x/2, cell.cell.y + cell.cell.height/2 - numSize.y/2},
-            40, 1, BLACK
-         );
+            { cell.cell.x + cell.cell.width / 2 - numSize.x / 2, cell.cell.y + cell.cell.height / 2 - numSize.y / 2 },
+            40, 1, numColor);
       }
    }
 
@@ -234,11 +235,11 @@ void GameLayer::OnRender() {
 
    int infoFontSize = 17;
    float infoFontSpacing = 0.98f;
-   float infoY = m_gridBox.y - 20; 
+   float infoY = m_gridBox.y - 20;
 
    // Stage
    DrawText("Stage", m_gridBox.x, tagY, tagFontSize, GRAY);
-   DrawTextEx(App::font_semibold, std::to_string(Storage::stage).c_str(), {m_gridBox.x + 5, infoY}, infoFontSize + 3, infoFontSpacing, DARKGRAY);
+   DrawTextEx(App::font_semibold, std::to_string(Storage::stage).c_str(), { m_gridBox.x + 5, infoY }, infoFontSize + 3, infoFontSpacing, DARKGRAY);
 
    int scoreTagWidth = MeasureText("Best Score", tagFontSize);
    int scoreTagX = m_gridBox.x + m_gridBox.width - scoreTagWidth;
@@ -250,13 +251,12 @@ void GameLayer::OnRender() {
    DrawTexture(m_trophyTexture, scoreInfoX, infoY, DARKGRAY);
    DrawTextEx(
       App::font_semibold, Storage::formatBestScore().c_str(),
-      {(float)scoreInfoX + m_trophyTexture.width + 2, infoY},
-      infoFontSize, infoFontSpacing, DARKGRAY
-   );
+      { (float)scoreInfoX + m_trophyTexture.width + 2, infoY },
+      infoFontSize, infoFontSpacing, DARKGRAY);
 
    // Numbers Cleared
    int numbersTagWidth = MeasureText("Numbers Cleared", tagFontSize);
-   int numbersTagX = m_gridBox.x + m_gridBox.width/2 - numbersTagWidth/2;
+   int numbersTagX = m_gridBox.x + m_gridBox.width / 2 - numbersTagWidth / 2;
    // int numbersWidth = MeasureTextEx(App::font_semibold, "1 2 3 4 5 6 7 8 9", infoFontSize, infoFontSpacing).x;
    // int numbersX = m_gridBox.x + m_gridBox.width/2 - numbersWidth/2;
 
@@ -266,26 +266,25 @@ void GameLayer::OnRender() {
    float numX;
    for(uint32_t i = 0; i < Storage::numbersCleared.size(); i++) {
       num = std::to_string(i + 1);
-      numX = m_gridBox.x + m_gridBox.width/2 - 60 + i * 15;
+      numX = m_gridBox.x + m_gridBox.width / 2 - 60 + i * 15;
 
       if(Storage::numbersCleared.at(i)) {
-         numWidth = m_tickTexture.width; // if number is cleared, we draw a tick mark at its position
-         numX -= numWidth/2; // center the tick mark at the number's position
+         numWidth = m_tickTexture.width;  // if number is cleared, we draw a tick mark at its position
+         numX -= numWidth / 2;            // center the tick mark at the number's position
          DrawTexture(m_tickTexture, numX, infoY, GRAY);
       } else {
          numWidth = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, infoFontSpacing).x;
-         numX -= numWidth/2; // center the number in its position
-         DrawTextEx(App::font_semibold, num.c_str(), {numX, infoY}, infoFontSize, infoFontSpacing, DARKGRAY);
+         numX -= numWidth / 2;  // center the number in its position
+         DrawTextEx(App::font_semibold, num.c_str(), { numX, infoY }, infoFontSize, infoFontSpacing, DARKGRAY);
       }
    }
 
    // Current Score
    int currentScoreWidth = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), 40, 1).x;
    DrawTextEx(
-      App::font_black, Storage::formatCurrentScore().c_str(), 
-      {(float)GetScreenWidth()/2 - currentScoreWidth/2, 58}, 
-      40, 1, DARKERGRAY
-   );
+      App::font_black, Storage::formatCurrentScore().c_str(),
+      { (float)GetScreenWidth() / 2 - currentScoreWidth / 2, 58 },
+      40, 1, DARKERGRAY);
 }
 
 void GameLayer::initGrid() {
@@ -308,17 +307,17 @@ void GameLayer::initGrid() {
 
 void GameLayer::setButtonsOrigin() {
    m_settingsButton.setOrigin(GetScreenWidth() - 45, 15);
-   
+
    int gameButtonsY = GetScreenHeight() - 60;
    m_plusButton.setOrigin(GetScreenWidth() / 2 - m_plusButton.getSize().x - 10, gameButtonsY);
    m_hintButton.setOrigin(GetScreenWidth() / 2 + 10, gameButtonsY);
 }
 
 void GameLayer::setGridBox() {
-   GridCell::size = std::min(GetScreenWidth()*0.6f / 9, 50.0f); // since there are 9 cells in a row
+   GridCell::size = std::min(GetScreenWidth() * 0.6f / 9, 50.0f);  // since there are 9 cells in a row
 
-   Vector2 boxOrigin = {((float)GetScreenWidth() - GridCell::size * 9) / 2, 130};
-   m_gridBox = {boxOrigin.x, boxOrigin.y, GridCell::size * 9, GridCell::size * 9};
+   Vector2 boxOrigin = { ((float)GetScreenWidth() - GridCell::size * 9) / 2, 130 };
+   m_gridBox = { boxOrigin.x, boxOrigin.y, GridCell::size * 9, GridCell::size * 9 };
 }
 
 void GameLayer::setGridCells() {
@@ -333,20 +332,20 @@ void GameLayer::setGridCells() {
 }
 
 GUI::Button* GameLayer::findHoveredButton() {
-   if (m_gobackButton.isHovered)
+   if(m_gobackButton.isHovered)
       return &m_gobackButton;
-   else if (m_settingsButton.isHovered)
+   else if(m_settingsButton.isHovered)
       return &m_settingsButton;
-   else if (m_plusButton.isHovered)
+   else if(m_plusButton.isHovered)
       return &m_plusButton;
-   else if (m_hintButton.isHovered)
+   else if(m_hintButton.isHovered)
       return &m_hintButton;
    else
       return nullptr;
 }
 
 GridCell* GameLayer::findHoveredGridCell() {
-   for(auto& row : m_grid) { // Not const because we want to return a non-const pointer
+   for(auto& row : m_grid) {  // Not const because we want to return a non-const pointer
       for(GridCell& cell : row) {
          if(CheckCollisionPointRec(GetMousePosition(), cell.cell))
             return &cell;
@@ -359,11 +358,15 @@ std::pair<int, int> GameLayer::getCellPos(GridCell* cell) const {
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          if(&m_grid[row][col] == cell)
-            return {row, col};
+            return { row, col };
       }
    }
 
-   return {-1, -1}; // default case (should not happen)
+   return { -1, -1 };  // default case (should not happen)
+}
+
+bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int> pos2) const {
+   return false;
 }
 
 #pragma endregion

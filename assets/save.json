@@ -1,17 +1,17 @@
 {
    "bestScore": 13500,
    "coins": 633370,
-   "currentScore": 2054630,
+   "currentScore": 0,
    "numbersCleared": [
       false,
       false,
-      true,
-      true,
+      false,
+      false,
       false,
       false,
       false,
       false,
       false
    ],
-   "stage": 11
+   "stage": 1
 }

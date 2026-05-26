@@ -16,16 +16,19 @@ static Vector2 buttonOrigin() {
       static_cast<float>(GetScreenHeight() - PanelLayer::HEIGHT - buttonBounds.y - 50)
    };
 }
+
+// clang-format off
 HomeLayer::HomeLayer() : Layer("Home Layer"), 
-      m_newButton(
-         {buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, 
-         "New Game", WHITE, BLUE, 25, {0.8f, 8}, App::font_semibold
-      ),
-      m_continueButton(
-         {buttonOrigin().x, buttonOrigin().y-buttonBounds.y-10, buttonBounds.x, buttonBounds.y}, 
-         "Continue Game", BLUE, WHITE, 25, {0.8f, 8}, App::font_semibold
-      )
+               m_newButton(
+                  {buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, 
+                  "New Game", WHITE, BLUE, 25, {0.8f, 8}, App::font_semibold
+               ),
+               m_continueButton(
+                  {buttonOrigin().x, buttonOrigin().y-buttonBounds.y-10, buttonBounds.x, buttonBounds.y}, 
+                  "Continue Game", BLUE, WHITE, 25, {0.8f, 8}, App::font_semibold
+               )
 {
+// clang-format on
    m_backgroundImage = LoadImage("assets/backgrounds/home_background_800x1417.png"); 
    resizeBackground();
    m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);

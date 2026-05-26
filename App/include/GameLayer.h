@@ -59,6 +59,9 @@ private:
    GridCell* findHoveredGridCell();
    std::pair<int, int> getCellPos(GridCell* cell) const; /// @return {row, col} of cell in grid
    inline bool isFocused(GridCell* cell) const { return (cell == m_focusedCells.first || cell == m_focusedCells.second); }
+
+   /// @return true if cells are compatible: sum to 10 or are equal but not empty, are in the surrounding 8 cells of each other
+   bool areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int> pos2) const;
 };
 
 /// adding two gridcells adds their value

@@ -10,16 +10,17 @@ static constexpr float BANNER_HEIGHT = 32;
 
 static constexpr float BOUNDS_TARGETY = 100;
 
+// clang-format off
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
-      m_bounds({
-         (float)(GetScreenWidth()) / 4, (float)(GetScreenHeight()), // to be animated to target height
-         (float)(GetScreenWidth()) / 2, (float)(GetScreenHeight()) / 2 + 100
-      }),
-      m_doneButton(
-         {m_bounds.x + m_bounds.width - 55, m_bounds.y + 7}, // origin 
-         {0, 0}, "Done", BLANK, BLUE, 20, {0, 0}, App::font_semibold
-      )
-{
+               m_bounds({
+                  (float)(GetScreenWidth()) / 4, (float)(GetScreenHeight()), // to be animated to target height
+                  (float)(GetScreenWidth()) / 2, (float)(GetScreenHeight()) / 2 + 100
+               }),
+               m_doneButton(
+                  {m_bounds.x + m_bounds.width - 55, m_bounds.y + 7}, // origin 
+                  {0, 0}, "Done", BLANK, BLUE, 20, {0, 0}, App::font_semibold
+               )
+{ // clang-format on
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
 
    // banners

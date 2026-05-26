@@ -5,6 +5,8 @@
 #include "Core/Logging.h"
 
 struct Storage {
+   Storage();
+
    static uint32_t stage;
    static std::array<bool, 9> numbersCleared; /// if 'n' is cleared, [n-1] is true
    static uint32_t coins;

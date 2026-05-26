@@ -11,7 +11,11 @@ uint32_t Storage::currentScore = 0;
 uint32_t Storage::stage = 1;
 std::array<bool, 9> Storage::numbersCleared = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-fs::file_time_type Storage::lastSaveTime = fs::file_time_type::min();  // initialize to earliest possible time so first load always works
+fs::file_time_type Storage::lastSaveTime = fs::file_time_type::min();
+
+Storage::Storage() {
+   lastSaveTime = fs::last_write_time("assets/save.json");
+}
 
 std::string Storage::format(uint32_t num) {
    if(num >= 1000) {
