@@ -103,11 +103,13 @@ void GameLayer::OnEvent(Core::Event& e) {
             } else {  // if not compatible, set the new one as the focused cell
                m_focusedCell->setState(CellState::Rest);
                m_focusedCell = activeCell;
-               activeCell->setState(CellState::Focused);
+               if(*activeCell != 0)
+                  activeCell->setState(CellState::Focused);
             }
          } else {  // no cell focused, so we set the clicked cell as the focused cell
             m_focusedCell = activeCell;
-            activeCell->setState(CellState::Focused);
+            if(*activeCell != 0)
+               activeCell->setState(CellState::Focused);
          }
          e.Handled = true;
          return;
@@ -403,7 +405,7 @@ bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int>
 
       int colStart = pos1.second + 1;
       bool isRow1Clear = true;
-      for(int col = colStart; col < m_grid.at(pos1.first).size(); col++) {
+      for(size_t col = colStart; col < m_grid.at(pos1.first).size(); col++) {
          if(m_grid.at(pos1.first).at(col).getState() != CellState::Matched) {
             isRow1Clear = false;
             break;
