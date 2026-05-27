@@ -195,9 +195,9 @@ void GameLayer::OnRender() {
          DrawRectangleRec(cell.cell, bgColor);
          DrawRectangleLinesEx(cell.cell, 1, ColorAlpha(LIGHTGRAY, 0.65f));
          DrawTextEx(
-            App::font_semibold, num.c_str(),
-            { cell.cell.x + cell.cell.width / 2 - numSize.x / 2, cell.cell.y + cell.cell.height / 2 - numSize.y / 2 },
-            40, 1, numColor);
+               App::font_semibold, num.c_str(),
+               { cell.cell.x + cell.cell.width / 2 - numSize.x / 2, cell.cell.y + cell.cell.height / 2 - numSize.y / 2 },
+               40, 1, numColor);
       }
    }
 
@@ -225,9 +225,9 @@ void GameLayer::OnRender() {
    DrawText("Best Score", scoreTagX, tagY, tagFontSize, GRAY);
    DrawTexture(m_trophyTexture, scoreInfoX, infoY, DARKGRAY);
    DrawTextEx(
-      App::font_semibold, Storage::formatBestScore().c_str(),
-      { (float)scoreInfoX + m_trophyTexture.width + 2, infoY },
-      infoFontSize, infoFontSpacing, DARKGRAY);
+         App::font_semibold, Storage::formatBestScore().c_str(),
+         { (float)scoreInfoX + m_trophyTexture.width + 2, infoY },
+         infoFontSize, infoFontSpacing, DARKGRAY);
 
    // Numbers Cleared
    int numbersTagWidth = MeasureText("Numbers Cleared", tagFontSize);
@@ -257,9 +257,9 @@ void GameLayer::OnRender() {
    // Current Score
    int currentScoreWidth = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), 40, 1).x;
    DrawTextEx(
-      App::font_black, Storage::formatCurrentScore().c_str(),
-      { (float)GetScreenWidth() / 2 - currentScoreWidth / 2, 58 },
-      40, 1, DARKERGRAY);
+         App::font_black, Storage::formatCurrentScore().c_str(),
+         { (float)GetScreenWidth() / 2 - currentScoreWidth / 2, 58 },
+         40, 1, DARKERGRAY);
 }
 
 void GameLayer::initGrid() {
@@ -341,33 +341,26 @@ std::pair<int, int> GameLayer::getCellPos(GridCell* cell) const {
 }
 
 bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int> pos2) const {
-/// @todo improve to be able to "see through" matched cells in diagonals and wrap around rows
+   /// @todo improve to be able to "see through" matched cells in diagonals and wrap around rows
    GridCell cell1 = m_grid.at(pos1.first).at(pos1.second);
    GridCell cell2 = m_grid.at(pos2.first).at(pos2.second);
 
    if(cell1.getState() == CellState::Matched || cell2.getState() == CellState::Matched)
       return false;  // matched cells are not compatible with any cell
 
-   bool areValuesCompatible = (  // cells sum to 10 or are equal but are not empty.
-      cell1 + cell2 == 10 ||
-      (cell1.value == cell2.value && cell1.value != 0)
-   );
-
+   // 1. Value Compatibility
+   bool areValuesCompatible =  // cells sum to 10 or are equal but are not empty.
+         (cell1 + cell2 == 10) ||
+         (cell1 == cell2 && cell1 != 0);
    if(!areValuesCompatible)
       return false;
 
-   // check if cells are in the surrounding 8 cells of each other
-   int rowDiff = std::abs(pos1.first - pos2.first);
-   int colDiff = std::abs(pos1.second - pos2.second);
-   if(rowDiff <= 1 && colDiff <= 1)
-      return true;
-
-   // check if cells share same row or column and there are only matched cells in between them
+   // 2. Same row/column IF no unmatched cell in between
    if(pos1.first == pos2.first) {  // same row
       int row = pos1.first;
       int colStart = std::min(pos1.second, pos2.second) + 1;
       int colEnd = std::max(pos1.second, pos2.second);
-      for(int col = colStart; col < colEnd; col++) 
+      for(int col = colStart; col < colEnd; col++)
          if(m_grid.at(row).at(col).getState() != CellState::Matched)
             return false;  // if there is a non-matched cell in between, the cells are not compatible
 
@@ -376,21 +369,33 @@ bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int>
       int col = pos1.second;
       int rowStart = std::min(pos1.first, pos2.first) + 1;
       int rowEnd = std::max(pos1.first, pos2.first);
-      for(int row = rowStart; row < rowEnd; row++) 
+      for(int row = rowStart; row < rowEnd; row++)
          if(m_grid.at(row).at(col).getState() != CellState::Matched)
             return false;  // if there is a non-matched cell in between, the cells are not compatible
 
       return true;
    }
-      
-   return false;
+
+   // 3. Same diagonal IF no unmatched cell in between
+   int rowDiff = std::abs(pos2.first - pos1.first);
+   int colDiff = std::abs(pos2.second - pos1.second);
+   if(rowDiff == colDiff) {  // same diagonal
+      int rowStep = pos1.first > pos2.first ? -1 : 1;
+      int colStep = pos1.second > pos2.second ? -1 : 1;
+
+      // adding step so we don't include the cell's row/col
+      int colStart = pos1.second + colStep;
+      int rowStart = pos1.first + rowStep;
+
+      for(int row = rowStart, col = colStart; row != pos2.first; row += rowStep, col += colStep) {
+         if(m_grid.at(row).at(col).getState() != CellState::Matched)
+            return false;  // if there is a non-matched cell in between, the cells are not compatible
+      }
+
+      return true;
+   }
+
+   return false;  // did not pass any compatibility condition, hence incompatible
 }
 
 #pragma endregion
-
-void GridCell::setState(CellState newState) {
-   if(state == CellState::Matched)
-      return; // matched cells cannot be changed
-
-   state = newState;
-}

@@ -6,23 +6,7 @@
 #include "Core/Layer.h"
 #include "GUI/Button.h"
 
-enum class CellState { Rest, Hovered, Focused, Matched };
-
-struct GridCell {
-   GridCell(int value = 0) : value(value), cell({0, 0, 0, 0}) {}
-
-   static float size;
-   static constexpr Color restColor = RAYWHITE;
-   static Color hoverColor, focusedColor, matchedColor;
-
-   int value; /// 0 for empty, 1-9 otherwise
-   Rectangle cell;
-
-   inline CellState getState() const { return state; }
-   void setState(CellState newState);
-private:
-   CellState state = CellState::Rest;
-};
+struct GridCell;
 
 class GameLayer : public Core::Layer {
 public:
@@ -63,9 +47,41 @@ private:
    GridCell* findHoveredGridCell();
    std::pair<int, int> getCellPos(GridCell* cell) const; /// @return {row, col} of cell in grid
 
-   /// @return true if cells are compatible: sum to 10 or are equal but not empty, are in the surrounding 8 cells of each other
+   /** @brief
+    * Value compatibility: if sum to 10 OR same
+
+    * Cell compatibility:
+    * - Same row/column IF no unmatched cell in between \
+    * - Same diagonal IF no unmatched cell in between \
+    * - If all cells to the right of cell are matched, its "vision" wraps around to the first unmatched cell of next row
+    */
    bool areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int> pos2) const;
 };
 
-/// adding two gridcells adds their value
+enum class CellState { Rest, Hovered, Focused, Matched };
+
+struct GridCell {
+   GridCell(int value = 0) : value(value), cell({0, 0, 0, 0}) {}
+
+   static float size;
+   static constexpr Color restColor = RAYWHITE;
+   static Color hoverColor, focusedColor, matchedColor;
+
+   int value; /// 0 for empty, 1-9 otherwise
+   Rectangle cell;
+
+   /// @param newState only set if current state is not CellState::Matched
+   inline void setState(CellState newState) { 
+      if(state != CellState::Matched)
+         state = newState;
+   }
+   inline CellState getState() const { return state; }
+private:
+   CellState state = CellState::Rest;
+};
+
+
 inline int operator+(const GridCell& a, const GridCell& b) { return a.value + b.value; }
+
+inline bool operator==(const GridCell& a, const GridCell& b) { return a.value == b.value; }
+inline bool operator==(const GridCell& a, int b) { return a.value == b; }
