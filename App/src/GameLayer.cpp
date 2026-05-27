@@ -341,7 +341,6 @@ std::pair<int, int> GameLayer::getCellPos(GridCell* cell) const {
 }
 
 bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int> pos2) const {
-   /// @todo improve to be able to "see through" matched cells in diagonals and wrap around rows
    GridCell cell1 = m_grid.at(pos1.first).at(pos1.second);
    GridCell cell2 = m_grid.at(pos2.first).at(pos2.second);
 
@@ -393,6 +392,34 @@ bool GameLayer::areCellsCompatible(std::pair<int, int> pos1, std::pair<int, int>
       }
 
       return true;
+   }
+
+   // 4. If all cells to the right of cell are matched, its "vision" wraps around to the first cell unmatched cell of next row
+   if(rowDiff == 1) { // rows must be adjacent, since there cannot be a fully matched row
+      if(pos1.first > pos2.first) {
+         std::swap(pos1, pos2);  // we want pos1 to be the upper cell and pos2 to be the lower cell
+         std::swap(cell1, cell2);
+      }
+
+      int colStart = pos1.second + 1;
+      bool isRow1Clear = true;
+      for(int col = colStart; col < m_grid.at(pos1.first).size(); col++) {
+         if(m_grid.at(pos1.first).at(col).getState() != CellState::Matched) {
+            isRow1Clear = false;
+            break;
+         }
+      }
+
+      if(isRow1Clear) {
+         int colEnd = pos2.second;
+         for(int col = 0; col < colEnd; col++) {
+            if(m_grid.at(pos2.first).at(col).getState() != CellState::Matched)
+               return false;
+         }
+
+         return true;
+      }
+
    }
 
    return false;  // did not pass any compatibility condition, hence incompatible
