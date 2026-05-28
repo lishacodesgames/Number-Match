@@ -85,33 +85,26 @@ void GameLayer::OnEvent(Core::Event& e) {
       // check if a grid cell has been clicked
       GridCell* activeCell = findHoveredGridCell();
       if(activeCell && activeCell != m_grid.focusedCell) {  // new cell was clicked
-         if(m_grid.focusedCell) {                           // a cell already focused
-            if(m_grid.isCellCompatible(m_grid.getCellPos(activeCell))) {
-               m_grid.focusedCell->setState(CellState::Matched);
-               activeCell->setState(CellState::Matched);
-               m_grid.focusedCell = nullptr;
-            } else {  // if not compatible, set the new one as the focused cell
+         if(m_grid.isCellCompatible(m_grid.getCellPos(activeCell))) {
+            m_grid.focusedCell->setState(CellState::Matched);
+            activeCell->setState(CellState::Matched);
+            m_grid.focusedCell = nullptr;
+         } else {
+            if(m_grid.focusedCell)
                m_grid.focusedCell->setState(CellState::Rest);
-               m_grid.focusedCell = activeCell;
-               if(*activeCell != 0)
-                  activeCell->setState(CellState::Focused);
-            }
-         } else {  // no cell focused, so we set the clicked cell as the focused cell
+
             m_grid.focusedCell = activeCell;
             if(*activeCell != 0)
                activeCell->setState(CellState::Focused);
          }
          e.Handled = true;
          return;
-      } else if(!activeCell) {
-         // no grid cell was clicked, so we reset the focused cell
-         // since clicking outside of the grid or clicking a matched cell should deselect the cells
+      } else if(!activeCell && m_grid.focusedCell) {
+         // clicking a matched cell or outside of the grid or a matched cell should deselect the cells
          // but we don't set e.Handled = true, in case the click has to be handled by another layer
-         if(m_grid.focusedCell) {
-            m_grid.focusedCell->setState(CellState::Rest);
-            m_grid.focusedCell = nullptr;
-         }
-      }
+         m_grid.focusedCell->setState(CellState::Rest);
+         m_grid.focusedCell = nullptr;
+      } // no change if focused cell was clicked
    }
 }
 
