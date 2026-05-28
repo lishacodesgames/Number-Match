@@ -35,7 +35,6 @@ struct Grid {
    void Draw();
    
    // --- gameplay ---
-   void resize();
    /** @brief
     * Value compatibility: if sum to 10 OR same
 
@@ -47,6 +46,8 @@ struct Grid {
     * @return true if cell @pos is compatible with focusedCell
     */
    bool isCellCompatible(std::pair<int, int> pos) const;
+   void resize();
+   void plus();
 
    // --- iteration ---
    inline auto begin() { return grid.begin(); }

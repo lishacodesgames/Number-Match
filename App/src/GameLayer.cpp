@@ -74,7 +74,7 @@ void GameLayer::OnEvent(Core::Event& e) {
             OnSuspend(true);  // suspend but render
             App::QueueLayerPush(new OptionsLayer());
          } else if(activeButton == &m_plusButton) {
-            TraceLog(LISHA_SAYS, "PLUS");  // temp
+            m_grid.plus();
          } else if(activeButton == &m_hintButton) {
             TraceLog(LISHA_SAYS, "HINT");  // temp
          }

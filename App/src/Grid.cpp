@@ -1,9 +1,9 @@
 #include <pch/Precompiled.h>
 #include "Grid.h"
 
+#include "Core/Logging.h"
 #include "Colors.h"
 #include "App.h"
-#include <utility>
 
 float GridCell::size = 45.0f;
 Color GridCell::hoverColor = ColorAlpha(SKYBLUE, 0.5f);
@@ -77,6 +77,54 @@ void Grid::resize() {
             box.y + row * GridCell::size,  // y
             GridCell::size, GridCell::size
          };
+      }
+   }
+}
+
+void Grid::plus() {
+   std::vector<int> plusValues;
+   for(size_t row = 0; row < grid.size(); row++) {
+      for(size_t col = 0; col < grid.at(row).size(); col++) {
+         if(grid[row][col].value != 0 && grid[row][col].getState() != CellState::Matched)
+            plusValues.push_back(grid[row][col].value);
+      }
+   }
+
+   if(plusValues.empty())
+      return; /// @todo stage system
+
+   std::pair<int, int> firstEmptyCell = { -1, -1 };
+   for(size_t row = 1; row < grid.size(); row++) { // first row can never be empty so we start from 2nd
+      auto it = std::find(grid.at(row).begin(), grid.at(row).end(), 0);
+      if(it != grid.at(row).end()) {
+         firstEmptyCell = { row, static_cast<int>(std::distance(grid.at(row).begin(), it)) };
+         break;
+      }
+      if(row == grid.size() - 1) { // if no empty cell till last iteration, we make a new row of empty cell
+         grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+         firstEmptyCell = { grid.size() - 1, 0 };
+      }
+   }
+
+   if(firstEmptyCell.first == -1) {
+      TraceLog(LOG_ERROR, "Error in Grid::plus(): no empty cell found and failed to create new row");
+      return;
+   }
+
+   // Duplicate all valid cells starting from firstEmptyCell
+   int row = firstEmptyCell.first;
+   int col = firstEmptyCell.second;
+   for(int value : plusValues) {
+      grid.at(row).at(col).value = value;
+      TraceLog(LISHA_SAYS, "Duplicated %d to [%d, %d]", grid.at(row).at(col).value, row, col);
+
+      // increment grid index
+      if(++col == (int)grid.at(0).size()) {
+         col = 0;
+         row++;
+         if(row == (int)grid.size()) {
+            grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+         }
       }
    }
 }
