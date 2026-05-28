@@ -6,10 +6,6 @@
 #include "Core/Event.h"
 #include "Core/Layer.h"
 
-constexpr Color LIGHTERGRAY = {230, 230, 230, 255}; /// A more aesthetically pleasing lightgray
-constexpr Color MEDIUMGRAY = {180, 180, 180, 255}; /// Between raylib's LIGHTGRAY and GRAY
-constexpr Color DARKERGRAY = {50, 50, 50, 255}; /// A more aesthetically pleasing darkgray
-
 /// Static class that manages the game loop and all game states (menu, gameplay, pause, etc.) 
 class App {
    static App* s_instance; // so App's statics and members can speak to each other

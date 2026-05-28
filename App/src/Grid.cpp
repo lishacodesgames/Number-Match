@@ -1,0 +1,181 @@
+#include <pch/Precompiled.h>
+#include "Grid.h"
+
+#include "Colors.h"
+#include "App.h"
+#include <utility>
+
+float GridCell::size = 45.0f;
+Color GridCell::hoverColor = ColorAlpha(SKYBLUE, 0.5f);
+Color GridCell::focusedColor = ColorAlpha(BLUE, 0.5f);
+Color GridCell::matchedColor = ColorAlpha(LIGHTERGRAY, 0.5f);
+
+Grid::Grid() : focusedCell(nullptr) {
+   grid.assign(9, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }),  // 9 rows of all blank cells
+   srand(time(0));
+
+   for(size_t row = 0; row < grid.size(); row++) {
+      for(size_t col = 0; col < grid.at(row).size(); col++) {
+         if(row < 3 || (row == 3 && col < 5)) // first 3 rows & half of 4th row
+            grid[row][col].value = 1 + rand() % 9;
+         else
+            grid[row][col].value = 0;
+
+         grid[row][col].setState(CellState::Rest);
+      }
+   }
+
+   resize();
+}
+
+void Grid::Draw() {
+   Color bgColor, numColor;
+   for(size_t row = 0; row < grid.size(); row++) {
+      for(size_t col = 0; col < grid.at(row).size(); col++) {
+         GridCell cell = grid.at(row).at(col);
+         std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
+         Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), 40, 1);
+
+         if(cell.getState() == CellState::Matched) {
+            numColor = LIGHTGRAY;
+            bgColor = GridCell::matchedColor;
+         } else {
+            numColor = BLACK;
+            if(cell.getState() == CellState::Focused)
+               bgColor = GridCell::focusedColor;
+            else if(cell.getState() == CellState::Hovered)
+               bgColor = GridCell::hoverColor;
+            else
+               bgColor = GridCell::restColor;
+         }
+
+         DrawRectangleRec(cell.bounds, bgColor);
+         DrawRectangleLinesEx(cell.bounds, 1, ColorAlpha(LIGHTGRAY, 0.65f));
+         DrawTextEx(
+               App::font_semibold, value.c_str(),
+               { cell.bounds.x + cell.bounds.width / 2 - numSize.x / 2, cell.bounds.y + cell.bounds.height / 2 - numSize.y / 2 },
+               40, 1, numColor);
+      }
+   }
+
+   // Box
+   DrawRectangleLinesEx(box, 3, ColorAlpha(DARKGRAY, 0.8f));
+}
+
+void Grid::resize() {
+   GridCell::size = std::min(GetScreenWidth() * 0.6f / 9, 50.0f);  // box min size is 60% screen, cell min size is 50px
+
+   // box is centered horizontally and has a fixed y value
+   Vector2 boxOrigin = { ((float)GetScreenWidth() - GridCell::size * 9) / 2, 130 };
+   box = { boxOrigin.x, boxOrigin.y, GridCell::size * 9, GridCell::size * 9 };
+
+   // set cell origins to match box
+   for(size_t row = 0; row < grid.size(); row++) {
+      for(size_t col = 0; col < grid.at(row).size(); col++) {
+         grid[row][col].bounds = {
+            box.x + col * GridCell::size,  // x
+            box.y + row * GridCell::size,  // y
+            GridCell::size, GridCell::size
+         };
+      }
+   }
+}
+
+std::pair<int, int> Grid::getCellPos(GridCell* cell) const {
+   for(size_t row = 0; row < grid.size(); row++) {
+      for(size_t col = 0; col < grid.at(row).size(); col++) {
+         if(&grid[row][col] == cell)
+            return { row, col };
+      }
+   }
+
+   return { -1, -1 };  // default case (should not happen)
+}
+
+bool Grid::isCellCompatible(std::pair<int, int> pos) const {
+   if(!focusedCell)
+      return false;
+
+   GridCell cell1 = *focusedCell;
+   GridCell cell2 = grid.at(pos.first).at(pos.second);
+   std::pair<int, int> pos1 = getCellPos(focusedCell);
+   std::pair<int, int> pos2 = pos;
+
+   if(cell1.getState() == CellState::Matched || cell2.getState() == CellState::Matched)
+      return false;  // matched cells are not compatible with any cell
+
+   // 1. Value Compatibility
+   bool areValuesCompatible =  // cells sum to 10 or are equal but are not empty.
+         (cell1 + cell2 == 10) ||
+         (cell1 == cell2 && cell1 != 0);
+   if(!areValuesCompatible)
+      return false;
+
+   // 2. Same row/column IF no unmatched cell in between
+   if(pos1.first == pos2.first) {  // same row
+      int row = pos1.first;
+      int colStart = std::min(pos1.second, pos2.second) + 1;
+      int colEnd = std::max(pos1.second, pos2.second);
+      for(int col = colStart; col < colEnd; col++)
+         if(grid.at(row).at(col).getState() != CellState::Matched)
+            return false;  // if there is a non-matched cell in between, the cells are not compatible
+
+      return true;
+   } else if(pos1.second == pos2.second) {  // same column
+      int col = pos1.second;
+      int rowStart = std::min(pos1.first, pos2.first) + 1;
+      int rowEnd = std::max(pos1.first, pos2.first);
+      for(int row = rowStart; row < rowEnd; row++)
+         if(grid.at(row).at(col).getState() != CellState::Matched)
+            return false;  // if there is a non-matched cell in between, the cells are not compatible
+
+      return true;
+   }
+
+   // 3. Same diagonal IF no unmatched cell in between
+   int rowDiff = std::abs(pos2.first - pos1.first);
+   int colDiff = std::abs(pos2.second - pos1.second);
+   if(rowDiff == colDiff) {  // same diagonal
+      int rowStep = pos1.first > pos2.first ? -1 : 1;
+      int colStep = pos1.second > pos2.second ? -1 : 1;
+
+      // adding step so we don't include the cell's row/col
+      int colStart = pos1.second + colStep;
+      int rowStart = pos1.first + rowStep;
+
+      for(int row = rowStart, col = colStart; row != pos2.first; row += rowStep, col += colStep)
+         if(grid.at(row).at(col).getState() != CellState::Matched)
+            return false;  // if there is a non-matched cell in between, the cells are not compatible
+
+      return true;
+   }
+
+   // 4. If all cells to the right of cell are matched, its "vision" wraps around to the first cell unmatched cell of next row
+   if(rowDiff == 1) { // rows must be adjacent, since there cannot be a fully matched row
+      if(pos1.first > pos2.first) {
+         std::swap(pos1, pos2);  // we want pos1 to be the upper cell and pos2 to be the lower cell
+         std::swap(cell1, cell2);
+      }
+
+      int colStart = pos1.second + 1;
+      bool isRow1Clear = true;
+      for(size_t col = colStart; col < grid.at(pos1.first).size(); col++) {
+         if(grid.at(pos1.first).at(col).getState() != CellState::Matched) {
+            isRow1Clear = false;
+            break;
+         }
+      }
+
+      if(isRow1Clear) {
+         int colEnd = pos2.second;
+         for(int col = 0; col < colEnd; col++) {
+            if(grid.at(pos2.first).at(col).getState() != CellState::Matched)
+               return false;
+         }
+
+         return true;
+      }
+   }
+
+   return false;
+}
