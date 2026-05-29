@@ -84,27 +84,32 @@ void GameLayer::OnEvent(Core::Event& e) {
 
       // check if a grid cell has been clicked
       GridCell* activeCell = m_grid.findHoveredCell();
-      if(activeCell && activeCell != m_grid.focusedCell) {  // new cell was clicked
-         if(m_grid.isCellCompatible(m_grid.getCellPos(activeCell))) {
-            m_grid.focusedCell->setState(CellState::Matched);
-            activeCell->setState(CellState::Matched);
-            m_grid.focusedCell = nullptr;
-         } else {
-            if(m_grid.focusedCell)
-               m_grid.focusedCell->setState(CellState::Rest);
+      if(activeCell) {
+         if(activeCell != m_grid.focusedCell) {  // new cell was clicked
+            if(m_grid.isCellCompatible(m_grid.getCellPos(activeCell))) {
+               m_grid.focusedCell->setState(CellState::Matched);
+               activeCell->setState(CellState::Matched);
+               m_grid.focusedCell = nullptr;
+            } else {
+               if(m_grid.focusedCell)
+                  m_grid.focusedCell->setState(CellState::Rest);
 
-            m_grid.focusedCell = activeCell;
-            if(*activeCell != 0)
-               activeCell->setState(CellState::Focused);
+               m_grid.focusedCell = activeCell;
+               if(*activeCell != 0) // empty cells cannot be focused
+                  activeCell->setState(CellState::Focused);
+            }
+         } else {  // clicking the already focused cell should deselect it
+            activeCell->setState(CellState::Hovered);
+            m_grid.focusedCell = nullptr;
          }
          e.Handled = true;
          return;
-      } else if(!activeCell && m_grid.focusedCell) {
+      } else if(m_grid.focusedCell) {
          // clicking a matched cell or outside of the grid or a matched cell should deselect the cells
-         // but we don't set e.Handled = true, in case the click has to be handled by another layer
          m_grid.focusedCell->setState(CellState::Rest);
          m_grid.focusedCell = nullptr;
-      } // no change if focused cell was clicked
+         // we don't set e.Handled = true, in case the click has to be handled by another layer
+      }
    }
 }
 

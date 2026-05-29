@@ -29,7 +29,6 @@ private:
 
    // --- helpers ---
    void setButtonsOrigin();
-
    GUI::Button* findHoveredButton(); /// @return any of the 4 member buttons OR nullptr
 };
 

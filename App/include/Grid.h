@@ -11,7 +11,7 @@ struct GridCell {
 
    static float size;
    static constexpr Color restColor = RAYWHITE;
-   static Color hoverColor, focusedColor, matchedColor;
+   static Color hoverColor, focusColor;
 
    int value; /// 0 for empty, 1-9 otherwise
    Rectangle bounds;

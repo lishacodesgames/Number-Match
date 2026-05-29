@@ -6,9 +6,8 @@
 #include "App.h"
 
 float GridCell::size = 45.0f;
-Color GridCell::hoverColor = ColorAlpha(SKYBLUE, 0.5f);
-Color GridCell::focusedColor = ColorAlpha(BLUE, 0.5f);
-Color GridCell::matchedColor = ColorAlpha(LIGHTERGRAY, 0.5f);
+Color GridCell::hoverColor = ColorAlpha(BLIZZARDBLUE, 0.5f);
+Color GridCell::focusColor = ColorAlpha(SKYBLUE, 0.5f);
 
 Grid::Grid() : focusedCell(nullptr) {
    grid.assign(9, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }),  // 9 rows of all blank cells
@@ -53,18 +52,17 @@ void Grid::Draw() {
          std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
          Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), 40, 1);
 
-         if(cell.getState() == CellState::Matched) {
+         // default
+         numColor = BLACK;
+         bgColor = GridCell::restColor;
+
+         // state cases
+         if(cell.getState() == CellState::Matched)
             numColor = LIGHTGRAY;
-            bgColor = GridCell::matchedColor;
-         } else {
-            numColor = BLACK;
-            if(cell.getState() == CellState::Focused)
-               bgColor = GridCell::focusedColor;
-            else if(cell.getState() == CellState::Hovered)
-               bgColor = GridCell::hoverColor;
-            else
-               bgColor = GridCell::restColor;
-         }
+         else if(cell.getState() == CellState::Focused)
+            bgColor = GridCell::focusColor;
+         else if(cell.getState() == CellState::Hovered)
+            bgColor = GridCell::hoverColor;
 
          DrawRectangleRec(cell.bounds, bgColor);
          DrawRectangleLinesEx(cell.bounds, 1, ColorAlpha(LIGHTGRAY, 0.65f));
