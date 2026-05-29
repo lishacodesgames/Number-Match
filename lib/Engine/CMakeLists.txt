@@ -8,6 +8,7 @@ target_sources(Engine PRIVATE
 
    # GUI
    src/GUI/Button.cpp
+   src/GUI/ScrollBar.cpp
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

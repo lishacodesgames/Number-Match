@@ -145,9 +145,7 @@ void GameLayer::OnRender() {
    m_plusButton.Draw();
    m_hintButton.Draw();
 
-   BeginScissorMode(m_grid.box.x, m_grid.box.y, m_grid.box.width, m_grid.box.height);  // so grid cells don't render outside of the box
    m_grid.Draw();
-   EndScissorMode();
 
    // Game info
    int tagFontSize = 5;

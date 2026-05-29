@@ -1,8 +1,8 @@
 #pragma once
-#include <raylib.h>
 #include <utility>
 #include <vector>
 #include <array>
+#include "GUI/ScrollBar.h"
 
 enum class CellState { Rest, Hovered, Focused, Matched };
 
@@ -26,6 +26,9 @@ private:
 
 struct Grid {
 private:
+   ScrollBar m_scrollBar;
+   float m_scrollOffset = 0.0f;
+
    std::vector<std::array<GridCell, 9>> m_grid{};  /// Vector of 9-length arrays
 public:
    GridCell* focusedCell;
@@ -33,7 +36,7 @@ public:
 
    Grid();
    void Update();
-   void Draw();
+   void Draw() const;
 
    // --- gameplay ---
    /** @brief

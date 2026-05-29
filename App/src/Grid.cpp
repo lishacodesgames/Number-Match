@@ -25,6 +25,8 @@ Grid::Grid() : focusedCell(nullptr) {
    }
 
    resize();
+   m_scrollBar.setThumbWidth(10.0f);
+   m_scrollBar.setTrackBounds({ box.x + box.width + 25, box.y, 2, box.height });
 }
 
 bool canOverride(GridCell* cell) {
@@ -45,24 +47,25 @@ void Grid::Update() {
    previousCell = hoveredCell;
 
    // Grid scroll logic
-   static float topRowY = box.y;
-   float scrollOffset = 35 * GetMouseWheelMove();  // 35 pixels per wheel notch
+   /// @todo let user choose direction of mouse scroll (+ <-> -) in settings
+   m_scrollOffset = std::max(0.0f, m_scrollOffset - 35 * GetMouseWheelMove()); // offset cannot be negative
+   float topRowY = box.y - m_scrollOffset;
+   float bottomestRowY = topRowY + (m_grid.size()) * GridCell::size; // actual bottom, not visual
 
-   if(scrollOffset != 0.0f) {
-      topRowY = std::min(130.0f, topRowY + scrollOffset); // max y = 130 (initial y)
-      
-      float bottomestRowY = topRowY + (m_grid.size()) * GridCell::size; // actual bottom, not visual
-      if(bottomestRowY < box.y + box.height) // non-existent cells are showing
-         topRowY += box.y + box.height - bottomestRowY; // add the difference
+   if(bottomestRowY < box.y + box.height) // non-existent cells are showing
+      topRowY += box.y + box.height - bottomestRowY; // add the difference
 
-      for(size_t row = 0; row < m_grid.size(); row++)
-         for(size_t col = 0; col < m_grid.at(row).size(); col++)
-            m_grid[row][col].bounds.y = topRowY + row * GridCell::size;  // only y changes with scroll
-   }
+   for(size_t row = 0; row < m_grid.size(); row++)
+      for(size_t col = 0; col < m_grid.at(row).size(); col++)
+         m_grid[row][col].bounds.y = topRowY + row * GridCell::size;  // only y changes with scroll
+
+   m_scrollBar.Update(m_scrollOffset, m_grid.size() * GridCell::size, box.height);
 }
 
-void Grid::Draw() {
+void Grid::Draw() const {
    Color bgColor, numColor;
+
+   BeginScissorMode(box.x, box.y, box.width, box.height); // so grid cells don't render outside of the box
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          const GridCell cell = m_grid.at(row).at(col);
@@ -88,9 +91,10 @@ void Grid::Draw() {
                40, 1, numColor);
       }
    }
+   EndScissorMode();
 
-   // Box
    DrawRectangleLinesEx(box, 3, ColorAlpha(DARKGRAY, 0.8f));
+   m_scrollBar.Draw();
 }
 
 void Grid::resize() {
@@ -107,12 +111,10 @@ void Grid::resize() {
 
 void Grid::plus() {
    std::vector<int> plusValues;
-   for(size_t row = 0; row < m_grid.size(); row++) {
-      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+   for(size_t row = 0; row < m_grid.size(); row++)
+      for(size_t col = 0; col < m_grid.at(row).size(); col++)
          if(m_grid[row][col].value != 0 && m_grid[row][col].getState() != CellState::Matched)
             plusValues.push_back(m_grid[row][col].value);
-      }
-   }
 
    if(plusValues.empty())
       return; /// @todo stage system
@@ -141,7 +143,6 @@ void Grid::plus() {
    int col = firstEmptyCell.second;
    for(int value : plusValues) {
       m_grid[row][col].value = value;
-      TraceLog(LISHA_SAYS, "Duplicated %d to [%d, %d]", m_grid.at(row).at(col).value, row, col);
 
       // increment grid index
       if(++col == (int)m_grid.at(0).size()) {
