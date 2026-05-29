@@ -107,6 +107,8 @@ void Grid::resize() {
    for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++) 
          setCellBounds(&m_grid[row][col]);
+         
+   m_scrollBar.setTrackBounds({ box.x + box.width + 25, box.y, 2, box.height });
 }
 
 void Grid::plus() {

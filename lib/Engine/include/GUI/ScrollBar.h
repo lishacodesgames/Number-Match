@@ -16,7 +16,7 @@ public:
     * @param contentHeight total height of scrollable region
     * @param viewportHeight visible height, used to calculate thumb's size relative to track
     */
-   void Update(float scrollOffset, float contentHeight, float viewportHeight);
+   void Update(float& scrollOffset, float contentHeight, float viewportHeight);
    void Draw() const;
 
    inline void setMinThumbHeight(float height) { m_minThumbHeight = height; } /// default = 20.0f
@@ -27,4 +27,7 @@ private:
    Rectangle m_thumb{}; // the movable piece
 
    float m_minThumbHeight = 20.0f;
+
+   bool m_isDragging = false;
+   float m_dragOffset = 0.0f;
 };
