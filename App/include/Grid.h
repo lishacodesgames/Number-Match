@@ -32,6 +32,7 @@ struct Grid {
    Rectangle box{};
 
    Grid();
+   void Update();
    void Draw();
    
    // --- gameplay ---
@@ -55,6 +56,7 @@ struct Grid {
 
    // --- helpers ---
    std::pair<int, int> getCellPos(GridCell* cell) const; /// @return {row, col} of cell in grid
+   GridCell* findHoveredCell();
 };
 
 

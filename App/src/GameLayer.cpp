@@ -83,7 +83,7 @@ void GameLayer::OnEvent(Core::Event& e) {
       }
 
       // check if a grid cell has been clicked
-      GridCell* activeCell = findHoveredGridCell();
+      GridCell* activeCell = m_grid.findHoveredCell();
       if(activeCell && activeCell != m_grid.focusedCell) {  // new cell was clicked
          if(m_grid.isCellCompatible(m_grid.getCellPos(activeCell))) {
             m_grid.focusedCell->setState(CellState::Matched);
@@ -122,26 +122,13 @@ void GameLayer::OnUpdate() {
    m_plusButton.Update();
    m_hintButton.Update();
 
-   static GridCell* previousCell = nullptr;  // to reset color back to restColor
-   GridCell* hoveredCell = findHoveredGridCell();
-   auto canOverride = [](GridCell* cell) -> bool {
-      return cell && cell->getState() != CellState::Focused && cell->getState() != CellState::Matched;
-   };  // helper lambda to check if we can override a cell's state (we can't override focused or matched cells)
+   m_grid.Update();
+   Storage::hotReload();
 
-   if(hoveredCell != previousCell) {  // a new cell is hovered
-      if(canOverride(hoveredCell))
-         hoveredCell->setState(CellState::Hovered);
-      if(canOverride(previousCell))
-         previousCell->setState(CellState::Rest);
-   }
-   previousCell = hoveredCell;
-
-   if(hoveredCell || findHoveredButton())
+   if(findHoveredButton() || m_grid.findHoveredCell())
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-
-   Storage::hotReload();
 }
 
 void GameLayer::OnRender() {
@@ -231,16 +218,6 @@ GUI::Button* GameLayer::findHoveredButton() {
       return &m_hintButton;
    else
       return nullptr;
-}
-
-GridCell* GameLayer::findHoveredGridCell() {
-   for(auto& row : m_grid) {  // Not const because we want to return a non-const pointer
-      for(GridCell& cell : row) {
-         if(CheckCollisionPointRec(GetMousePosition(), cell.bounds))
-            return &cell;
-      }
-   }
-   return nullptr;
 }
 
 #pragma endregion

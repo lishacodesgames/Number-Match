@@ -28,6 +28,23 @@ Grid::Grid() : focusedCell(nullptr) {
    resize();
 }
 
+bool canOverride(GridCell* cell) {
+   return cell && cell->getState() != CellState::Focused && cell->getState() != CellState::Matched;
+} // we can't override focused or matched cells)
+
+void Grid::Update() {
+   static GridCell* previousCell = nullptr;  // to reset color back to restColor
+   GridCell* hoveredCell = findHoveredCell();
+
+   if(hoveredCell != previousCell) {  // a new cell is hovered
+      if(canOverride(hoveredCell))
+         hoveredCell->setState(CellState::Hovered);
+      if(canOverride(previousCell))
+         previousCell->setState(CellState::Rest);
+   }
+   previousCell = hoveredCell;
+}
+
 void Grid::Draw() {
    Color bgColor, numColor;
    for(size_t row = 0; row < grid.size(); row++) {
@@ -226,4 +243,14 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
    }
 
    return false;
+}
+
+GridCell* Grid::findHoveredCell() {
+   for(auto& row : grid) {  // Not const because we want to return a non-const pointer
+      for(GridCell& cell : row) {
+         if(CheckCollisionPointRec(GetMousePosition(), cell.bounds))
+            return &cell;
+      }
+   }
+   return nullptr;
 }
