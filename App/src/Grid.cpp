@@ -45,13 +45,19 @@ void Grid::Update() {
    previousCell = hoveredCell;
 
    // Grid scroll logic
-   static float cellsOriginY = box.y;
+   static float topRowY = box.y;
    float scrollOffset = 35 * GetMouseWheelMove();  // 35 pixels per wheel notch
-   cellsOriginY = std::min(130.0f, cellsOriginY + scrollOffset); // max y = 130
-   for(size_t row = 0; row < m_grid.size(); row++) {
-      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
-         m_grid[row][col].bounds.y = cellsOriginY + row * GridCell::size;  // only y changes with scroll
-      }
+
+   if(scrollOffset != 0.0f) {
+      topRowY = std::min(130.0f, topRowY + scrollOffset); // max y = 130 (initial y)
+      
+      float bottomestRowY = topRowY + (m_grid.size()) * GridCell::size; // actual bottom, not visual
+      if(bottomestRowY < box.y + box.height) // non-existent cells are showing
+         topRowY += box.y + box.height - bottomestRowY; // add the difference
+
+      for(size_t row = 0; row < m_grid.size(); row++)
+         for(size_t col = 0; col < m_grid.at(row).size(); col++)
+            m_grid[row][col].bounds.y = topRowY + row * GridCell::size;  // only y changes with scroll
    }
 }
 
@@ -94,16 +100,9 @@ void Grid::resize() {
    Vector2 boxOrigin = { ((float)GetScreenWidth() - GridCell::size * 9) / 2, 130 };
    box = { boxOrigin.x, boxOrigin.y, GridCell::size * 9, GridCell::size * 9 };
 
-   // set cell origins to match box
-   for(size_t row = 0; row < m_grid.size(); row++) {
-      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
-         m_grid[row][col].bounds = {
-            box.x + col * GridCell::size,  // x
-            box.y + row * GridCell::size,  // y
-            GridCell::size, GridCell::size
-         };
-      }
-   }
+   for(size_t row = 0; row < m_grid.size(); row++)
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) 
+         setCellBounds(&m_grid[row][col]);
 }
 
 void Grid::plus() {
@@ -125,6 +124,7 @@ void Grid::plus() {
          firstEmptyCell = { row, static_cast<int>(std::distance(m_grid.at(row).begin(), it)) };
          break;
       }
+
       if(row == m_grid.size() - 1) { // if no empty cell till last iteration, we make a new row of empty cell
          m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
          firstEmptyCell = { m_grid.size() - 1, 0 };
@@ -140,7 +140,7 @@ void Grid::plus() {
    int row = firstEmptyCell.first;
    int col = firstEmptyCell.second;
    for(int value : plusValues) {
-      m_grid.at(row).at(col).value = value;
+      m_grid[row][col].value = value;
       TraceLog(LISHA_SAYS, "Duplicated %d to [%d, %d]", m_grid.at(row).at(col).value, row, col);
 
       // increment grid index
@@ -149,9 +149,20 @@ void Grid::plus() {
          row++;
          if(row == (int)m_grid.size()) {
             m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            for(GridCell& cell : m_grid[row])
+               setCellBounds(&cell);
          }
-      }
+      } // if condition already increments col
    }
+}
+
+void Grid::setCellBounds(GridCell* cell) {
+   std::pair<int, int> pos = getCellPos(cell);
+   cell->bounds = {
+      box.x + pos.second * GridCell::size,  // x
+      box.y + pos.first * GridCell::size,  // y
+      GridCell::size, GridCell::size
+   };
 }
 
 std::pair<int, int> Grid::getCellPos(GridCell* cell) const {
