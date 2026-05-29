@@ -1,15 +1,8 @@
 {
 	"folders": [
-		{
-			"path": ".",
-			"name": "repo"
-		},
-		{
-			"path": "App"
-		},
-		{
-			"path": "lib"
-		}
+		{ "path": ".", "name": "repo" },
+		{ "path": "App" },
+		{ "path": "lib" }
 	],
 	"settings": {
 		"cmake.sourceDirectory": "${workspaceFolder:repo}",
@@ -18,6 +11,9 @@
 			"**/build/**": true,
 			"**/bin/**": true,
 			"**/obj/**": true,
+			"**/raylib/**": true
+		},
+		"C_Cpp.files.exclude": {
 			"**/raylib/**": true
 		}
 	} 

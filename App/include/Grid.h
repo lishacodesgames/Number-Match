@@ -27,7 +27,9 @@ private:
 };
 
 struct Grid {
-   std::vector<std::array<GridCell, 9>> grid{}; /// Vector of 9-length arrays 
+private:
+   std::vector<std::array<GridCell, 9>> m_grid{}; /// Vector of 9-length arrays 
+public:
    GridCell* focusedCell;
    Rectangle box{};
 
@@ -51,11 +53,11 @@ struct Grid {
    void plus();
 
    // --- iteration ---
-   inline auto begin() { return grid.begin(); }
-   inline auto end() { return grid.end(); }
+   inline auto begin() { return m_grid.begin(); }
+   inline auto end() { return m_grid.end(); }
 
    // --- helpers ---
-   std::pair<int, int> getCellPos(GridCell* cell) const; /// @return {row, col} of cell in grid
+   std::pair<int, int> getCellPos(GridCell* cell) const; /// @return {row, col} of cell in m_grid
    GridCell* findHoveredCell();
 };
 

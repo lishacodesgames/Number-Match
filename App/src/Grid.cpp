@@ -10,17 +10,17 @@ Color GridCell::hoverColor = ColorAlpha(BLIZZARDBLUE, 0.5f);
 Color GridCell::focusColor = ColorAlpha(SKYBLUE, 0.5f);
 
 Grid::Grid() : focusedCell(nullptr) {
-   grid.assign(9, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }),  // 9 rows of all blank cells
+   m_grid.assign(9, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }),  // 9 rows of all blank cells
    srand(time(0));
 
-   for(size_t row = 0; row < grid.size(); row++) {
-      for(size_t col = 0; col < grid.at(row).size(); col++) {
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          if(row < 3 || (row == 3 && col < 5)) // first 3 rows & half of 4th row
-            grid[row][col].value = 1 + rand() % 9;
+            m_grid[row][col].value = 1 + rand() % 9;
          else
-            grid[row][col].value = 0;
+            m_grid[row][col].value = 0;
 
-         grid[row][col].setState(CellState::Rest);
+         m_grid[row][col].setState(CellState::Rest);
       }
    }
 
@@ -32,6 +32,7 @@ bool canOverride(GridCell* cell) {
 } // we can't override focused or matched cells)
 
 void Grid::Update() {
+   // Update hovered cell's state
    static GridCell* previousCell = nullptr;  // to reset color back to restColor
    GridCell* hoveredCell = findHoveredCell();
 
@@ -42,21 +43,29 @@ void Grid::Update() {
          previousCell->setState(CellState::Rest);
    }
    previousCell = hoveredCell;
+
+   // Grid scroll logic
+   static float cellsOriginY = box.y;
+   float scrollOffset = 35 * GetMouseWheelMove();  // 35 pixels per wheel notch
+   cellsOriginY = std::min(130.0f, cellsOriginY + scrollOffset); // max y = 130
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         m_grid[row][col].bounds.y = cellsOriginY + row * GridCell::size;  // only y changes with scroll
+      }
+   }
 }
 
 void Grid::Draw() {
    Color bgColor, numColor;
-   for(size_t row = 0; row < grid.size(); row++) {
-      for(size_t col = 0; col < grid.at(row).size(); col++) {
-         GridCell cell = grid.at(row).at(col);
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         const GridCell cell = m_grid.at(row).at(col);
          std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
          Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), 40, 1);
 
          // default
          numColor = BLACK;
          bgColor = GridCell::restColor;
-
-         // state cases
          if(cell.getState() == CellState::Matched)
             numColor = LIGHTGRAY;
          else if(cell.getState() == CellState::Focused)
@@ -68,7 +77,8 @@ void Grid::Draw() {
          DrawRectangleLinesEx(cell.bounds, 1, ColorAlpha(LIGHTGRAY, 0.65f));
          DrawTextEx(
                App::font_semibold, value.c_str(),
-               { cell.bounds.x + cell.bounds.width / 2 - numSize.x / 2, cell.bounds.y + cell.bounds.height / 2 - numSize.y / 2 },
+               { cell.bounds.x + cell.bounds.width / 2 - numSize.x / 2, 
+                  cell.bounds.y + cell.bounds.height / 2 - numSize.y / 2 },
                40, 1, numColor);
       }
    }
@@ -85,9 +95,9 @@ void Grid::resize() {
    box = { boxOrigin.x, boxOrigin.y, GridCell::size * 9, GridCell::size * 9 };
 
    // set cell origins to match box
-   for(size_t row = 0; row < grid.size(); row++) {
-      for(size_t col = 0; col < grid.at(row).size(); col++) {
-         grid[row][col].bounds = {
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         m_grid[row][col].bounds = {
             box.x + col * GridCell::size,  // x
             box.y + row * GridCell::size,  // y
             GridCell::size, GridCell::size
@@ -98,10 +108,10 @@ void Grid::resize() {
 
 void Grid::plus() {
    std::vector<int> plusValues;
-   for(size_t row = 0; row < grid.size(); row++) {
-      for(size_t col = 0; col < grid.at(row).size(); col++) {
-         if(grid[row][col].value != 0 && grid[row][col].getState() != CellState::Matched)
-            plusValues.push_back(grid[row][col].value);
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         if(m_grid[row][col].value != 0 && m_grid[row][col].getState() != CellState::Matched)
+            plusValues.push_back(m_grid[row][col].value);
       }
    }
 
@@ -109,15 +119,15 @@ void Grid::plus() {
       return; /// @todo stage system
 
    std::pair<int, int> firstEmptyCell = { -1, -1 };
-   for(size_t row = 1; row < grid.size(); row++) { // first row can never be empty so we start from 2nd
-      auto it = std::find(grid.at(row).begin(), grid.at(row).end(), 0);
-      if(it != grid.at(row).end()) {
-         firstEmptyCell = { row, static_cast<int>(std::distance(grid.at(row).begin(), it)) };
+   for(size_t row = 1; row < m_grid.size(); row++) { // first row can never be empty so we start from 2nd
+      auto it = std::find(m_grid.at(row).begin(), m_grid.at(row).end(), 0);
+      if(it != m_grid.at(row).end()) {
+         firstEmptyCell = { row, static_cast<int>(std::distance(m_grid.at(row).begin(), it)) };
          break;
       }
-      if(row == grid.size() - 1) { // if no empty cell till last iteration, we make a new row of empty cell
-         grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-         firstEmptyCell = { grid.size() - 1, 0 };
+      if(row == m_grid.size() - 1) { // if no empty cell till last iteration, we make a new row of empty cell
+         m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+         firstEmptyCell = { m_grid.size() - 1, 0 };
       }
    }
 
@@ -130,24 +140,24 @@ void Grid::plus() {
    int row = firstEmptyCell.first;
    int col = firstEmptyCell.second;
    for(int value : plusValues) {
-      grid.at(row).at(col).value = value;
-      TraceLog(LISHA_SAYS, "Duplicated %d to [%d, %d]", grid.at(row).at(col).value, row, col);
+      m_grid.at(row).at(col).value = value;
+      TraceLog(LISHA_SAYS, "Duplicated %d to [%d, %d]", m_grid.at(row).at(col).value, row, col);
 
       // increment grid index
-      if(++col == (int)grid.at(0).size()) {
+      if(++col == (int)m_grid.at(0).size()) {
          col = 0;
          row++;
-         if(row == (int)grid.size()) {
-            grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+         if(row == (int)m_grid.size()) {
+            m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
          }
       }
    }
 }
 
 std::pair<int, int> Grid::getCellPos(GridCell* cell) const {
-   for(size_t row = 0; row < grid.size(); row++) {
-      for(size_t col = 0; col < grid.at(row).size(); col++) {
-         if(&grid[row][col] == cell)
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         if(&m_grid[row][col] == cell)
             return { row, col };
       }
    }
@@ -160,7 +170,7 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
       return false;
 
    GridCell cell1 = *focusedCell;
-   GridCell cell2 = grid.at(pos.first).at(pos.second);
+   GridCell cell2 = m_grid.at(pos.first).at(pos.second);
    std::pair<int, int> pos1 = getCellPos(focusedCell);
    std::pair<int, int> pos2 = pos;
 
@@ -180,7 +190,7 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
       int colStart = std::min(pos1.second, pos2.second) + 1;
       int colEnd = std::max(pos1.second, pos2.second);
       for(int col = colStart; col < colEnd; col++)
-         if(grid.at(row).at(col).getState() != CellState::Matched)
+         if(m_grid.at(row).at(col).getState() != CellState::Matched)
             return false;  // if there is a non-matched cell in between, the cells are not compatible
 
       return true;
@@ -189,7 +199,7 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
       int rowStart = std::min(pos1.first, pos2.first) + 1;
       int rowEnd = std::max(pos1.first, pos2.first);
       for(int row = rowStart; row < rowEnd; row++)
-         if(grid.at(row).at(col).getState() != CellState::Matched)
+         if(m_grid.at(row).at(col).getState() != CellState::Matched)
             return false;  // if there is a non-matched cell in between, the cells are not compatible
 
       return true;
@@ -207,7 +217,7 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
       int rowStart = pos1.first + rowStep;
 
       for(int row = rowStart, col = colStart; row != pos2.first; row += rowStep, col += colStep)
-         if(grid.at(row).at(col).getState() != CellState::Matched)
+         if(m_grid.at(row).at(col).getState() != CellState::Matched)
             return false;  // if there is a non-matched cell in between, the cells are not compatible
 
       return true;
@@ -222,8 +232,8 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
 
       int colStart = pos1.second + 1;
       bool isRow1Clear = true;
-      for(size_t col = colStart; col < grid.at(pos1.first).size(); col++) {
-         if(grid.at(pos1.first).at(col).getState() != CellState::Matched) {
+      for(size_t col = colStart; col < m_grid.at(pos1.first).size(); col++) {
+         if(m_grid.at(pos1.first).at(col).getState() != CellState::Matched) {
             isRow1Clear = false;
             break;
          }
@@ -232,7 +242,7 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
       if(isRow1Clear) {
          int colEnd = pos2.second;
          for(int col = 0; col < colEnd; col++) {
-            if(grid.at(pos2.first).at(col).getState() != CellState::Matched)
+            if(m_grid.at(pos2.first).at(col).getState() != CellState::Matched)
                return false;
          }
 
@@ -244,7 +254,7 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
 }
 
 GridCell* Grid::findHoveredCell() {
-   for(auto& row : grid) {  // Not const because we want to return a non-const pointer
+   for(auto& row : m_grid) {  // Not const because we want to return a non-const pointer
       for(GridCell& cell : row) {
          if(CheckCollisionPointRec(GetMousePosition(), cell.bounds))
             return &cell;
