@@ -18,19 +18,20 @@ The only keybinding is: `Q` to go back to home from the game
 
 ## How to use
 
-### Clone
-`git clone --recursive https://github.com/lishacodesgames/Number-Match.git` to get the raylib submodule local
-
-**If you forgot the recursive flag, run:** <br>
-`git submodule update --init --recursive` after regular `git clone`
-
-### Build
+### Clone & Build
 ```bash
-cmake --preset Release
-cmake --build --preset Release
+git clone --recursive --shallow-submodules https://github.com/lishacodesgames/Number-Match.git
+cd Number-Match
+cmake --preset Release && cmake --build --preset Release
 ```
 
-### Run
+**NOTE: If you forgot the recursive flag in git clone, run:** <br>
+`git submodule update --init --recursive --depth 1` after regular `git clone`, and then the cmake command.
+
+**If you have the repository cloned, but want to update, run:** <br>
+`git fetch && git pull` instead of clone, and then the cmake command.
+
+### Run the Game
 **Windows**
 ```bash
 "bin\Release\NumberMatch.exe"
