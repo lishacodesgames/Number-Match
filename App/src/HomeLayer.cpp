@@ -46,7 +46,7 @@ void HomeLayer::OnEvent(Core::Event &e) {
          return;
       }
       
-      PanelLayer::PopInstance();
+      App::QueueLayerPop(App::GetLayerByName("Panel Layer"));
       App::QueueLayerPop(this);
 
       Core::Layer* game = App::GetLayerByName("Game Layer");

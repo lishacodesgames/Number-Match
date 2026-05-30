@@ -1,6 +1,5 @@
 #pragma once
 #include <raylib.h>
-#include "Core/Event.h"
 #include "Core/Layer.h"
 
 class MeLayer : public Core::Layer {

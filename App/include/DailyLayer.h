@@ -1,6 +1,5 @@
 #pragma once
-#include "PanelLayer.h"
-#include "Core/Event.h"
+#include <raylib.h>
 #include "Core/Layer.h"
 
 class DailyLayer : public Core::Layer {

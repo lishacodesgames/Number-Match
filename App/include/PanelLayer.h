@@ -9,10 +9,7 @@ enum class Menu {None, Home, Daily, Me};
 class PanelLayer : public Core::Layer {
 public:
    PanelLayer();
-   ~PanelLayer() override {
-      currentPage = Menu::None;
-      s_instance = nullptr;
-   }
+   ~PanelLayer() override { currentPage = Menu::None; }
 
    void OnEvent(Core::Event& e) override;
    void OnUpdate() override;
@@ -28,13 +25,9 @@ public:
    Core::Layer* currentLayer;
    static Menu currentPage;
 public:
-   static void PopInstance() { App::QueueLayerPop(s_instance); }
-
    GUI::Button* findHoveredButton();
    GUI::Button* findFocusedButton();
 
    void resetAllFocus();
    void setButtonsOrigin();
-private:
-   static PanelLayer* s_instance; /// for memory management of this layer
 };

@@ -17,14 +17,12 @@ static Vector2 buttonsOrigin() { // must be compuled after window exists, hence 
 }
 
 Menu PanelLayer::currentPage = Menu::None;
-PanelLayer* PanelLayer::s_instance = nullptr;
 
 PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
       homeButton({0, 0}, {0, 0}, "Main", BLANK, BLUE, 30, {0.0f, 0}, App::font_semibold),
       dailyButton({0, 0}, {0, 0}, "Daily Challenges", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold),
       meButton({0, 0}, {0, 0}, "Me", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold) 
 {
-   s_instance = this;
    homeButton.setFocus(true, BLANK, BLUE);
    currentPage = Menu::Home;
 
