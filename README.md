@@ -19,9 +19,9 @@ The only keybinding is: `Q` to go back to home from the game
 ## How to use
 
 ### Clone
-`git clone --recursive` to get the raylib submodule local
+`git clone --recursive https://github.com/lishacodesgames/Number-Match.git` to get the raylib submodule local
 
-**If you forgot, do:** <br>
+**If you forgot the recursive flag, run:** <br>
 `git submodule update --init --recursive` after regular `git clone`
 
 ### Build
