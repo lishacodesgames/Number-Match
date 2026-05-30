@@ -15,7 +15,9 @@ public:
    void OnEvent(Core::Event& e) override;
    void OnRender() override;
 private:
+   // --- gameplay ---
    Grid m_grid;
+   void handleMatch(GridCell* cell);  /// handles matching with focused cell
 
    // --- game info ---
    Texture m_trophyTexture = {0};

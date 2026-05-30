@@ -53,6 +53,9 @@ public:
    void resize();
    void plus();
 
+   void clearRow(int row);
+   bool isRowClear(int row); /// @return true IF all cells in row are either matched or empty (value = 0)
+
    // --- iteration ---
    inline auto begin() { return m_grid.begin(); }
    inline auto end() { return m_grid.end(); }

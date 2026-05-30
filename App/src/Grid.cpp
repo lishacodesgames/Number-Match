@@ -48,12 +48,9 @@ void Grid::Update() {
 
    // Grid scroll logic
    /// @todo let user choose direction of mouse scroll (+ <-> -) in settings
-   m_scrollOffset = std::max(0.0f, m_scrollOffset - 35 * GetMouseWheelMove()); // offset cannot be negative
+   float maxScrollOffset = std::max(0.0f, m_grid.size() * GridCell::size - box.height);
+   m_scrollOffset = std::clamp(m_scrollOffset - 35 * GetMouseWheelMove(), 0.0f, maxScrollOffset);
    float topRowY = box.y - m_scrollOffset;
-   float bottomestRowY = topRowY + (m_grid.size()) * GridCell::size; // actual bottom, not visual
-
-   if(bottomestRowY < box.y + box.height) // non-existent cells are showing
-      topRowY += box.y + box.height - bottomestRowY; // add the difference
 
    for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++)
@@ -107,7 +104,7 @@ void Grid::resize() {
    for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++) 
          setCellBounds(&m_grid[row][col]);
-         
+
    m_scrollBar.setTrackBounds({ box.x + box.width + 25, box.y, 2, box.height });
 }
 
@@ -157,6 +154,24 @@ void Grid::plus() {
          }
       } // if condition already increments col
    }
+}
+
+void Grid::clearRow(int row) {
+   m_grid.erase(m_grid.begin() + row);
+
+   if(m_grid.size() < 9) { // maintain at least 9 rows
+      m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+      for(GridCell& cell : m_grid.back())
+         setCellBounds(&cell);
+   }
+}
+
+bool Grid::isRowClear(int row) {
+   for(const GridCell& cell : m_grid.at(row)) {
+      if(cell.getState() != CellState::Matched && cell.value != 0)
+         return false;
+   }
+   return true;
 }
 
 void Grid::setCellBounds(GridCell* cell) {

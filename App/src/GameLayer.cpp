@@ -86,11 +86,9 @@ void GameLayer::OnEvent(Core::Event& e) {
       GridCell* activeCell = m_grid.findHoveredCell();
       if(activeCell) {
          if(activeCell != m_grid.focusedCell) {  // new cell was clicked
-            if(m_grid.isCellCompatible(m_grid.getCellPos(activeCell))) {
-               m_grid.focusedCell->setState(CellState::Matched);
-               activeCell->setState(CellState::Matched);
-               m_grid.focusedCell = nullptr;
-            } else {
+            if(m_grid.isCellCompatible(m_grid.getCellPos(activeCell)))
+               handleMatch(activeCell);
+            else {
                if(m_grid.focusedCell)
                   m_grid.focusedCell->setState(CellState::Rest);
 
@@ -200,6 +198,22 @@ void GameLayer::OnRender() {
          App::font_black, Storage::formatCurrentScore().c_str(),
          { (float)GetScreenWidth() / 2 - currentScoreWidth / 2, 58 },
          40, 1, DARKERGRAY);
+}
+
+void GameLayer::handleMatch(GridCell* cell) {
+   m_grid.focusedCell->setState(CellState::Matched);
+   cell->setState(CellState::Matched);
+
+   // check if either cell's row is clear
+   int row1 = m_grid.getCellPos(m_grid.focusedCell).first;
+   if(m_grid.isRowClear(row1))
+      m_grid.clearRow(row1);
+   
+   int row2 = m_grid.getCellPos(cell).first;
+   if(m_grid.isRowClear(row2))
+      m_grid.clearRow(row2);
+
+   m_grid.focusedCell = nullptr;
 }
 
 #pragma region Helpers
