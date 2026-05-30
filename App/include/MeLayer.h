@@ -1,13 +1,18 @@
 #pragma once
-#include "PanelLayer.h"
+#include <raylib.h>
 #include "Core/Event.h"
 #include "Core/Layer.h"
 
 class MeLayer : public Core::Layer {
 public:
-   MeLayer();
+   MeLayer() : Core::Layer("Me Layer") {}
    ~MeLayer() override = default;
-   void OnAttach() override;
+
+   void OnAttach() override {
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+      Core::Layer::OnAttach();
+   }
+
    void OnEvent(Core::Event& e) override;
    void OnUpdate() override;
    void OnRender() override;

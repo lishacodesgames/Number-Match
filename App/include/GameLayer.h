@@ -9,11 +9,16 @@ public:
    GameLayer(bool reset); /// @param reset : if true, resets the storage saves, otherwise loads game layer with existing info.
    ~GameLayer() = default;
 
-   void OnAttach() override;
-   void OnResume() override;
+   void OnAttach() override {
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+      Core::Layer::OnAttach();
+   }
+
    void OnUpdate() override;
    void OnEvent(Core::Event& e) override;
    void OnRender() override;
+
+   void OnResume() override;
 private:
    // --- gameplay ---
    Grid m_grid;
@@ -29,7 +34,7 @@ private:
    GUI::Button m_plusButton;
    GUI::Button m_hintButton;
 
-   // --- helpers ---
+private:
    void setButtonsOrigin();
    GUI::Button* findHoveredButton(); /// @return any of the 4 member buttons OR nullptr
 };

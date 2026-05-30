@@ -16,20 +16,14 @@ static Vector2 buttonsOrigin() { // must be compuled after window exists, hence 
    };
 }
 
-PanelLayer* PanelLayer::s_instance = nullptr;
 Menu PanelLayer::currentPage = Menu::None;
+PanelLayer* PanelLayer::s_instance = nullptr;
 
-void PanelLayer::PopInstance() {
-   if(s_instance)
-      App::QueueLayerPop(s_instance);
-}
-
-// clang-format off
 PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
       homeButton({0, 0}, {0, 0}, "Main", BLANK, BLUE, 30, {0.0f, 0}, App::font_semibold),
       dailyButton({0, 0}, {0, 0}, "Daily Challenges", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold),
       meButton({0, 0}, {0, 0}, "Me", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold) 
-{ // clang-format on
+{
    s_instance = this;
    homeButton.setFocus(true, BLANK, BLUE);
    currentPage = Menu::Home;
@@ -39,10 +33,6 @@ PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
    homeButton.setIcon("assets/icons/menus/home_20x20.png");
    dailyButton.setIcon("assets/icons/menus/daily_20x20.png");
    meButton.setIcon("assets/icons/menus/me_20x20.png");
-}
-PanelLayer::~PanelLayer() {
-   currentPage = Menu::None;
-   s_instance = nullptr; 
 }
 
 void PanelLayer::OnEvent(Core::Event& e) {
@@ -82,6 +72,7 @@ void PanelLayer::OnUpdate() {
    dailyButton.Update();
    meButton.Update();
 
+   /// @todo fix logic with previousCell, like in Grid::Update()
    GUI::Button* focusedButton = findFocusedButton();
    resetAllFocus();
    focusedButton->setFocus(true, BLANK, BLUE);
@@ -113,17 +104,6 @@ GUI::Button* PanelLayer::findHoveredButton() {
    else if (meButton.isHovered)
       return &meButton;
    else
-      return nullptr;
-}
-
-GUI::Button* PanelLayer::findActiveButton() {
-   if(homeButton.isActive)
-      return &homeButton;
-   else if(dailyButton.isActive)
-      return &dailyButton;
-   else if(meButton.isActive)
-      return &meButton;
-   else  
       return nullptr;
 }
 

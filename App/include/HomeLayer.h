@@ -7,11 +7,11 @@
 class HomeLayer : public Core::Layer {
 public:
    HomeLayer();
-   ~HomeLayer() override;
-   void OnUpdate() override;
-   void OnEvent(Core::Event &e) override;
-   void OnRender() override;
+   ~HomeLayer() override { UnloadTexture(m_backgroundTexture); }
 
+   void OnEvent(Core::Event &e) override;
+   void OnUpdate() override;
+   void OnRender() override;
 private:
    Image m_backgroundImage = {0};
    Texture m_backgroundTexture = {0};
@@ -19,10 +19,18 @@ private:
 
    GUI::Button m_newButton;
    GUI::Button m_continueButton;
-   GUI::Button* findHoveredButton();
+private:
+   GUI::Button* findHoveredButton() {
+      if(m_newButton.isHovered)
+         return &m_newButton;
+      else if(m_continueButton.isHovered)
+         return &m_continueButton;
+      else
+         return nullptr;
+   }
 
-   void resizeBackground();
    void setButtonsOrigin();
+   void resizeBackground();
 };
 
 inline Vector2 operator+(const Vector2& vec, const float& fl) { return {vec.x+fl, vec.y+fl}; }

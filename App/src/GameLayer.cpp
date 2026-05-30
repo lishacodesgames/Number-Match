@@ -14,13 +14,12 @@
 
 static constexpr Vector2 helperPadding = { 8, 8 };
 
-// clang-format off
 GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
       m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
       m_settingsButton({0, 0}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
       m_plusButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}),
       m_hintButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}) 
-{  // clang-format on
+{
    m_trophyTexture = LoadTexture("assets/icons/game/trophy_16x16.png");
    m_tickTexture = LoadTexture("assets/icons/game/tick_16x16.png");
 
@@ -35,19 +34,6 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
       Storage::save(1, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 0);  // reset storage to default values
    else
       Storage::load();
-}
-
-void GameLayer::OnAttach() {
-   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   Core::Layer::OnAttach();
-}
-
-void GameLayer::OnResume() {
-   setButtonsOrigin();
-   m_grid.resize();
-   Storage::load();
-
-   Layer::OnResume();
 }
 
 void GameLayer::OnEvent(Core::Event& e) {
@@ -198,6 +184,14 @@ void GameLayer::OnRender() {
          App::font_black, Storage::formatCurrentScore().c_str(),
          { (float)GetScreenWidth() / 2 - currentScoreWidth / 2, 58 },
          40, 1, DARKERGRAY);
+}
+
+void GameLayer::OnResume() {
+   setButtonsOrigin();
+   m_grid.resize();
+   Storage::load();
+
+   Layer::OnResume();
 }
 
 void GameLayer::handleMatch(GridCell* cell) {

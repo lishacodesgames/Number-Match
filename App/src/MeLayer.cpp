@@ -1,16 +1,8 @@
 #include <pch/Precompiled.h>
 #include "MeLayer.h"
 
-#include <raylib.h>
 #include "Core/Logging.h"
-#include "Core/Layer.h"
 #include "App.h"
-
-MeLayer::MeLayer() : Core::Layer("Me Layer") {}
-void MeLayer::OnAttach() {
-   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   Core::Layer::OnAttach();
-}
 
 void MeLayer::OnEvent(Core::Event& e) {
    if (e.GetEventType() == Core::EventType::KeyPressed)

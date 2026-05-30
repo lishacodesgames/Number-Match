@@ -5,10 +5,12 @@
 
 class CoinLayer : public Core::Layer {
 public:
-   CoinLayer();
-   ~CoinLayer() override;
+   CoinLayer() : Core::Layer("Coin Layer", true) { 
+      m_coinTexture = LoadTexture("assets/icons/game/coin_20x20.png");
+   }
+   ~CoinLayer() override { UnloadTexture(m_coinTexture); }
 
-   void OnEvent(Core::Event& e) override;
+   void OnEvent([[maybe_unused]] Core::Event& e) override {}
    void OnUpdate() override;
    void OnRender() override;
 private:

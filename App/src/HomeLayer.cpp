@@ -17,7 +17,6 @@ static Vector2 buttonOrigin() {
    };
 }
 
-// clang-format off
 HomeLayer::HomeLayer() : Layer("Home Layer"), 
       m_newButton(
          {buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, 
@@ -28,7 +27,6 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
          "Continue Game", BLUE, WHITE, 25, {0.8f, 8}, App::font_semibold
       )
 {
-// clang-format on
    m_backgroundImage = LoadImage("assets/backgrounds/home_background_800x1417.png"); 
    resizeBackground();
    m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
@@ -39,7 +37,6 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
 
    Storage::load();
 }
-HomeLayer::~HomeLayer() { UnloadTexture(m_backgroundTexture); }
 
 void HomeLayer::OnEvent(Core::Event &e) {
    if(e.GetEventType() == Core::EventType::MouseClicked) {
@@ -108,13 +105,9 @@ void HomeLayer::OnRender() {
    m_continueButton.Draw();
 }
 
-GUI::Button* HomeLayer::findHoveredButton() {
-   if(m_newButton.isHovered)
-      return &m_newButton;
-   else if(m_continueButton.isHovered)
-      return &m_continueButton;
-   else
-      return nullptr;
+void HomeLayer::setButtonsOrigin() {
+   m_newButton.setOrigin(buttonOrigin());
+   m_continueButton.setOrigin({buttonOrigin().x, buttonOrigin().y - buttonBounds.y - 10});
 }
 
 void HomeLayer::resizeBackground() {
@@ -127,9 +120,4 @@ void HomeLayer::resizeBackground() {
 
    UnloadTexture(m_backgroundTexture);
    m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
-}
-
-void HomeLayer::setButtonsOrigin() {
-   m_newButton.setOrigin(buttonOrigin());
-   m_continueButton.setOrigin({buttonOrigin().x, buttonOrigin().y - buttonBounds.y - 10});
 }

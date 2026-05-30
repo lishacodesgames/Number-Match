@@ -41,37 +41,6 @@ App::~App() {
    TraceLog(LISHA_SAYS, "GOODBYE!\n");
 }
 
-void App::QueueLayerSwap(Core::Layer* pop, Core::Layer* push) {
-   QueueLayerPop(pop);
-   QueueLayerPush(push);
-}
-
-void App::QueueLayerPush(Core::Layer* layer) {
-   for(Core::Layer* existing : s_instance->m_layerStack)
-      if(typeid(*existing) == typeid(*layer)) // duplicate layers
-         QueueLayerPop(existing);
-
-   s_instance->m_pendingPushes.push_back(layer);
-}
-void App::QueueLayerPop(Core::Layer* layer) { s_instance->m_pendingPops.push_back(layer); }
-
-Core::Layer* App::GetLayerByName(const std::string& name) {
-   for(Core::Layer* layer : s_instance->m_layerStack)
-      if(layer->GetName() == name)
-         return layer;
-   
-   return nullptr;
-}
-
-void App::OnEvent(Core::Event& e) {
-   // TOPMOST (last) layer must get the event FIRST
-   for(auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it) {
-      (*it)->OnEvent(e);
-      if(e.Handled) 
-         break; // stop propagating if event was handled
-   }
-}
-
 void App::Run() {
    TraceLog(LISHA_SAYS, "Working Directory: %s", GetWorkingDirectory());
 
@@ -129,5 +98,36 @@ void App::Run() {
          layer->OnRender();
 
       EndDrawing();
+   }
+}
+
+void App::QueueLayerSwap(Core::Layer* pop, Core::Layer* push) {
+   QueueLayerPop(pop);
+   QueueLayerPush(push);
+}
+
+void App::QueueLayerPush(Core::Layer* layer) {
+   for(Core::Layer* existing : s_instance->m_layerStack)
+      if(typeid(*existing) == typeid(*layer)) // duplicate layers
+         QueueLayerPop(existing);
+
+   s_instance->m_pendingPushes.push_back(layer);
+}
+void App::QueueLayerPop(Core::Layer* layer) { s_instance->m_pendingPops.push_back(layer); }
+
+Core::Layer* App::GetLayerByName(const std::string& name) {
+   for(Core::Layer* layer : s_instance->m_layerStack)
+      if(layer->GetName() == name)
+         return layer;
+   
+   return nullptr;
+}
+
+void App::OnEvent(Core::Event& e) {
+   // TOPMOST (last) layer must get the event FIRST
+   for(auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it) {
+      (*it)->OnEvent(e);
+      if(e.Handled) 
+         break; // stop propagating if event was handled
    }
 }

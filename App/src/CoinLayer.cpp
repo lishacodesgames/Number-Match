@@ -5,14 +5,6 @@
 #include "Storage.h"
 #include "App.h"
 
-CoinLayer::CoinLayer() : Core::Layer("Coin Layer", true) {
-   m_coinTexture = LoadTexture("assets/icons/game/coin_20x20.png");
-}
-
-CoinLayer::~CoinLayer() { UnloadTexture(m_coinTexture); }
-
-void CoinLayer::OnEvent([[maybe_unused]] Core::Event& e) {}
-
 void CoinLayer::OnUpdate() {
    // cannot be in OnEvent since CoinLayer is sometimes on top of PanelLayer so the coin's check happens before layer is switched
    // causing coins to not update when switching from Home to Daily/Me, since PanelLayer is popped after the click event is processed

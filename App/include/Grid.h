@@ -17,20 +17,13 @@ struct GridCell {
    Rectangle bounds;
 
    /// @param newState only set if current state is not CellState::Matched
-   inline void setState(CellState newState) { if(state != CellState::Matched) state = newState; }
-   inline CellState getState() const { return state; }
-
+   void setState(CellState newState) { if(state != CellState::Matched) state = newState; }
+   CellState getState() const { return state; }
 private:
    CellState state = CellState::Rest;
 };
 
 struct Grid {
-private:
-   ScrollBar m_scrollBar;
-   float m_scrollOffset = 0.0f;
-
-   std::vector<std::array<GridCell, 9>> m_grid{};  /// Vector of 9-length arrays
-public:
    GridCell* focusedCell;
    Rectangle box{};
 
@@ -39,17 +32,7 @@ public:
    void Draw() const;
 
    // --- gameplay ---
-   /** @brief
-    * Value compatibility: if sum to 10 OR same
-
-    * Cell compatibility:
-    * - Same row/column IF no unmatched cell in between \
-    * - Same diagonal IF no unmatched cell in between \
-    * - If all cells to the right of cell are matched, its "vision" wraps around to the first unmatched cell of next row
-    *
-    * @return true if cell @pos is compatible with focusedCell
-    */
-   bool isCellCompatible(std::pair<int, int> pos) const;
+   
    void resize();
    void plus();
 
@@ -63,7 +46,24 @@ public:
    // --- helpers ---
    void setCellBounds(GridCell* cell);                    /// set cell origins to match box
    std::pair<int, int> getCellPos(GridCell* cell) const;  /// @return {row, col} of cell in m_grid
+   
    GridCell* findHoveredCell();
+   /** @brief
+    * Value compatibility: if sum to 10 OR same
+
+    * Cell compatibility:
+    * - Same row/column IF no unmatched cell in between \
+    * - Same diagonal IF no unmatched cell in between \
+    * - If all cells to the right of cell are matched, its "vision" wraps around to the first unmatched cell of next row
+    *
+    * @return true if cell @pos is compatible with focusedCell
+    */
+   bool isCellCompatible(std::pair<int, int> pos) const;
+private:
+   ScrollBar m_scrollBar;
+   float m_scrollOffset = 0.0f;
+
+   std::vector<std::array<GridCell, 9>> m_grid{};  /// Vector of 9-length arrays
 };
 
 inline int operator+(const GridCell& a, const GridCell& b) { return a.value + b.value; }

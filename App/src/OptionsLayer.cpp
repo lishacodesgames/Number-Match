@@ -7,11 +7,10 @@
 #include "App.h"
 
 static constexpr int PANEL_HEIGHT = 35;
-static constexpr float BANNER_HEIGHT = 32;
+static constexpr float BANNER_HEIGHT = 32.0f;
 
-static constexpr float BOUNDS_TARGETY = 100;
+static constexpr float BOUNDS_TARGETY = 100.0f;
 
-// clang-format off
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
       m_bounds({
          (float)(GetScreenWidth()) / 4, (float)(GetScreenHeight()), // to be animated to target height
@@ -21,7 +20,7 @@ OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
          {m_bounds.x + m_bounds.width - 55, m_bounds.y + 7}, // origin 
          {0, 0}, "Done", BLANK, BLUE, 20, {0, 0}, App::font_semibold
       )
-{ // clang-format on
+{
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
 
    // banners
@@ -51,16 +50,6 @@ OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
    m_bannerNames[PREFS] = "Privacy Preferences";
    m_bannerNames[MATH] = "Math Puzzle";
    m_bannerNames[NO_ADS] = "Remove Ads";
-}
-
-OptionsLayer::~OptionsLayer() {
-   for(Texture icon : m_bannerIcons)
-      UnloadTexture(icon);
-}
-
-void OptionsLayer::OnAttach() {
-   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   Core::Layer::OnAttach();
 }
 
 void OptionsLayer::OnEvent(Core::Event& e) {

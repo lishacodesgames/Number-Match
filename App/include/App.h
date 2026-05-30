@@ -8,7 +8,6 @@
 
 /// Static class that manages the game loop and all game states (menu, gameplay, pause, etc.) 
 class App {
-   static App* s_instance; // so App's statics and members can speak to each other
 public:
    App(const std::string& name);
    ~App();
@@ -25,7 +24,8 @@ public:
    static Font font_black;
 private:
    void OnEvent(Core::Event& e);
-
+private:
+   static App* s_instance; // so App's statics and members can speak to each other
    Core::LayerStack m_layerStack;
 
    // memory management for pending layer changes, to be applied at the end of the current frame

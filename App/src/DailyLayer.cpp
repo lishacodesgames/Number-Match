@@ -7,12 +7,6 @@
 #include "Core/Layer.h"
 #include "App.h"
 
-DailyLayer::DailyLayer() : Layer("Daily Layer") {}
-void DailyLayer::OnAttach() {
-   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-   Core::Layer::OnAttach();
-}
-
 void DailyLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::KeyPressed)
       TraceLog(LISHA_SAYS, "The '%c' key was pressed", static_cast<Core::KeyPressedEvent&>(e).key);
