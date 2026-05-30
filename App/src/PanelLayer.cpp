@@ -16,15 +16,12 @@ static Vector2 buttonsOrigin() { // must be compuled after window exists, hence 
    };
 }
 
-Menu PanelLayer::currentPage = Menu::None;
-
 PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
       homeButton({0, 0}, {0, 0}, "Main", BLANK, BLUE, 30, {0.0f, 0}, App::font_semibold),
       dailyButton({0, 0}, {0, 0}, "Daily Challenges", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold),
       meButton({0, 0}, {0, 0}, "Me", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold) 
 {
    homeButton.setFocus(true, BLANK, BLUE);
-   currentPage = Menu::Home;
 
    setButtonsOrigin();
 
@@ -36,26 +33,25 @@ PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
 void PanelLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::MouseClicked) {
       GUI::Button* activeButton = findHoveredButton();
-      if(!activeButton)
+      if(!activeButton || activeButton->isFocused)
          return;
 
+      static GUI::Button* previousButton = &homeButton;
       Core::Layer* newLayer = nullptr;
-      if(activeButton == &homeButton && currentPage != Menu::Home) {
-         currentPage = Menu::Home;
-         newLayer = new HomeLayer();
-      } else if(activeButton == &dailyButton && currentPage != Menu::Daily) {
-         currentPage = Menu::Daily;
-         newLayer = new DailyLayer();
-      } else if(activeButton == &meButton && currentPage != Menu::Me) {
-         currentPage = Menu::Me;
-         newLayer = new MeLayer();
+      if(activeButton != previousButton) {
+         if(activeButton == &homeButton)
+            newLayer = new HomeLayer();
+         else if(activeButton == &dailyButton)
+            newLayer = new DailyLayer();
+         else if(activeButton == &meButton)
+            newLayer = new MeLayer();
       }
-
       if(newLayer) {
-         resetAllFocus();
+         previousButton->setFocus(false, BLANK, GRAY);
          activeButton->setFocus(true, BLANK, BLUE);
          App::QueueLayerSwap(currentLayer, newLayer);
          currentLayer = newLayer;
+         previousButton = activeButton;
       }
    }
 }
@@ -70,16 +66,21 @@ void PanelLayer::OnUpdate() {
    dailyButton.Update();
    meButton.Update();
 
-   /// @todo fix logic with previousCell, like in Grid::Update()
-   GUI::Button* focusedButton = findFocusedButton();
-   resetAllFocus();
-   focusedButton->setFocus(true, BLANK, BLUE);
-
+   static GUI::Button* previousButton = &homeButton;
    GUI::Button* hoveredButton = findHoveredButton();
+
    if (hoveredButton) {
       hoveredButton->contentColor = DARKBLUE;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } // else case will be handled by below layers, since this one is an overlay
+
+   if(previousButton && hoveredButton != previousButton) { // new button is focused, so we must reset previous one
+      if(previousButton->isFocused)
+         previousButton->contentColor = BLUE;
+      else
+         previousButton->contentColor = GRAY;
+   }
+   previousButton = hoveredButton;
 }
 
 void PanelLayer::OnRender() {
@@ -92,36 +93,6 @@ void PanelLayer::OnRender() {
    homeButton.Draw();
    dailyButton.Draw();
    meButton.Draw();
-}
-
-GUI::Button* PanelLayer::findHoveredButton() {
-   if (homeButton.isHovered)
-      return &homeButton;
-   else if (dailyButton.isHovered)
-      return &dailyButton;
-   else if (meButton.isHovered)
-      return &meButton;
-   else
-      return nullptr;
-}
-
-GUI::Button* PanelLayer::findFocusedButton() {
-   if(homeButton.isFocused)
-      return &homeButton;
-   else if(dailyButton.isFocused)
-      return &dailyButton;
-   else if(meButton.isFocused)
-      return &meButton;
-   else {
-      TraceLog(LOG_ERROR, "No panel button is focused!");
-      return nullptr;
-   }
-}
-
-void PanelLayer::resetAllFocus() {
-   homeButton.setFocus(false, BLANK, GRAY);
-   dailyButton.setFocus(false, BLANK, GRAY);
-   meButton.setFocus(false, BLANK, GRAY);
 }
 
 void PanelLayer::setButtonsOrigin() {

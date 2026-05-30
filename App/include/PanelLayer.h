@@ -9,7 +9,7 @@ enum class Menu {None, Home, Daily, Me};
 class PanelLayer : public Core::Layer {
 public:
    PanelLayer();
-   ~PanelLayer() override { currentPage = Menu::None; }
+   ~PanelLayer() override = default;
 
    void OnEvent(Core::Event& e) override;
    void OnUpdate() override;
@@ -17,17 +17,22 @@ public:
 public:   
    static constexpr int HEIGHT = 50;
    static constexpr float BUTTON_SPACING = 192.0f;
+   
+   Core::Layer* currentLayer;
 
    GUI::Button homeButton;
    GUI::Button dailyButton;
    GUI::Button meButton;
-
-   Core::Layer* currentLayer;
-   static Menu currentPage;
 public:
-   GUI::Button* findHoveredButton();
-   GUI::Button* findFocusedButton();
-
-   void resetAllFocus();
    void setButtonsOrigin();
+   GUI::Button* findHoveredButton() {
+      if (homeButton.isHovered)
+         return &homeButton;
+      else if (dailyButton.isHovered)
+         return &dailyButton;
+      else if (meButton.isHovered)
+         return &meButton;
+      else
+         return nullptr;
+   }
 };

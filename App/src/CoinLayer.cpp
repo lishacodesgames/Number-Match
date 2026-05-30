@@ -9,7 +9,7 @@ void CoinLayer::OnUpdate() {
    // cannot be in OnEvent since CoinLayer is sometimes on top of PanelLayer so the coin's check happens before layer is switched
    // causing coins to not update when switching from Home to Daily/Me, since PanelLayer is popped after the click event is processed
    // leads to buggy mess lol
-   if(PanelLayer::currentPage == Menu::Daily || PanelLayer::currentPage == Menu::Me) 
+   if(App::GetLayerByName("Panel Layer") && !App::GetLayerByName("Home Layer"))
       App::QueueLayerPop(this);
 }
 
