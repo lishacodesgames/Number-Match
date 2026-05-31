@@ -1,9 +1,17 @@
 {
+	"extensions": {
+		"recommendations": [
+			"Katsute.code-background",
+			"runarsf.platform-settings"
+		]
+	},
+
 	"folders": [
 		{ "path": ".", "name": "repo" },
 		{ "path": "App" },
 		{ "path": "lib" }
 	],
+
 	"settings": {
 		"cmake.sourceDirectory": "${workspaceFolder:repo}",
 
@@ -15,6 +23,48 @@
 		},
 		"C_Cpp.files.exclude": {
 			"**/raylib/**": true
-		}
+		},
+
+		"background.settingScope": "Workspace",
+		"background.useInvertedOpacity": true,
+
+		// if too opaque, set to (1 - written value) bcz vscode can't decide which platform uses which opacity convention
+		"platformSettings.platforms": {
+			"win32": { "background.backgroundOpacity": [ 0.95, 0.93, 0.83, 0.95 ] },
+			"linux": { "background.backgroundOpacity": [ 0.05, 0.07, 0.17, 0.05 ] },
+			"darwin": { "background.backgroundOpacity": [ 0.95, 0.93, 0.83, 0.95 ] } // mac
+		},
+
+		"background.backgroundSize": [ "Cover", "Cover", "Cover", "Cover" ],
+		"background.autoInstall": true,
+		"background.backgroundChangeTime": [1800, 1200, 600, 1800], // 30 mins
+		"background.backgroundAlignment": [
+			"Center Center",
+			"Center Center",
+			"Top Left",
+			"Center Center"
+		],
+
+		"background.editorBackgrounds": [
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/editor/1.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/editor/2.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/editor/3.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/editor/4.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/editor/5.gif"
+		],
+		"background.sidebarBackgrounds": [
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/sidebar/1.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/sidebar/2.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/sidebar/3.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/sidebar/4.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/sidebar/5.png"
+		],
+		"background.panelBackgrounds": [
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/panel/1.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/panel/2.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/panel/3.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/panel/4.png",
+			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/panel/5.png"
+		],
 	} 
 }
