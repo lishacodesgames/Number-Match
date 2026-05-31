@@ -26,6 +26,14 @@ PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
    resize();
 }
 
+void PanelLayer::OnAttach() {
+   currentLayer = App::GetLayerByName("Home Layer");
+   if(!currentLayer)
+      TraceLog(LOG_FATAL, "Panel Layer has no current layer!");
+
+   Core::Layer::OnAttach();
+}
+
 void PanelLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::MouseClicked) {
       GUI::Button* activeButton = findHoveredButton();

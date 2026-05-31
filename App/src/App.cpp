@@ -30,7 +30,6 @@ App::App(const std::string& name) {
    m_layerStack.PushOverlay(panel);
    panel->currentLayer = home;
    
-   m_layerStack.PushOverlay(new CoinLayer());
    TraceLog(LISHA_SAYS, "App Loaded!");
 }
 

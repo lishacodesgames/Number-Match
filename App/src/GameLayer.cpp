@@ -59,11 +59,12 @@ void GameLayer::OnEvent(Core::Event& e) {
          } else if(activeButton == &m_settingsButton) {
             OnSuspend(true);  // suspend but render
             App::QueueLayerPush(new OptionsLayer());
-         } else if(activeButton == &m_plusButton) {
-            m_grid.plus();
-         } else if(activeButton == &m_hintButton) {
-            TraceLog(LISHA_SAYS, "HINT");  // temp
          }
+         else if(activeButton == &m_plusButton)
+            m_grid.plus();
+         else if(activeButton == &m_hintButton)
+            TraceLog(LISHA_SAYS, "HINT");  // temp
+
          e.Handled = true;
          return;
       }

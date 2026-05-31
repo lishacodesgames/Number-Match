@@ -7,8 +7,7 @@ namespace Core {
    Layer::Layer(
       const std::string& name, bool isOverlay,
       bool renderSuspended, bool updateSuspended, bool eventSuspended
-   ) : m_name(name), isOverlay(isOverlay), renderSuspended(renderSuspended), updateSuspended(updateSuspended), eventSuspended(eventSuspended)
-   {}
+   ) : m_name(name), isOverlay(isOverlay), renderSuspended(renderSuspended), updateSuspended(updateSuspended), eventSuspended(eventSuspended) {}
 
    void Layer::OnAttach() { TraceLog(LISHA_SAYS, "%s ATTACHED", m_name.c_str()); }
    void Layer::OnDetach() { TraceLog(LISHA_SAYS, "%s DETACHED", m_name.c_str()); }

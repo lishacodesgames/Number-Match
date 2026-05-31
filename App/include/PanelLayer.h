@@ -11,6 +11,8 @@ public:
    PanelLayer();
    ~PanelLayer() override = default;
 
+   void OnAttach() override;
+
    void OnEvent(Core::Event& e) override;
    void OnUpdate() override;
    void OnRender() override;
