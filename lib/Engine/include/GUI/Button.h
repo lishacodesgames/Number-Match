@@ -3,7 +3,8 @@
 #include <utility>
 #include <string>
 
-namespace GUI {
+namespace GUI
+{
    /** Constructor parameters' organisation
     * 
     *  -- compulsory --
@@ -80,18 +81,19 @@ namespace GUI {
 
       /// @param dimensions default = {0, 0}, keeps original dimensions of texture
       void setIcon(const char* filepath, Vector2 dimensions = {0, 0}); 
-      void setIcon(Texture icon);
       
       void setOrigin(Vector2 origin);
       void setOrigin(int x, int y);
 
-      void setSize(Vector2 size);
+      void resize(Vector2 size); /// resize box and contents to match
+      void setSize(Vector2 size); /// resize ONLY the box
       void setBounds(Rectangle bounds);
       void setPadding(Vector2 horizPadding, Vector2 vertPadding);
       void setFocus(bool isFocused, Color buttonColor, Color contentColor);
 
-      Vector2 getOrigin() const;
-      Vector2 getSize() const;
+      Vector2 getIconOrigin() const;
+      Vector2 getOrigin() const; /// @return origin of the button's bounds
+      Vector2 getSize() const; /// @return size of button's bounds
       Rectangle getBounds() const;
 
       // ---------------
@@ -107,6 +109,7 @@ namespace GUI {
       // ---- PRIVATE MEMBERS ----
       // -------------------------
 
+      Image m_icon = {0};
       Rectangle m_bounds;
       Vector2 m_horizontalPadding; /// {left, right}
       Vector2 m_verticalPadding;   /// {top, bottom}

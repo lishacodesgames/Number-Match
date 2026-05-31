@@ -9,12 +9,8 @@
 #include "MeLayer.h"
 #include "App.h"
 
-static Vector2 buttonsOrigin() { // must be compuled after window exists, hence the function
-   return { 
-      static_cast<float>(GetScreenWidth() / 3 - 180),
-      static_cast<float>(GetScreenHeight() - PanelLayer::HEIGHT + 10)
-   };
-}
+float PanelLayer::buttonSpacing = 0.0f;
+int PanelLayer::height = 50;
 
 PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
       homeButton({0, 0}, {0, 0}, "Main", BLANK, BLUE, 30, {0.0f, 0}, App::font_semibold),
@@ -23,11 +19,11 @@ PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
 {
    homeButton.setFocus(true, BLANK, BLUE);
 
-   setButtonsOrigin();
-
    homeButton.setIcon("assets/icons/menus/home_20x20.png");
    dailyButton.setIcon("assets/icons/menus/daily_20x20.png");
    meButton.setIcon("assets/icons/menus/me_20x20.png");
+   
+   resize();
 }
 
 void PanelLayer::OnEvent(Core::Event& e) {
@@ -58,7 +54,7 @@ void PanelLayer::OnEvent(Core::Event& e) {
 
 void PanelLayer::OnUpdate() {
    if(IsWindowResized()) {
-      setButtonsOrigin();
+      resize();
       TraceLog(LOG_INFO, "Window Resized: %d, %d", GetScreenWidth(), GetScreenHeight());
    }
 
@@ -84,10 +80,10 @@ void PanelLayer::OnUpdate() {
 }
 
 void PanelLayer::OnRender() {
-   DrawLine(0, GetScreenHeight() - HEIGHT, GetScreenWidth(), GetScreenHeight() - HEIGHT, {180, 180, 180, 255});
+   DrawLine(0, GetScreenHeight() - height, GetScreenWidth(), GetScreenHeight() - height, {180, 180, 180, 255});
    DrawRectangleV(
-      {0.0f, static_cast<float>(GetScreenHeight() - HEIGHT)}, 
-      {static_cast<float>(GetScreenWidth()), HEIGHT}, WHITE
+      {0.0f, (float)(GetScreenHeight() - height)}, 
+      {(float)(GetScreenWidth()), (float)height}, WHITE
    );
 
    homeButton.Draw();
@@ -95,8 +91,29 @@ void PanelLayer::OnRender() {
    meButton.Draw();
 }
 
-void PanelLayer::setButtonsOrigin() {
-   homeButton.setOrigin(buttonsOrigin());
-   dailyButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING, 0});
-   meButton.setOrigin(homeButton.getOrigin() + Vector2{BUTTON_SPACING * 2.7f, 0});
+void scaleThisButtonToBeTaller(GUI::Button* button, float height) {
+   float sizeRatio = button->getSize().x / button->getSize().y;
+   button->resize({height * sizeRatio, height});
+}
+
+void PanelLayer::resize() {
+   // set size
+   height = std::max(50, GetScreenHeight() / 15);
+   scaleThisButtonToBeTaller(&homeButton, height * 5.5f/7);
+   scaleThisButtonToBeTaller(&dailyButton, height * 5.5f/7);
+   scaleThisButtonToBeTaller(&meButton, height * 5.5f/7);
+
+   // set origins using CSS's space-around formula
+   float totalButtonsWidth = homeButton.getSize().x + dailyButton.getSize().x + meButton.getSize().x * 1.3f; // daily button is huge, me button is tiny, makes the "equal" spacing seem unequal
+   float remainingSpace = GetScreenWidth() - totalButtonsWidth;
+   float spaceUnit = remainingSpace/(2*3); // each item gets space on left & right, so we divide by twice the no. of items
+   buttonSpacing = 2 * spaceUnit;
+
+   float verticalSpace = height - homeButton.getSize().y;
+   
+   // |<- (1X) ->[ ITEM 1 ]<- (2X) ->[ ITEM 2 ]<- (2X) ->[ ITEM 3 ]<- (1X) ->|
+
+   homeButton.setOrigin({spaceUnit, GetScreenHeight() - height + verticalSpace / 2});
+   dailyButton.setOrigin(homeButton.getOrigin()+ Vector2{buttonSpacing + homeButton.getSize().x, 0});
+   meButton.setOrigin(dailyButton.getOrigin() + Vector2{buttonSpacing + dailyButton.getSize().x, 0});
 }

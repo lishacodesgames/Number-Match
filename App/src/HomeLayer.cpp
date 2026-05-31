@@ -13,7 +13,7 @@ static constexpr Vector2 buttonBounds = {350, 35};
 static Vector2 buttonOrigin() {
    return {
       static_cast<float>(GetScreenWidth() - buttonBounds.x)/2, 
-      static_cast<float>(GetScreenHeight() - PanelLayer::HEIGHT - buttonBounds.y - 50)
+      static_cast<float>(GetScreenHeight() - PanelLayer::height - buttonBounds.y - 50)
    };
 }
 

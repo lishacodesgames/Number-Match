@@ -15,8 +15,8 @@ public:
    void OnUpdate() override;
    void OnRender() override;
 public:   
-   static constexpr int HEIGHT = 50;
-   static constexpr float BUTTON_SPACING = 192.0f;
+   static int height;
+   static float buttonSpacing;
    
    Core::Layer* currentLayer;
 
@@ -24,7 +24,7 @@ public:
    GUI::Button dailyButton;
    GUI::Button meButton;
 public:
-   void setButtonsOrigin();
+   void resize();
    GUI::Button* findHoveredButton() {
       if (homeButton.isHovered)
          return &homeButton;
