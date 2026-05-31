@@ -63,7 +63,7 @@ void PanelLayer::OnEvent(Core::Event& e) {
 void PanelLayer::OnUpdate() {
    if(IsWindowResized()) {
       resize();
-      TraceLog(LOG_INFO, "Window Resized: %d, %d", GetScreenWidth(), GetScreenHeight());
+      TraceLog(LISHA_SAYS, "RESIZE: Window Resized: %d, %d", GetScreenWidth(), GetScreenHeight());
    }
 
    homeButton.Update();

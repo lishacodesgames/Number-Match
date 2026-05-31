@@ -174,8 +174,10 @@ void HomeLayer::resizeTextures() {
    m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
 
    // trophy
-   float trophyScale = std::clamp(GetScreenHeight() / 800.0f, 1.0f, 2.5f);
-   ImageResize(&m_trophyImage, 30 * trophyScale, 30 * trophyScale); // original trophy size is 30x30
+   float scale = std::clamp(GetScreenHeight() / 800.0f, 1.0f, 2.5f);
+   ImageResize(&m_trophyImage, 30 * scale, 30 * scale); // original trophy size is 30x30
    UnloadTexture(m_trophyTexture);
    m_trophyTexture = LoadTextureFromImage(m_trophyImage);
+
+   TraceLog(LOG_INFO, "RESIZE: Best score icon resized to: %d, %d", 30 * scale, 30 * scale);
 }

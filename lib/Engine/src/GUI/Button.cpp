@@ -145,7 +145,6 @@ namespace GUI
          ImageResize(&m_icon, m_bounds.width * iconRatio.x, m_bounds.height * iconRatio.y);
          UnloadTexture(icon);
          icon = LoadTextureFromImage(m_icon);
-         TraceLog(LOG_INFO, "New icon size: %d, %d", icon.width, icon.height);
       }
    }
 

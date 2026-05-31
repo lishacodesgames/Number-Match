@@ -2,17 +2,21 @@
 #include <raylib.h>
 #include "Core/Event.h"
 #include "Core/Layer.h"
+#include <string>
+#include <utility>
 
 class CoinLayer : public Core::Layer {
 public:
-   CoinLayer() : Core::Layer("Coin Layer", true) { 
-      m_coinTexture = LoadTexture("assets/icons/game/coin_20x20.png");
-   }
+   CoinLayer();
    ~CoinLayer() override { UnloadTexture(m_coinTexture); }
 
    void OnEvent([[maybe_unused]] Core::Event& e) override {}
    void OnUpdate() override;
    void OnRender() override;
 private:
+   Image m_coinImage = {0};
    Texture m_coinTexture = {0};
+   std::pair<std::string, int> amount; // amount, fontSize
+
+   void resize();
 };
