@@ -85,7 +85,7 @@ namespace GUI
       void setOrigin(Vector2 origin);
       void setOrigin(int x, int y);
 
-      void resize(Vector2 size); /// resize box and contents to match
+      void setSize(int fontSize, Vector2 padding = {-1, -1}); /// resize box and contents to match
       void setSize(Vector2 size); /// resize ONLY the box
       void setBounds(Rectangle bounds);
       void setPadding(Vector2 horizPadding, Vector2 vertPadding);

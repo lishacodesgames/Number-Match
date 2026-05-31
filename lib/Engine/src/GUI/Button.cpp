@@ -134,17 +134,19 @@ namespace GUI
       m_bounds.y = origin.y;
    }
 
-   void Button::resize(Vector2 size) {
-      Vector2 iconRatio = {(float)icon.width / m_bounds.width, (float)icon.height / m_bounds.height};
-
-      setSize(size);
-      ImageResize(&m_icon, size.x * iconRatio.x, size.y * iconRatio.y);
-      UnloadTexture(icon);
-      icon = LoadTextureFromImage(m_icon);
-      TraceLog(LOG_INFO, "New icon size: %d, %d", icon.width, icon.height);
-
-      fontSize = icon.height;
-      Vector2 iconOrigin = getIconOrigin();
+   void Button::setSize(int fontSize, Vector2 padding) {
+      this->fontSize = fontSize;
+      if(padding.x >= 0 && padding.y >= 0) // if padding is provided as an argument, we use it, otherwise we keep the same padding
+         setPadding({padding.x, padding.y}, {padding.x, padding.y});
+      
+      bool iconExists = IsTextureValid(icon);
+      if(iconExists) {
+         Vector2 iconRatio = {(float)icon.width / m_bounds.width, (float)icon.height / m_bounds.height};
+         ImageResize(&m_icon, m_bounds.width * iconRatio.x, m_bounds.height * iconRatio.y);
+         UnloadTexture(icon);
+         icon = LoadTextureFromImage(m_icon);
+         TraceLog(LOG_INFO, "New icon size: %d, %d", icon.width, icon.height);
+      }
    }
 
    void Button::setSize(Vector2 size) {

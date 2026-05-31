@@ -9,24 +9,18 @@
 #include "Storage.h"
 #include "App.h"
 
-static constexpr Vector2 buttonBounds = {350, 35};
-static Vector2 buttonOrigin() {
-   return {
-      static_cast<float>(GetScreenWidth() - buttonBounds.x)/2, 
-      static_cast<float>(GetScreenHeight() - PanelLayer::height - buttonBounds.y - 50)
-   };
-}
-
 HomeLayer::HomeLayer() : Layer("Home Layer"), 
       m_newButton(
-         {buttonOrigin().x, buttonOrigin().y, buttonBounds.x, buttonBounds.y}, 
+         {0, 0}, {0, 0},
          "New Game", WHITE, BLUE, 25, {0.8f, 8}, App::font_semibold
       ),
       m_continueButton(
-         {buttonOrigin().x, buttonOrigin().y-buttonBounds.y-10, buttonBounds.x, buttonBounds.y}, 
+         {0, 0}, {0, 0},
          "Continue Game", BLUE, WHITE, 25, {0.8f, 8}, App::font_semibold
       )
 {
+   resizeButtons();
+
    m_backgroundImage = LoadImage("assets/backgrounds/home_background_800x1417.png"); 
    resizeBackground();
    m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
@@ -66,7 +60,7 @@ void HomeLayer::OnEvent(Core::Event &e) {
 void HomeLayer::OnUpdate() {
    if(IsWindowResized()) {
       resizeBackground();
-      setButtonsOrigin();
+      resizeButtons();
    }
 
    m_newButton.Update();
@@ -105,9 +99,29 @@ void HomeLayer::OnRender() {
    m_continueButton.Draw();
 }
 
-void HomeLayer::setButtonsOrigin() {
-   m_newButton.setOrigin(buttonOrigin());
-   m_continueButton.setOrigin({buttonOrigin().x, buttonOrigin().y - buttonBounds.y - 10});
+void setSize(GUI::Button* button) {
+   Vector2 buttonBounds = {
+      std::clamp(GetScreenWidth() / 1.5f, 400.0f, 700.0f),
+      std::clamp(GetScreenHeight() / 20.0f, 40.0f, 60.0f)
+   };
+
+   button->setSize(buttonBounds);
+   button->fontSize = buttonBounds.y * 0.7f;
+}
+
+void HomeLayer::resizeButtons() {
+   // set size
+   setSize(&m_newButton);
+   setSize(&m_continueButton);
+
+   // set origin
+   Vector2 buttonOrigin = {
+      static_cast<float>(GetScreenWidth() - m_newButton.getSize().x)/2, 
+      static_cast<float>(GetScreenHeight() - PanelLayer::height - m_newButton.getSize().y - 50)
+   };
+
+   m_newButton.setOrigin(buttonOrigin);
+   m_continueButton.setOrigin({buttonOrigin.x, buttonOrigin.y - m_continueButton.getSize().y - 10});
 }
 
 void HomeLayer::resizeBackground() {

@@ -29,7 +29,7 @@ private:
          return nullptr;
    }
 
-   void setButtonsOrigin();
+   void resizeButtons();
    void resizeBackground();
 };
 

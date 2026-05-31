@@ -99,17 +99,14 @@ void PanelLayer::OnRender() {
    meButton.Draw();
 }
 
-void scaleThisButtonToBeTaller(GUI::Button* button, float height) {
-   float sizeRatio = button->getSize().x / button->getSize().y;
-   button->resize({height * sizeRatio, height});
-}
-
 void PanelLayer::resize() {
    // set size
    height = std::max(50, GetScreenHeight() / 15);
-   scaleThisButtonToBeTaller(&homeButton, height * 5.5f/7);
-   scaleThisButtonToBeTaller(&dailyButton, height * 5.5f/7);
-   scaleThisButtonToBeTaller(&meButton, height * 5.5f/7);
+   float weirdlyPerfectNumber = (5.0f/7) * 0.9f; // after testing with various sizes, this multiplier seems to keep the button size proportional to the panel height in a visually appealing way
+
+   homeButton.setSize(height * weirdlyPerfectNumber, {0, 0});
+   dailyButton.setSize(height * weirdlyPerfectNumber, {0, 0});
+   meButton.setSize(height * weirdlyPerfectNumber, {0, 0});
 
    // set origins using CSS's space-around formula
    float totalButtonsWidth = homeButton.getSize().x + dailyButton.getSize().x + meButton.getSize().x * 1.3f; // daily button is huge, me button is tiny, makes the "equal" spacing seem unequal
