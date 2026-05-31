@@ -15,6 +15,8 @@ public:
 private:
    Image m_backgroundImage = {0};
    Texture m_backgroundTexture = {0};
+
+   Image m_trophyImage = {0};
    Texture m_trophyTexture = {0};
 
    GUI::Button m_newButton;
@@ -29,8 +31,9 @@ private:
          return nullptr;
    }
 
+   // --- WINDOW RESIZING ---
    void resizeButtons();
-   void resizeBackground();
+   void resizeTextures();
 };
 
 inline Vector2 operator+(const Vector2& vec, const float& fl) { return {vec.x+fl, vec.y+fl}; }
