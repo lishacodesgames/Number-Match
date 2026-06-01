@@ -156,7 +156,7 @@ void Grid::plus() {
    }
 }
 
-/// @bug when clearing last 2 rows at once, sometimes it's working, sometimes it's not
+/// @bug clearing rows 0 & 1 at the same time doesn't work
 void Grid::clearRow(int row) {
    m_grid.erase(m_grid.begin() + row);
 
