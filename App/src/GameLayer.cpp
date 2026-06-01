@@ -113,7 +113,6 @@ void GameLayer::OnUpdate() {
    m_hintButton.Update();
 
    m_grid.Update();
-   Storage::hotReload();
 
    if(findHoveredButton() || m_grid.findHoveredCell())
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
@@ -180,11 +179,12 @@ void GameLayer::OnRender() {
    }
 
    // Current Score
-   int currentScoreWidth = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), 40, 1).x;
+   int currentScoreWidth = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), GridCell::numHeight, 1).x;
    DrawTextEx(
-         App::font_black, Storage::formatCurrentScore().c_str(),
-         { (float)GetScreenWidth() / 2 - currentScoreWidth / 2, 58 },
-         40, 1, DARKERGRAY);
+      App::font_black, Storage::formatCurrentScore().c_str(),
+      { (float)GetScreenWidth() / 2 - currentScoreWidth / 2, 58 },
+      GridCell::numHeight, 1, DARKERGRAY
+   );
 }
 
 void GameLayer::OnResume() {

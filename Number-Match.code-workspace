@@ -15,20 +15,25 @@
 	"settings": {
 		"cmake.sourceDirectory": "${workspaceFolder:repo}",
 
-		"search.exclude": {
-			"**/build/**": true,
-			"**/bin/**": true,
-			"**/obj/**": true,
-			"**/raylib/**": true
+		"search.exclude": { // searching symbols
+			"${workspaceFolder:repo}/build/**": true,
+			"${workspaceFolder:repo}/bin/**": true,
+			"${workspaceFolder:lib}/raylib/**": true,
+			"${workspaceFolder:lib}/nlohmann/**": true
 		},
-		"C_Cpp.files.exclude": {
-			"**/raylib/**": true
+		"C_Cpp.files.exclude": { // intellisense
+			"${workspaceFolder:repo}/build/**": true,
+			"${workspaceFolder:repo}/bin/**": true,
+			"${workspaceFolder:lib}/raylib/**": true,
+			"${workspaceFolder:lib}/nlohmann/**": true
 		},
+		"C_Cpp.default.browse.path": [
+			"${workspaceFolder:App}"
+		],
 
 		"background.settingScope": "Workspace",
 		"background.useInvertedOpacity": true,
 
-		// if too opaque, set to (1 - written value) bcz vscode can't decide which platform uses which opacity convention
 		"platformSettings.platforms": {
 			"win32": { "background.backgroundOpacity": [ 0.95, 0.93, 0.83, 0.95 ] },
 			"linux": { "background.backgroundOpacity": [ 0.05, 0.07, 0.17, 0.05 ] },

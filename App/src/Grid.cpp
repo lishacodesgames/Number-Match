@@ -5,7 +5,8 @@
 #include "Colors.h"
 #include "App.h"
 
-float GridCell::size = 45.0f;
+float GridCell::cellSize = 45.0f;
+float GridCell::numHeight = 0;
 Color GridCell::hoverColor = ColorAlpha(BLIZZARDBLUE, 0.5f);
 Color GridCell::focusColor = ColorAlpha(SKYBLUE, 0.5f);
 
@@ -48,15 +49,15 @@ void Grid::Update() {
 
    // Grid scroll logic
    /// @todo let user choose direction of mouse scroll (+ <-> -) in settings
-   float maxScrollOffset = std::max(0.0f, m_grid.size() * GridCell::size - box.height);
+   float maxScrollOffset = std::max(0.0f, m_grid.size() * GridCell::cellSize - box.height);
    m_scrollOffset = std::clamp(m_scrollOffset - 35 * GetMouseWheelMove(), 0.0f, maxScrollOffset);
    float topRowY = box.y - m_scrollOffset;
 
    for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++)
-         m_grid[row][col].bounds.y = topRowY + row * GridCell::size;  // only y changes with scroll
+         m_grid[row][col].bounds.y = topRowY + row * GridCell::cellSize;  // only y changes with scroll
 
-   m_scrollBar.Update(m_scrollOffset, m_grid.size() * GridCell::size, box.height);
+   m_scrollBar.Update(m_scrollOffset, m_grid.size() * GridCell::cellSize, box.height);
 }
 
 void Grid::Draw() const {
@@ -67,7 +68,7 @@ void Grid::Draw() const {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          const GridCell cell = m_grid.at(row).at(col);
          std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
-         Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), 40, 1);
+         Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), GridCell::numHeight, 1);
 
          // default
          numColor = BLACK;
@@ -82,10 +83,11 @@ void Grid::Draw() const {
          DrawRectangleRec(cell.bounds, bgColor);
          DrawRectangleLinesEx(cell.bounds, 1, ColorAlpha(LIGHTGRAY, 0.65f));
          DrawTextEx(
-               App::font_semibold, value.c_str(),
-               { cell.bounds.x + cell.bounds.width / 2 - numSize.x / 2, 
-                  cell.bounds.y + cell.bounds.height / 2 - numSize.y / 2 },
-               40, 1, numColor);
+            App::font_semibold, value.c_str(),
+            { cell.bounds.x + cell.bounds.width / 2 - numSize.x / 2, 
+               cell.bounds.y + cell.bounds.height / 2 - numSize.y / 2 },
+            GridCell::numHeight, 1, numColor
+         );
       }
    }
    EndScissorMode();
@@ -95,11 +97,15 @@ void Grid::Draw() const {
 }
 
 void Grid::resize() {
-   GridCell::size = std::min(GetScreenWidth() * 0.6f / 9, 50.0f);  // box min size is 60% screen, cell min size is 50px
+   GridCell::cellSize = std::clamp( // scaled based on smaller of the 2 screen dimensions
+      std::min(GetScreenWidth(), GetScreenHeight()) * 0.7f / 9, 40.0f, 150.0f
+   );
+   GridCell::numHeight = GridCell::cellSize * 0.75f;
 
    // box is centered horizontally and has a fixed y value
-   Vector2 boxOrigin = { ((float)GetScreenWidth() - GridCell::size * 9) / 2, 130 };
-   box = { boxOrigin.x, boxOrigin.y, GridCell::size * 9, GridCell::size * 9 };
+   float boxX = (GetScreenWidth() - GridCell::cellSize * 9) / 2.0f;
+   float boxY = std::max(120.0f, (GetScreenHeight() - GridCell::cellSize * 9) / 2.0f); // min padding for score
+   box = { boxX, boxY, GridCell::cellSize * 9, GridCell::cellSize * 9 };
 
    for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++) 
@@ -177,9 +183,9 @@ bool Grid::isRowClear(int row) {
 void Grid::setCellBounds(GridCell* cell) {
    std::pair<int, int> pos = getCellPos(cell);
    cell->bounds = {
-      box.x + pos.second * GridCell::size,  // x
-      box.y + pos.first * GridCell::size,  // y
-      GridCell::size, GridCell::size
+      box.x + pos.second * GridCell::cellSize,  // x
+      box.y + pos.first * GridCell::cellSize,  // y
+      GridCell::cellSize, GridCell::cellSize
    };
 }
 

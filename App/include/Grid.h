@@ -9,7 +9,7 @@ enum class CellState { Rest, Hovered, Focused, Matched };
 struct GridCell {
    GridCell(int value = 0) : value(value), bounds({ 0, 0, 0, 0 }) {}
 
-   static float size;
+   static float cellSize, numHeight;
    static constexpr Color restColor = RAYWHITE;
    static Color hoverColor, focusColor;
 
