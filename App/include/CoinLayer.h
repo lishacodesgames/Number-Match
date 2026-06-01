@@ -13,10 +13,12 @@ public:
    void OnEvent([[maybe_unused]] Core::Event& e) override {}
    void OnUpdate() override;
    void OnRender() override;
+
+   static Rectangle box;
 private:
    Image m_coinImage = {0};
    Texture m_coinTexture = {0};
-   std::pair<std::string, int> amount; // amount, fontSize
+   float m_fontSize;
 
    void resize();
 };

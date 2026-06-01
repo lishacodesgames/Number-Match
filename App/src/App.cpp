@@ -5,6 +5,7 @@
 #include "PanelLayer.h"
 #include "HomeLayer.h"
 #include "CoinLayer.h"
+#include "Storage.h"
 
 Font App::font_semibold = GetFontDefault(); // font must be loaded after InitWindow()
 Font App::font_black = GetFontDefault();
@@ -24,6 +25,7 @@ App::App(const std::string& name) {
    font_semibold = LoadFontEx("assets/fonts/RedHatDisplay-SemiBold.ttf", 40, NULL, 0);
    font_black = LoadFontEx("assets/fonts/RedHatDisplay-Black.ttf", 70, NULL, 0);
 
+   Storage::load();
    HomeLayer* home = new HomeLayer();
    m_layerStack.PushLayer(home);
    PanelLayer* panel = new PanelLayer();
@@ -82,6 +84,7 @@ void App::Run() {
       // (eg. pause menu can override gameplay input)
       // ---------------------------
       
+      Storage::hotReload();
       for(Core::Layer* layer : m_layerStack)
          layer->OnUpdate();
       

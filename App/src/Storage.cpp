@@ -50,8 +50,9 @@ bool Storage::hotReload() {
       load();
       lastCheck = now;
       return true;  // file was modified, successfully reloaded
-   } else
-      return false; // file was not modified, no reload needed
+   }
+
+   return false; // file was not modified, no reload needed
 }
 
 void Storage::save() {
