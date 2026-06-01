@@ -156,7 +156,6 @@ void Grid::plus() {
    }
 }
 
-/// @bug clearing rows 0 & 1 at the same time doesn't work
 void Grid::clearRow(int row) {
    m_grid.erase(m_grid.begin() + row);
 

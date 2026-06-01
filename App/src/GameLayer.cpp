@@ -201,10 +201,14 @@ void GameLayer::handleMatch(GridCell* cell) {
 
    // check if either cell's row is clear
    int row1 = m_grid.getCellPos(m_grid.focusedCell).first;
+   int row2 = m_grid.getCellPos(cell).first;
+
    if(m_grid.isRowClear(row1))
       m_grid.clearRow(row1);
    
-   int row2 = m_grid.getCellPos(cell).first;
+   if(row2 > row1)
+      row2--;
+   
    if(m_grid.isRowClear(row2))
       m_grid.clearRow(row2);
 
