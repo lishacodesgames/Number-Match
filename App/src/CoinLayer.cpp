@@ -10,6 +10,7 @@ Rectangle CoinLayer::box = { 0, 0, 0, 0 };
 
 CoinLayer::CoinLayer() : Core::Layer("Coin Layer", true) {
    m_coinImage = LoadImage("assets/icons/game/coin_20x20.png");
+   m_coinTexture = LoadTextureFromImage(m_coinImage);
    resize();
 }
 
@@ -43,10 +44,11 @@ void CoinLayer::resize() {
 
    float scale = std::clamp(GetScreenHeight() / 650.0f, 1.0f, 2.0f);
    ImageResize(&m_coinImage, 20 * scale, 20 * scale);  // original coin texture size is 20 x 20
-   if(IsTextureValid(m_coinTexture))
+   if(m_coinTexture.height != m_coinImage.height) {
       UnloadTexture(m_coinTexture);
-   m_coinTexture = LoadTextureFromImage(m_coinImage);
-   TraceLog(LOG_INFO, "RESIZE: Coin icon resized to: %f, %f", 20 * scale, 20 * scale);
+      m_coinTexture = LoadTextureFromImage(m_coinImage);
+      TraceLog(LOG_INFO, "RESIZE: Coin icon resized to: %d, %d", m_coinTexture.width, m_coinTexture.height);
+   }
 
    std::string coinAmount = Storage::formatCoins();
    Vector2 coinAmtSize = MeasureTextEx(App::font_semibold, coinAmount.c_str(), m_fontSize, 1.5f);

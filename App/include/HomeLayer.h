@@ -22,6 +22,8 @@ private:
    GUI::Button m_newButton;
    GUI::Button m_continueButton;
 private:
+   void resize();
+
    GUI::Button* findHoveredButton() {
       if(m_newButton.isHovered)
          return &m_newButton;
@@ -30,10 +32,6 @@ private:
       else
          return nullptr;
    }
-
-   // --- WINDOW RESIZING ---
-   void resizeButtons();
-   void resizeTextures();
 };
 
 inline Vector2 operator+(const Vector2& vec, const float& fl) { return {vec.x+fl, vec.y+fl}; }

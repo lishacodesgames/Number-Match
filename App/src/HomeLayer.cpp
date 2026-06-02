@@ -23,11 +23,10 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
    m_backgroundImage = LoadImage("assets/backgrounds/home_background_800x1417.png");
    m_trophyImage = LoadImage("assets/icons/menus/trophy_30x30.png");
 
-   resizeButtons();
-   resizeTextures();
-
    m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
    m_trophyTexture = LoadTextureFromImage(m_trophyImage);
+   
+   resize();
 
    if(!App::GetLayerByName("Coin Layer"))
       App::QueueLayerPush(new CoinLayer());
@@ -61,10 +60,8 @@ void HomeLayer::OnEvent(Core::Event& e) {
 }
 
 void HomeLayer::OnUpdate() {
-   if(IsWindowResized()) {
-      resizeTextures();
-      resizeButtons();
-   }
+   if(IsWindowResized())
+      resize();
 
    m_newButton.Update();
    m_continueButton.Update();
@@ -136,7 +133,7 @@ void HomeLayer::OnRender() {
    m_continueButton.Draw();
 }
 
-void resize(GUI::Button* button) {
+void resizeThis(GUI::Button* button) {
    Vector2 buttonBounds = {
       std::clamp(GetScreenWidth() / 1.5f, 400.0f, 550.0f),
       std::clamp(GetScreenHeight() / 20.0f, 40.0f, 60.0f)
@@ -146,12 +143,11 @@ void resize(GUI::Button* button) {
    button->fontSize = buttonBounds.y * 0.7f;
 }
 
-void HomeLayer::resizeButtons() {
-   // set size
-   resize(&m_newButton);
-   resize(&m_continueButton);
+void HomeLayer::resize() {
+   // Buttons
+   resizeThis(&m_newButton);
+   resizeThis(&m_continueButton);
 
-   // set origin
    Vector2 buttonOrigin = {
       static_cast<float>(GetScreenWidth() - m_newButton.getSize().x) / 2,
       static_cast<float>(GetScreenHeight() - PanelLayer::height - m_newButton.getSize().y - 50)
@@ -159,10 +155,8 @@ void HomeLayer::resizeButtons() {
 
    m_newButton.setOrigin(buttonOrigin);
    m_continueButton.setOrigin({ buttonOrigin.x, buttonOrigin.y - m_continueButton.getSize().y - 10 });
-}
 
-void HomeLayer::resizeTextures() {
-   // background
+   // Background
    float aspectRatio = m_backgroundImage.width / (float)m_backgroundImage.height;
 
    if(GetScreenWidth() > m_backgroundImage.width)
@@ -170,14 +164,18 @@ void HomeLayer::resizeTextures() {
    else if(GetScreenHeight() > m_backgroundImage.height)
       ImageResize(&m_backgroundImage, (int)(GetScreenHeight() * aspectRatio), GetScreenHeight());
 
-   UnloadTexture(m_backgroundTexture);
-   m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
+   if(m_backgroundTexture.height != m_backgroundImage.height || m_backgroundTexture.width != m_backgroundImage.width) {
+      UnloadTexture(m_backgroundTexture);
+      m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
+      TraceLog(LOG_INFO, "RESIZE: Home background resized to: %d, %d", m_backgroundTexture.width, m_backgroundTexture.height);
+   }
 
-   // trophy
+   // Best Score's Trophy Icon
    float scale = std::clamp(GetScreenHeight() / 800.0f, 1.0f, 2.5f);
    ImageResize(&m_trophyImage, 30 * scale, 30 * scale); // original trophy size is 30x30
-   UnloadTexture(m_trophyTexture);
-   m_trophyTexture = LoadTextureFromImage(m_trophyImage);
-
-   TraceLog(LOG_INFO, "RESIZE: Best score icon resized to: %d, %d", 30 * scale, 30 * scale);
+   if(m_trophyTexture.height != m_trophyImage.height) {
+      UnloadTexture(m_trophyTexture);
+      m_trophyTexture = LoadTextureFromImage(m_trophyImage);
+      TraceLog(LOG_INFO, "RESIZE: Best score icon resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
+   }
 }

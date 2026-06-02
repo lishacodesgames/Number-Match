@@ -102,11 +102,15 @@ void PanelLayer::OnRender() {
 void PanelLayer::resize() {
    // set size
    height = std::max(50, GetScreenHeight() / 15);
-   float weirdlyPerfectNumber = (5.0f/7) * 0.9f; // after testing with various sizes, this multiplier seems to keep the button size proportional to the panel height in a visually appealing way
-
-   homeButton.setSize(height * weirdlyPerfectNumber, {0, 0});
-   dailyButton.setSize(height * weirdlyPerfectNumber, {0, 0});
-   meButton.setSize(height * weirdlyPerfectNumber, {0, 0});
+   float weirdlyPerfectNumber = height * (5.0f / 7) * 0.9f; // dont ask why
+   if((int)weirdlyPerfectNumber != homeButton.icon.height) {
+      homeButton.setSize(weirdlyPerfectNumber, {0, 0});
+      TraceLog(LOG_INFO, "RESIZE: Panel \"home\" icon resized to: %d, %d", homeButton.icon.width, homeButton.icon.height);
+      dailyButton.setSize(weirdlyPerfectNumber, {0, 0});
+      TraceLog(LOG_INFO, "RESIZE: Panel \"daily\" icon resized to: %d, %d", dailyButton.icon.width, dailyButton.icon.height);
+      meButton.setSize(weirdlyPerfectNumber, {0, 0});
+      TraceLog(LOG_INFO, "RESIZE: Panel \"me\" icon resized to: %d, %d", meButton.icon.width, meButton.icon.height);
+   }
 
    // set origins using CSS's space-around formula
    float totalButtonsWidth = homeButton.getSize().x + dailyButton.getSize().x + meButton.getSize().x * 1.3f; // daily button is huge, me button is tiny, makes the "equal" spacing seem unequal
