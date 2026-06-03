@@ -35,7 +35,7 @@ private:
    GUI::Button m_hintButton;
 
 private:
-   void setButtonsOrigin();
+   void resize();
    GUI::Button* findHoveredButton(); /// @return any of the 4 member buttons OR nullptr
 };
 

@@ -19,7 +19,7 @@ App::App(const std::string& name) {
 
    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
    InitWindow(800, 650, name.c_str());
-   SetWindowMinSize(500, 500);
+   SetWindowMinSize(500, 575);
    SetTargetFPS(60);
 
    font_semibold = LoadFontEx("assets/fonts/RedHatDisplay-SemiBold.ttf", 40, NULL, 0);
@@ -46,6 +46,9 @@ void App::Run() {
    TraceLog(LISHA_SAYS, "Working Directory: %s", GetWorkingDirectory());
 
    while(!WindowShouldClose()) {
+      if(IsWindowResized())
+         TraceLog(LISHA_SAYS, "RESIZE: Window Resized: %d, %d", GetScreenWidth(), GetScreenHeight());
+
       // ---------------------------
       // 1. apply pending layer changes at the start of the current frame
       // to avoid mid-frame changes that could cause bugs

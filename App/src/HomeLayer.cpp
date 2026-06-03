@@ -134,13 +134,13 @@ void HomeLayer::OnRender() {
 }
 
 void resizeThis(GUI::Button* button) {
-   Vector2 buttonBounds = {
+   Rectangle buttonBounds = {
+      button->getOrigin().x, button->getOrigin().y,
       std::clamp(GetScreenWidth() / 1.5f, 400.0f, 550.0f),
       std::clamp(GetScreenHeight() / 20.0f, 40.0f, 60.0f)
    };
 
-   button->setSize(buttonBounds);
-   button->fontSize = buttonBounds.y * 0.7f;
+   button->setBounds(buttonBounds, true);
 }
 
 void HomeLayer::resize() {

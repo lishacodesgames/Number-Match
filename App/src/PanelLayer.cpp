@@ -61,10 +61,8 @@ void PanelLayer::OnEvent(Core::Event& e) {
 }
 
 void PanelLayer::OnUpdate() {
-   if(IsWindowResized()) {
+   if(IsWindowResized())
       resize();
-      TraceLog(LISHA_SAYS, "RESIZE: Window Resized: %d, %d", GetScreenWidth(), GetScreenHeight());
-   }
 
    homeButton.Update();
    dailyButton.Update();
@@ -74,15 +72,15 @@ void PanelLayer::OnUpdate() {
    GUI::Button* hoveredButton = findHoveredButton();
 
    if (hoveredButton) {
-      hoveredButton->contentColor = DARKBLUE;
+      hoveredButton->setContentColor(DARKBLUE);
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } // else case will be handled by below layers, since this one is an overlay
 
    if(previousButton && hoveredButton != previousButton) { // new button is focused, so we must reset previous one
       if(previousButton->isFocused)
-         previousButton->contentColor = BLUE;
+         previousButton->setContentColor(BLUE);
       else
-         previousButton->contentColor = GRAY;
+         previousButton->setContentColor(GRAY);
    }
    previousButton = hoveredButton;
 }
@@ -103,13 +101,14 @@ void PanelLayer::resize() {
    // set size
    height = std::max(50, GetScreenHeight() / 15);
    float weirdlyPerfectNumber = height * (5.0f / 7) * 0.9f; // dont ask why
-   if((int)weirdlyPerfectNumber != homeButton.icon.height) {
-      homeButton.setSize(weirdlyPerfectNumber, {0, 0});
-      TraceLog(LOG_INFO, "RESIZE: Panel \"home\" icon resized to: %d, %d", homeButton.icon.width, homeButton.icon.height);
-      dailyButton.setSize(weirdlyPerfectNumber, {0, 0});
-      TraceLog(LOG_INFO, "RESIZE: Panel \"daily\" icon resized to: %d, %d", dailyButton.icon.width, dailyButton.icon.height);
-      meButton.setSize(weirdlyPerfectNumber, {0, 0});
-      TraceLog(LOG_INFO, "RESIZE: Panel \"me\" icon resized to: %d, %d", meButton.icon.width, meButton.icon.height);
+
+  if((int)weirdlyPerfectNumber != homeButton.getIcon().height) {
+      homeButton.setFontSize(weirdlyPerfectNumber);
+      TraceLog(LOG_INFO, "RESIZE: Panel \"home\" icon resized to: %d, %d", homeButton.getIcon().width, homeButton.getIcon().height);
+      dailyButton.setFontSize(weirdlyPerfectNumber);
+      TraceLog(LOG_INFO, "RESIZE: Panel \"daily\" icon resized to: %d, %d", dailyButton.getIcon().width, dailyButton.getIcon().height);
+      meButton.setFontSize(weirdlyPerfectNumber);
+      TraceLog(LOG_INFO, "RESIZE: Panel \"me\" icon resized to: %d, %d", meButton.getIcon().width, meButton.getIcon().height);
    }
 
    // set origins using CSS's space-around formula

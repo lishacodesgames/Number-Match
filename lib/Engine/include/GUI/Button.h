@@ -3,29 +3,29 @@
 #include <utility>
 #include <string>
 
-namespace GUI
-{
+namespace GUI {
+   struct Roundness {
+      float roundness = 0.8f; /// 0.0f - 1.0f, 0.8f by default
+      int segments = 8;       /// number of segments to use for drawing rounded corners, 8 by default
+   };
+
    /** Constructor parameters' organisation
-    * 
+    *
     *  -- compulsory --
     * Bounds (Rectangle or origin+padding)
     * text -- set "" if not wanted
     * bg color & text+icon color
-    * 
+    *
     * -- optional --
     * font size & button roundness
     * custom font
-    * 
+    *
     */
    class Button {
    public:
-      // -----------------
-      // ---- METHODS ----
-      // -----------------
-
       void Update();
       void Draw();
-
+   public:
       // ----------------------
       // ---- CONSTRUCTORS ----
       // ----------------------
@@ -37,7 +37,7 @@ namespace GUI
          Rectangle exactBounds, 
          const char* text, 
          Color buttonColor, Color contentColor,
-         int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
+         int fontSize = 20, Roundness roundness = {0.8f, 8},
          Font font = GetFontDefault()
       );
 
@@ -47,81 +47,100 @@ namespace GUI
          Vector2 padding, 
          const char* text, 
          Color buttonColor, Color contentColor,
-         int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
+         int fontSize = 20, Roundness roundness = {0.8f, 8},
          Font font = GetFontDefault()
       );
 
       /// Custom padding
-      Button(
-         Vector2 origin,
-         float paddingLeft, float paddingRight, float paddingTop, float paddingBottom,
+      Button(  Vector2 origin,
+         Vector2 horizPadding, Vector2 vertPadding,
          const char* text, 
          Color buttonColor, Color contentColor,
-         int fontSize = 20, std::pair<float, int> roundness = {0.8f, 8},
+         int fontSize = 20, Roundness roundness = {0.8f, 8},
          Font font = GetFontDefault()
       );
-      
-      // ------------------------
-      // ---- PUBLIC MEMBERS ----
-      // ------------------------
 
-      Texture icon = {0}; // optional
-      std::string text; // compulsory
+   public:
+      // -----------------
+      // ---- SETTERS ----
+      // -----------------
 
-      Color buttonColor = BLACK, contentColor = WHITE;
+      /// @param dimensions default = {0, 0}, keeps original dimensions
+      void setIcon(const char* filepath, Vector2 dimensions = { 0, 0 });
+      void setText(const std::string& text) { m_text = text; recalculateLayout(); }
 
-      int fontSize = 20;
-      std::pair<float, int> roundness = {0.8f, 8};
+      void setFont(Font font) { m_font = font; recalculateLayout(); }
+      void setFontSize(int fontSize) { m_fontSize = fontSize; recalculateLayout(); }
+      void setRoundness(Roundness roundness) { m_roundness = roundness; }
 
-      Font font;
-
-      // ---------------------
-      // ---- GETS & SETS ----
-      // ---------------------
-
-      /// @param dimensions default = {0, 0}, keeps original dimensions of texture
-      void setIcon(const char* filepath, Vector2 dimensions = {0, 0}); 
-      
-      void setOrigin(Vector2 origin);
-      void setOrigin(int x, int y);
-
-      void setSize(int fontSize, Vector2 padding = {-1, -1}); /// resize box and contents to match
-      void setSize(Vector2 size); /// resize ONLY the box
-      void setBounds(Rectangle bounds);
+      /// @param recalculateLayout TRUE: will resize contents to stay in same ratio as before -- FALSE: will resize only rectangle
+      void setBounds(Rectangle bounds, bool resizeContent);
       void setPadding(Vector2 horizPadding, Vector2 vertPadding);
+      void setOrigin(Vector2 origin) { m_bounds.x = origin.x; m_bounds.y = origin.y; }
+      void setOrigin(int x, int y) { m_bounds.x = x; m_bounds.y = y; }
+
+      void setButtonColor(Color color) { m_buttonColor = color; }
+      void setContentColor(Color color) { m_contentColor = color; }
+
       void setFocus(bool isFocused, Color buttonColor, Color contentColor);
+   public:
+      // -----------------
+      // ---- GETTERS ----
+      // -----------------
+      Texture getIcon() const { return m_iconTexture; }
+      std::string getText() const { return m_text; }
+
+      Font getFont() const { return m_font; }
+      int getFontSize() const { return m_fontSize; }
+      Roundness getRoundness() const { return m_roundness; }
+         
+      Rectangle getBounds() const { return m_bounds; }
+      Vector2 getHorizontalPadding() const { return m_horizontalPadding; }
+      Vector2 getVerticalPadding() const { return m_verticalPadding; }
 
       Vector2 getIconOrigin() const;
-      Vector2 getOrigin() const; /// @return origin of the button's bounds
-      Vector2 getSize() const; /// @return size of button's bounds
-      Rectangle getBounds() const;
-
+      Vector2 getTextOrigin() const;
+      Vector2 getOrigin() const { return { m_bounds.x, m_bounds.y }; }           /// @return origin of the button's bounds
+      Vector2 getSize() const { return { m_bounds.width, m_bounds.height }; }    /// @return size of button's bounds
+      
+   public:
       // ---------------
       // ---- FLAGS ----
       // ---------------
 
-      bool isHovered = false; /// is button being hovered
-      bool isActive = false; /// is button being clicked
-      bool isFocused = false; /// set by user. Has button been clicked
-      
-   private: 
-      // -------------------------
-      // ---- PRIVATE MEMBERS ----
-      // -------------------------
+      bool isHovered = false;  /// is button being hovered
+      bool isActive = false;   /// is button being clicked
+      bool isFocused = false;  /// set by user. Has button been clicked
 
-      Image m_icon = {0};
+   private:
+      // -----------------
+      // ---- MEMBERS ----
+      // -----------------
+
+      Image m_iconImage = { 0 };
+      Texture m_iconTexture = { 0 };   // optional
+      std::string m_text;              // compulsory
+
+      Font m_font;
+      int m_fontSize = 20;
+      Roundness m_roundness = { 0.8f, 8 };
+
       Rectangle m_bounds;
-      Vector2 m_horizontalPadding; /// {left, right}
-      Vector2 m_verticalPadding;   /// {top, bottom}
+      Vector2 m_horizontalPadding;  /// {left, right}
+      Vector2 m_verticalPadding;    /// {top, bottom}
 
-      // -------------------
-      // ---- OPERATORS ----
-      // -------------------
+      Color m_buttonColor = BLACK, m_contentColor = WHITE;
+
+   private:
+      // -----------------
+      // ---- HELPERS ----
+      // -----------------
+      void recalculateLayout();
       friend bool operator==(const Button& first, const Button& second);
    };
-   
+
    bool operator==(const Button& first, const Button& second);
-}
+}  // namespace GUI
 
 bool operator==(const Color& first, const Color& second);
 bool operator==(const Rectangle& first, const Rectangle& second);

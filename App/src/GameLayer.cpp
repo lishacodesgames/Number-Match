@@ -3,7 +3,6 @@
 
 #include "Core/Logging.h"
 #include "OptionsLayer.h"
-#include "Core/Layer.h"
 #include "PanelLayer.h"
 #include "HomeLayer.h"
 #include "Storage.h"
@@ -12,13 +11,11 @@
 
 /// @todo make scoring system into an enum class (diagonal matches > non-adjacent matches > adjacent matches)
 
-static constexpr Vector2 helperPadding = { 8, 8 };
-
 GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
-      m_gobackButton({15, 15}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
-      m_settingsButton({0, 0}, {0, 0}, "", BLANK, Color{42, 187, 235, 255}, 20, {0, 0}),
-      m_plusButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}),
-      m_hintButton({0, 0}, helperPadding, "", LIGHTERGRAY, BLUE, 25, {1.0f, 8}) 
+      m_gobackButton({ 15, 15 }, { 6, 1 }, { 1, 1 }, "", BLANK, BRIGHTSKYBLUE, 20, { 0, 0 }),
+      m_settingsButton({ 0, 0 }, { 1, 1 }, "", BLANK, BRIGHTSKYBLUE, 20, { 0, 0 }),
+      m_plusButton({ 0, 0 }, { 10, 10 }, "", LIGHTERGRAY, BLUE, 25, { 1.0f, 8 }),
+      m_hintButton({ 0, 0 }, { 10, 10 }, "", LIGHTERGRAY, BLUE, 25, { 1.0f, 8 }) 
 {
    m_trophyTexture = LoadTexture("assets/icons/game/trophy_16x16.png");
    m_tickTexture = LoadTexture("assets/icons/game/tick_16x16.png");
@@ -28,7 +25,7 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
    m_plusButton.setIcon("assets/icons/game/plus_35x35.png");
    m_hintButton.setIcon("assets/icons/game/hint_35x35.png");
 
-   setButtonsOrigin();
+   resize();
 
    if(reset)
       Storage::save(1, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 0);  // reset storage to default values
@@ -99,10 +96,8 @@ void GameLayer::OnEvent(Core::Event& e) {
 }
 
 void GameLayer::OnUpdate() {
-   if(IsWindowResized()) {
-      setButtonsOrigin();
-      m_grid.resize();
-   }
+   if(IsWindowResized())
+      resize();
 
    if(isSuspended && !updateSuspended)
       return;
@@ -188,8 +183,7 @@ void GameLayer::OnRender() {
 }
 
 void GameLayer::OnResume() {
-   setButtonsOrigin();
-   m_grid.resize();
+   resize();
    Storage::load();
 
    Layer::OnResume();
@@ -217,12 +211,26 @@ void GameLayer::handleMatch(GridCell* cell) {
 
 #pragma region Helpers
 
-void GameLayer::setButtonsOrigin() {
-   m_settingsButton.setOrigin(GetScreenWidth() - 45, 15);
+void GameLayer::resize() {
+   m_grid.resize();
 
-   int gameButtonsY = GetScreenHeight() - 60;
-   m_plusButton.setOrigin(GetScreenWidth() / 2 - m_plusButton.getSize().x - 10, gameButtonsY);
-   m_hintButton.setOrigin(GetScreenWidth() / 2 + 10, gameButtonsY);
+   // size
+   m_gobackButton.setFontSize(GridCell::numHeight);
+   m_settingsButton.setFontSize(GridCell::numHeight);
+
+   Vector2 padding = { GridCell::numHeight * 0.3f, GridCell::numHeight * 0.3f };
+   m_plusButton.setFontSize(GridCell::numHeight);
+   m_plusButton.setPadding(padding, padding);
+   m_hintButton.setFontSize(GridCell::numHeight);
+   m_hintButton.setPadding(padding, padding);
+
+   // origins
+   m_gobackButton.setOrigin({m_gobackButton.getSize().x * 0.3f, m_gobackButton.getSize().y * 0.3f});
+   m_settingsButton.setOrigin({GetScreenWidth() - m_settingsButton.getSize().x * 1.3f, m_settingsButton.getSize().y * 0.3f});
+
+   int gameButtonsY = GetScreenHeight() - m_plusButton.getSize().y * 1.3f;
+   m_plusButton.setOrigin(GetScreenWidth() / 2 - m_plusButton.getSize().x * 1.3f, gameButtonsY);
+   m_hintButton.setOrigin(GetScreenWidth() / 2 + m_plusButton.getSize().x * 0.3f, gameButtonsY);
 }
 
 GUI::Button* GameLayer::findHoveredButton() {

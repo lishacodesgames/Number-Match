@@ -39,8 +39,10 @@ void CoinLayer::OnRender() {
 }
 
 void CoinLayer::resize() {
+   float old = m_fontSize;
    m_fontSize = std::clamp(GetScreenHeight() / 23.809f, 20.0f, 40.0f);
-   TraceLog(LOG_INFO, "RESIZE: Coin font resized to: %f", m_fontSize);
+   if(std::abs(m_fontSize - old) > 0.5f)  // to avoid polluting the terminal with unnecssary logs
+      TraceLog(LOG_INFO, "RESIZE: Coin font resized to: %f", m_fontSize);
 
    float scale = std::clamp(GetScreenHeight() / 650.0f, 1.0f, 2.0f);
    ImageResize(&m_coinImage, 20 * scale, 20 * scale);  // original coin texture size is 20 x 20

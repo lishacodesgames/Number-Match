@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cstdio>
+#include "Core/Logging.h"
 
 // ---- RAYLIB ----
 #include <raylib.h>
