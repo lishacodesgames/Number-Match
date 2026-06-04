@@ -124,9 +124,10 @@ namespace GUI
       recalculateLayout();
    }
 
-   void Button::setBounds(Rectangle bounds, bool resizeContent) {
+   void Button::setBounds(Vector2 bounds, bool resizeContent) {
       Vector2 oldSize = { m_bounds.width, m_bounds.height };
-      m_bounds = bounds;
+      m_bounds.width = bounds.x;
+      m_bounds.height = bounds.y;
       if(!resizeContent)
          return;
 
@@ -158,7 +159,7 @@ namespace GUI
    }
 
    void Button::setFocus(bool isFocused, Color buttonColor, Color contentColor) {
-      isFocused = isFocused;
+      this->isFocused = isFocused;
       m_buttonColor = buttonColor;
       m_contentColor = contentColor;
    }

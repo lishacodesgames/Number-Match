@@ -12,12 +12,12 @@
 
 HomeLayer::HomeLayer() : Layer("Home Layer"),
       m_newButton(
-         { 0, 0 }, { 0, 0 },
-         "New Game", WHITE, BLUE, 25, { 0.8f, 8 }, App::font_semibold
+         { 0, 0, 533, 40 },
+         "New Game", WHITE, BLUE, 30, { 0.8f, 8 }, App::font_semibold
       ),
       m_continueButton(
-         { 0, 0 }, { 0, 0 },
-         "Continue Game", BLUE, WHITE, 25, { 0.8f, 8 }, App::font_semibold
+         { 0, 0, 533, 40 },
+         "Continue Game", BLUE, WHITE, 30, { 0.8f, 8 }, App::font_semibold
       )
 {
    m_backgroundImage = LoadImage("assets/backgrounds/home_background_800x1417.png");
@@ -134,8 +134,7 @@ void HomeLayer::OnRender() {
 }
 
 void resizeThis(GUI::Button* button) {
-   Rectangle buttonBounds = {
-      button->getOrigin().x, button->getOrigin().y,
+   Vector2 buttonBounds = {
       std::clamp(GetScreenWidth() / 1.5f, 400.0f, 550.0f),
       std::clamp(GetScreenHeight() / 20.0f, 40.0f, 60.0f)
    };
@@ -146,6 +145,8 @@ void resizeThis(GUI::Button* button) {
 void HomeLayer::resize() {
    // Buttons
    resizeThis(&m_newButton);
+   if(m_newButton.getFontSize() != m_continueButton.getFontSize())
+      TraceLog(LOG_INFO, "Play button font resized to: %d", m_newButton.getFontSize());
    resizeThis(&m_continueButton);
 
    Vector2 buttonOrigin = {

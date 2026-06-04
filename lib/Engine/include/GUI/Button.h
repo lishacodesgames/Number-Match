@@ -52,7 +52,8 @@ namespace GUI {
       );
 
       /// Custom padding
-      Button(  Vector2 origin,
+      Button(
+         Vector2 origin,
          Vector2 horizPadding, Vector2 vertPadding,
          const char* text, 
          Color buttonColor, Color contentColor,
@@ -74,7 +75,7 @@ namespace GUI {
       void setRoundness(Roundness roundness) { m_roundness = roundness; }
 
       /// @param recalculateLayout TRUE: will resize contents to stay in same ratio as before -- FALSE: will resize only rectangle
-      void setBounds(Rectangle bounds, bool resizeContent);
+      void setBounds(Vector2 bounds, bool resizeContent);
       void setPadding(Vector2 horizPadding, Vector2 vertPadding);
       void setOrigin(Vector2 origin) { m_bounds.x = origin.x; m_bounds.y = origin.y; }
       void setOrigin(int x, int y) { m_bounds.x = x; m_bounds.y = y; }
