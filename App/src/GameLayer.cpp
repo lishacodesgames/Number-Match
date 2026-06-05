@@ -32,6 +32,7 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
       Storage::load();
 }
 
+#pragma region Methods
 void GameLayer::OnEvent(Core::Event& e) {
    if(isSuspended && !eventSuspended)
       return;
@@ -126,57 +127,62 @@ void GameLayer::OnRender() {
    m_grid.Draw();
 
    // Game info
-   int tagFontSize = 5;
-   float tagY = m_grid.box.y - 30;
-
-   int infoFontSize = 17;
+   float tagFontSize = GridCell::numHeight * 0.55f;
+   float infoFontSize = tagFontSize * 0.90f;
    float infoFontSpacing = 0.98f;
-   float infoY = m_grid.box.y - 20;
+   TraceLog(LOG_INFO, "Tag font size: %f", tagFontSize);
+   TraceLog(LOG_INFO, "Info font size: %f", infoFontSize);
+
+   float infoY = m_grid.box.y - infoFontSize * 1.1f;
+   float tagY = infoY - tagFontSize - infoFontSize * 0.15f;
+
+   Color tagColor = DARKGRAY;
+   Color infoColor = DARKGRAY;
 
    // Stage
-   DrawText("Stage", m_grid.box.x, tagY, tagFontSize, GRAY);
-   DrawTextEx(App::font_semibold, std::to_string(Storage::stage).c_str(), { m_grid.box.x + 5, infoY }, infoFontSize + 3, infoFontSpacing, DARKGRAY);
+   DrawTextEx(App::font_retro, "Stage", { m_grid.box.x, tagY }, tagFontSize, infoFontSpacing, tagColor);
+   DrawTextEx(App::font_semibold, std::to_string(Storage::stage).c_str(), { m_grid.box.x + 5, infoY }, infoFontSize + 3, infoFontSpacing, infoColor);
 
-   int scoreTagWidth = MeasureText("Best Score", tagFontSize);
-   int scoreTagX = m_grid.box.x + m_grid.box.width - scoreTagWidth;
-   int scoreValueWidth = MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), infoFontSize, infoFontSpacing).x;
-   int scoreInfoX = m_grid.box.x + m_grid.box.width - scoreValueWidth - m_trophyTexture.width - 2;
+   float scoreTagWidth = MeasureTextEx(App::font_retro, "Best Score", tagFontSize, infoFontSpacing).x;
+   float scoreTagX = m_grid.box.x + m_grid.box.width - scoreTagWidth;
+   float scoreValueWidth = MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), infoFontSize, infoFontSpacing).x;
+   float scoreInfoX = m_grid.box.x + m_grid.box.width - scoreValueWidth - m_trophyTexture.width - 2;
 
    // Best Score
-   DrawText("Best Score", scoreTagX, tagY, tagFontSize, GRAY);
-   DrawTexture(m_trophyTexture, scoreInfoX, infoY, DARKGRAY);
+   DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, infoFontSpacing, tagColor);
+   DrawTexture(m_trophyTexture, scoreInfoX, infoY, infoColor);
    DrawTextEx(
          App::font_semibold, Storage::formatBestScore().c_str(),
-         { (float)scoreInfoX + m_trophyTexture.width + 2, infoY },
-         infoFontSize, infoFontSpacing, DARKGRAY);
+         { scoreInfoX + m_trophyTexture.width + 2, infoY },
+         infoFontSize, infoFontSpacing, infoColor);
 
    // Numbers Cleared
-   int numbersTagWidth = MeasureText("Numbers Cleared", tagFontSize);
-   int numbersTagX = m_grid.box.x + m_grid.box.width / 2 - numbersTagWidth / 2;
+   float numbersTagWidth = MeasureTextEx(App::font_retro, "Numbers Cleared", tagFontSize, infoFontSpacing).x;
+   float numbersTagX = m_grid.box.x + m_grid.box.width / 2 - numbersTagWidth / 2;
 
-   DrawText("Numbers Cleared", numbersTagX, tagY, tagFontSize, GRAY);
+   DrawTextEx(App::font_retro, "Numbers Cleared", { numbersTagX, tagY }, tagFontSize, infoFontSpacing, tagColor);
 
    for(uint32_t i = 0; i < Storage::numbersCleared.size(); i++) {
       std::string num = std::to_string(i + 1);
       float numX = m_grid.box.x + m_grid.box.width / 2 - 60 + i * 15;
 
-      int numWidth;
+      float numWidth;
       if(Storage::numbersCleared.at(i)) {
          numWidth = m_tickTexture.width;  // if number is cleared, we draw a tick mark at its position
          numX -= numWidth / 2;            // center the tick mark at the number's position
-         DrawTexture(m_tickTexture, numX, infoY, GRAY);
+         DrawTexture(m_tickTexture, numX, infoY, infoColor);
       } else {
          numWidth = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, infoFontSpacing).x;
          numX -= numWidth / 2;  // center the number in its position
-         DrawTextEx(App::font_semibold, num.c_str(), { numX, infoY }, infoFontSize, infoFontSpacing, DARKGRAY);
+         DrawTextEx(App::font_semibold, num.c_str(), { numX, infoY }, infoFontSize, infoFontSpacing, infoColor);
       }
    }
 
    // Current Score
-   int currentScoreWidth = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), GridCell::numHeight, 1).x;
+   Vector2 currentScoreSize = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), GridCell::numHeight, 1);
    DrawTextEx(
       App::font_black, Storage::formatCurrentScore().c_str(),
-      { (float)GetScreenWidth() / 2 - currentScoreWidth / 2, 58 },
+      { (float)GetScreenWidth() / 2 - currentScoreSize.x / 2, m_grid.box.y - currentScoreSize.y * 2.0f },
       GridCell::numHeight, 1, DARKERGRAY
    );
 }
@@ -187,6 +193,7 @@ void GameLayer::OnResume() {
 
    Layer::OnResume();
 }
+#pragma endregion
 
 void GameLayer::handleMatch(GridCell* cell) {
    m_grid.focusedCell->setState(CellState::Matched);

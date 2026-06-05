@@ -6,8 +6,10 @@
 #include "CoinLayer.h"
 #include "Storage.h"
 
-Font App::font_semibold = GetFontDefault(); // font must be loaded after InitWindow()
+// font must be loaded after InitWindow()
+Font App::font_semibold = GetFontDefault();
 Font App::font_black = GetFontDefault();
+Font App::font_retro = GetFontDefault();
 
 App* App::s_instance = nullptr;
 
@@ -21,6 +23,7 @@ App::App(const std::string& name) {
    SetWindowMinSize(500, 575);
    SetTargetFPS(60);
 
+   font_retro = LoadFontEx("assets/fonts/Goldman-Regular.ttf", 20, NULL, 0);
    font_semibold = LoadFontEx("assets/fonts/RedHatDisplay-SemiBold.ttf", 40, NULL, 0);
    font_black = LoadFontEx("assets/fonts/RedHatDisplay-Black.ttf", 70, NULL, 0);
 

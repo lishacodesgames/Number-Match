@@ -20,6 +20,7 @@ public:
    
    static Core::Layer* GetLayerByName(const std::string& name);
 
+   static Font font_retro;
    static Font font_semibold;
    static Font font_black;
 private:
