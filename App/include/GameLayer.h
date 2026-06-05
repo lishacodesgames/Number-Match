@@ -25,6 +25,8 @@ private:
    void handleMatch(GridCell* cell);  /// handles matching with focused cell
 
    // --- game info ---
+   Image m_trophyImage = {0};
+   Image m_tickImage = {0};
    Texture m_trophyTexture = {0};
    Texture m_tickTexture = {0};
 

@@ -92,7 +92,8 @@ void Grid::Draw() const {
    EndScissorMode();
 
    DrawRectangleLinesEx(box, 3, ColorAlpha(DARKGRAY, 0.8f));
-   m_scrollBar.Draw();
+   if(m_grid.size() > 9)
+      m_scrollBar.Draw();
 }
 
 void Grid::resize() {

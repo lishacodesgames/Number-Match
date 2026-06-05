@@ -4,6 +4,7 @@
 #include "OptionsLayer.h"
 #include "PanelLayer.h"
 #include "HomeLayer.h"
+#include "CoinLayer.h"
 #include "Storage.h"
 #include "Colors.h"
 #include "App.h"
@@ -16,8 +17,10 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
       m_plusButton({ 0, 0 }, { 12, 10 }, "", LIGHTERGRAY, BLUE, 25, { 1.0f, 8 }),
       m_hintButton({ 0, 0 }, { 12, 10 }, "", LIGHTERGRAY, BLUE, 25, { 1.0f, 8 }) 
 {
-   m_trophyTexture = LoadTexture("assets/icons/game/trophy_16x16.png");
-   m_tickTexture = LoadTexture("assets/icons/game/tick_16x16.png");
+   m_trophyImage = LoadImage("assets/icons/game/trophy_16x16.png");
+   m_trophyTexture = LoadTextureFromImage(m_trophyImage);
+   m_tickImage = LoadImage("assets/icons/game/tick_16x16.png");
+   m_tickTexture = LoadTextureFromImage(m_tickImage);
 
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
    m_settingsButton.setIcon("assets/icons/game/settings_30x30.png");
@@ -130,8 +133,6 @@ void GameLayer::OnRender() {
    float tagFontSize = GridCell::numHeight * 0.55f;
    float infoFontSize = tagFontSize * 0.90f;
    float infoFontSpacing = 0.98f;
-   TraceLog(LOG_INFO, "Tag font size: %f", tagFontSize);
-   TraceLog(LOG_INFO, "Info font size: %f", infoFontSize);
 
    float infoY = m_grid.box.y - infoFontSize * 1.1f;
    float tagY = infoY - tagFontSize - infoFontSize * 0.15f;
@@ -152,38 +153,54 @@ void GameLayer::OnRender() {
    DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, infoFontSpacing, tagColor);
    DrawTexture(m_trophyTexture, scoreInfoX, infoY, infoColor);
    DrawTextEx(
-         App::font_semibold, Storage::formatBestScore().c_str(),
-         { scoreInfoX + m_trophyTexture.width + 2, infoY },
-         infoFontSize, infoFontSpacing, infoColor);
+      App::font_semibold, Storage::formatBestScore().c_str(),
+      { scoreInfoX + m_trophyTexture.width + 2, infoY },
+      infoFontSize, infoFontSpacing, infoColor
+   );
 
    // Numbers Cleared
    float numbersTagWidth = MeasureTextEx(App::font_retro, "Numbers Cleared", tagFontSize, infoFontSpacing).x;
    float numbersTagX = m_grid.box.x + m_grid.box.width / 2 - numbersTagWidth / 2;
-
    DrawTextEx(App::font_retro, "Numbers Cleared", { numbersTagX, tagY }, tagFontSize, infoFontSpacing, tagColor);
 
-   for(uint32_t i = 0; i < Storage::numbersCleared.size(); i++) {
-      std::string num = std::to_string(i + 1);
-      float numX = m_grid.box.x + m_grid.box.width / 2 - 60 + i * 15;
+   float allNumsWidth = 0.0f;
+   const float padding = MeasureTextEx(App::font_semibold, "5", infoFontSize, infoFontSpacing).x * 0.5f;
+   for(uint32_t i = 0; i < 9; i++) {
+      float thisNumWidth = 0.0f;
+      if(Storage::numbersCleared.at(i))
+         thisNumWidth = m_tickTexture.width;
+      else
+         thisNumWidth = MeasureTextEx(App::font_semibold, std::to_string(i + 1).c_str(), infoFontSize, infoFontSpacing).x;
+      
+      allNumsWidth += thisNumWidth + (i == 8 ? 0 : padding); // add padding after every number except the last one
+   }
 
-      float numWidth;
+   const float firstNumX = m_grid.box.x + m_grid.box.width / 2 - allNumsWidth / 2;
+   float soFarX = firstNumX;
+   for(uint32_t i = 0; i < 9; i++) {
+      std::string num = std::to_string(i + 1);
+      float thisNumWidth;
+
       if(Storage::numbersCleared.at(i)) {
-         numWidth = m_tickTexture.width;  // if number is cleared, we draw a tick mark at its position
-         numX -= numWidth / 2;            // center the tick mark at the number's position
-         DrawTexture(m_tickTexture, numX, infoY, infoColor);
+         DrawTexture(m_tickTexture, soFarX, infoY, infoColor);
+         thisNumWidth = m_tickTexture.width;
       } else {
-         numWidth = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, infoFontSpacing).x;
-         numX -= numWidth / 2;  // center the number in its position
-         DrawTextEx(App::font_semibold, num.c_str(), { numX, infoY }, infoFontSize, infoFontSpacing, infoColor);
+         DrawTextEx(App::font_semibold, num.c_str(), { soFarX, infoY }, infoFontSize, infoFontSpacing, infoColor);
+         thisNumWidth = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, infoFontSpacing).x;
       }
+
+      soFarX += thisNumWidth + padding;
    }
 
    // Current Score
-   Vector2 currentScoreSize = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), GridCell::numHeight, 1);
+   /// @bug currentScore sometimes gets hidden behind coin box
+   float remSpaceY = (GetScreenHeight() - tagY) - (CoinLayer::box.y + CoinLayer::box.height);
+   float currentScoreFontSize = std::min(GridCell::numHeight, remSpaceY * 0.7f);
+   Vector2 currentScoreSize = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), currentScoreFontSize, 1);
    DrawTextEx(
       App::font_black, Storage::formatCurrentScore().c_str(),
       { (float)GetScreenWidth() / 2 - currentScoreSize.x / 2, m_grid.box.y - currentScoreSize.y * 2.0f },
-      GridCell::numHeight, 1, DARKERGRAY
+      currentScoreFontSize, 1, DARKGRAY
    );
 }
 
@@ -218,10 +235,31 @@ void GameLayer::handleMatch(GridCell* cell) {
 #pragma region Helpers
 
 void GameLayer::resize() {
+   // game
    m_grid.resize();
 
-   // navigation buttons
+   float infoFontSize = GridCell::numHeight * 0.55f * 0.9f;
+   float trophyScale = infoFontSize / m_trophyTexture.height;
+   if(trophyScale > 0.5f) {
+      Image bestScoreTrophy = ImageCopy(m_trophyImage);
+      ImageResize(&bestScoreTrophy, m_trophyTexture.width * trophyScale, m_trophyTexture.height * trophyScale);
 
+      m_trophyTexture = LoadTextureFromImage(bestScoreTrophy);
+      UnloadImage(bestScoreTrophy);
+      TraceLog(LOG_INFO, "RESIZE: Best Score Trophy resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
+   }
+
+   float tickScale = infoFontSize / m_tickTexture.height;
+   if(tickScale > 0.5f) {
+      Image tick = ImageCopy(m_tickImage);
+      ImageResize(&tick, m_tickTexture.width * tickScale, m_tickTexture.height * tickScale);
+
+      m_tickTexture = LoadTextureFromImage(tick);
+      UnloadImage(tick);
+      TraceLog(LOG_INFO, "RESIZE: Tick resized to: %d, %d", m_tickTexture.width, m_tickTexture.height);
+   }
+
+   // navigation buttons
    m_gobackButton.setFontSize(GridCell::numHeight);
    m_settingsButton.setFontSize(GridCell::numHeight);
    
@@ -229,7 +267,6 @@ void GameLayer::resize() {
    m_settingsButton.setOrigin({GetScreenWidth() - m_settingsButton.getSize().x * 1.3f, m_settingsButton.getSize().y * 0.3f});
 
    // gameplay buttons
-
    float remSpaceY = GetScreenHeight() - (m_grid.box.y + m_grid.box.height);
    float iconHeight = std::min(GridCell::numHeight, remSpaceY * 0.7f);
    m_plusButton.setFontSize(iconHeight);

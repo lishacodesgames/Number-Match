@@ -151,7 +151,7 @@ void HomeLayer::resize() {
 
    Vector2 buttonOrigin = {
       static_cast<float>(GetScreenWidth() - m_newButton.getSize().x) / 2,
-      static_cast<float>(GetScreenHeight() - PanelLayer::height - m_newButton.getSize().y - 50)
+      static_cast<float>(GetScreenHeight() - PanelLayer::height - m_newButton.getSize().y * 3)
    };
 
    m_newButton.setOrigin(buttonOrigin);

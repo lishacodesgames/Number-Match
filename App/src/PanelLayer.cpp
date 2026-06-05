@@ -75,7 +75,8 @@ void PanelLayer::OnUpdate() {
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    } // else case will be handled by below layers, since this one is an overlay
 
-   if(previousButton && hoveredButton != previousButton) { // new button is focused, so we must reset previous one
+   if(previousButton && hoveredButton != previousButton) {
+      // new button is focused, so we must reset previous one
       if(previousButton->isFocused)
          previousButton->setContentColor(BLUE);
       else
@@ -98,7 +99,7 @@ void PanelLayer::OnRender() {
 
 void PanelLayer::resize() {
    // set size
-   height = std::max(50, GetScreenHeight() / 15);
+   height = std::max(40, GetScreenHeight() / 15);
    float weirdlyPerfectNumber = height * (5.0f / 7) * 0.9f; // dont ask why
 
   if((int)weirdlyPerfectNumber != homeButton.getIcon().height) {

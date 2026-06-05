@@ -29,6 +29,7 @@ void CoinLayer::OnRender() {
    Vector2 coinAmountSize = MeasureTextEx(App::font_semibold, Storage::formatCoins().c_str(), m_fontSize, 1.5f);
 
    DrawRectangleRounded(box, 5.0f, 5, WHITE);
+   DrawRectangleRoundedLinesEx(box, 5.0f, 5, 2, LIGHTGRAY);
    DrawTexture(m_coinTexture, box.x + m_coinTexture.width * 0.3f, box.y + (box.height - m_coinTexture.height) / 2, WHITE);
    DrawTextEx(
       App::font_semibold, Storage::formatCoins().c_str(),
