@@ -14,4 +14,4 @@ message(STATUS "--")
 # go to cmakelists in subdirectories
 add_subdirectory(lib/Engine)
 add_subdirectory(lib/raylib)
-add_subdirectory(App)
+add_subdirectory(src)

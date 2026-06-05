@@ -8,7 +8,7 @@
 
 	"folders": [
 		{ "path": ".", "name": "repo" },
-		{ "path": "App" },
+		{ "path": "src", "name": "App" },
 		{ "path": "lib" }
 	],
 

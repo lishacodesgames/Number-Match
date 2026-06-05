@@ -1,7 +1,7 @@
 set(BIN ${CMAKE_SOURCE_DIR}/bin/${OUTFILE})
 file(GLOB_RECURSE NM_SOURCES 
-   ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp 
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp 
+   ${CMAKE_CURRENT_SOURCE_DIR}/*.h
 )
 
 add_executable(${PROJECT_NAME} ${NM_SOURCES})
@@ -9,7 +9,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Engine)
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN})
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
-   ${CMAKE_CURRENT_SOURCE_DIR}/include
+   ${CMAKE_SOURCE_DIR}/src
    ${CMAKE_SOURCE_DIR}/lib/nlohmann # json library
 )
 

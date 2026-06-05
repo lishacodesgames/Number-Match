@@ -1,9 +1,9 @@
 #include <pch/Precompiled.h>
 #include "App.h"
 
-#include "PanelLayer.h"
-#include "HomeLayer.h"
-#include "CoinLayer.h"
+#include "Layers/PanelLayer.h"
+#include "Layers/HomeLayer.h"
+#include "Layers/CoinLayer.h"
 #include "Storage.h"
 
 // font must be loaded after InitWindow()
