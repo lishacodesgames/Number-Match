@@ -1,7 +1,6 @@
 #include <pch/Precompiled.h>
 #include "GameLayer.h"
 
-#include "Core/Logging.h"
 #include "OptionsLayer.h"
 #include "PanelLayer.h"
 #include "HomeLayer.h"
@@ -14,8 +13,8 @@
 GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
       m_gobackButton({ 15, 15 }, { 6, 1 }, { 1, 1 }, "", BLANK, BRIGHTSKYBLUE, 20, { 0, 0 }),
       m_settingsButton({ 0, 0 }, { 1, 1 }, "", BLANK, BRIGHTSKYBLUE, 20, { 0, 0 }),
-      m_plusButton({ 0, 0 }, { 10, 10 }, "", LIGHTERGRAY, BLUE, 25, { 1.0f, 8 }),
-      m_hintButton({ 0, 0 }, { 10, 10 }, "", LIGHTERGRAY, BLUE, 25, { 1.0f, 8 }) 
+      m_plusButton({ 0, 0 }, { 12, 10 }, "", LIGHTERGRAY, BLUE, 25, { 1.0f, 8 }),
+      m_hintButton({ 0, 0 }, { 12, 10 }, "", LIGHTERGRAY, BLUE, 25, { 1.0f, 8 }) 
 {
    m_trophyTexture = LoadTexture("assets/icons/game/trophy_16x16.png");
    m_tickTexture = LoadTexture("assets/icons/game/tick_16x16.png");
@@ -214,21 +213,24 @@ void GameLayer::handleMatch(GridCell* cell) {
 void GameLayer::resize() {
    m_grid.resize();
 
-   // size
+   // navigation buttons
+
    m_gobackButton.setFontSize(GridCell::numHeight);
    m_settingsButton.setFontSize(GridCell::numHeight);
-
-   Vector2 padding = { GridCell::numHeight * 0.3f, GridCell::numHeight * 0.3f };
-   m_plusButton.setFontSize(GridCell::numHeight);
-   m_plusButton.setPadding(padding, padding);
-   m_hintButton.setFontSize(GridCell::numHeight);
-   m_hintButton.setPadding(padding, padding);
-
-   // origins
+   
    m_gobackButton.setOrigin({m_gobackButton.getSize().x * 0.3f, m_gobackButton.getSize().y * 0.3f});
    m_settingsButton.setOrigin({GetScreenWidth() - m_settingsButton.getSize().x * 1.3f, m_settingsButton.getSize().y * 0.3f});
 
-   int gameButtonsY = GetScreenHeight() - m_plusButton.getSize().y * 1.3f;
+   // gameplay buttons
+
+   float remSpaceY = GetScreenHeight() - (m_grid.box.y + m_grid.box.height);
+   float iconHeight = std::min(GridCell::numHeight, remSpaceY * 0.7f);
+   m_plusButton.setFontSize(iconHeight);
+   m_hintButton.setFontSize(iconHeight);
+   m_plusButton.setPadding(iconHeight * 0.3f, iconHeight * 0.25f);
+   m_hintButton.setPadding(iconHeight * 0.3f, iconHeight * 0.25f);
+
+   int gameButtonsY = m_grid.box.y + m_grid.box.height + (remSpaceY - m_plusButton.getSize().y) / 2;
    m_plusButton.setOrigin(GetScreenWidth() / 2 - m_plusButton.getSize().x * 1.3f, gameButtonsY);
    m_hintButton.setOrigin(GetScreenWidth() / 2 + m_plusButton.getSize().x * 0.3f, gameButtonsY);
 }

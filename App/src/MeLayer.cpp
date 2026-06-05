@@ -1,7 +1,6 @@
 #include <pch/Precompiled.h>
 #include "MeLayer.h"
 
-#include "Core/Logging.h"
 #include "App.h"
 
 void MeLayer::OnEvent(Core::Event& e) {

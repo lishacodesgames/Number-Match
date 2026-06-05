@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <string>
 #include <array>
-#include "Core/Logging.h"
 
 struct Storage {
    Storage() { lastSaveTime = std::filesystem::last_write_time("assets/save.json"); }

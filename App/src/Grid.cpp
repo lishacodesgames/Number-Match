@@ -1,7 +1,6 @@
 #include <pch/Precompiled.h>
 #include "Grid.h"
 
-#include "Core/Logging.h"
 #include "Colors.h"
 #include "App.h"
 

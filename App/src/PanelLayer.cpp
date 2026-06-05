@@ -1,7 +1,6 @@
 #include <pch/Precompiled.h>
 #include "PanelLayer.h"
 
-#include "Core/Logging.h"
 #include "DailyLayer.h"
 #include "Core/Event.h"
 #include "GUI/Button.h"

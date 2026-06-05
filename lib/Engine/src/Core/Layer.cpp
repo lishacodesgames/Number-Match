@@ -1,9 +1,8 @@
 #include <pch/Precompiled.h>
 #include "Core/Layer.h"
 
-#include "Core/Logging.h"
-
 namespace Core {
+
    Layer::Layer(
       const std::string& name, bool isOverlay,
       bool renderSuspended, bool updateSuspended, bool eventSuspended

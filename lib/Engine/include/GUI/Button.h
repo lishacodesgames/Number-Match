@@ -71,14 +71,20 @@ namespace GUI {
       void setText(const std::string& text) { m_text = text; recalculateLayout(); }
 
       void setFont(Font font) { m_font = font; recalculateLayout(); }
-      void setFontSize(int fontSize) { m_fontSize = fontSize; recalculateLayout(); }
+      void setFontSize(int fontSize);
       void setRoundness(Roundness roundness) { m_roundness = roundness; }
 
       /// @param recalculateLayout TRUE: will resize contents to stay in same ratio as before -- FALSE: will resize only rectangle
       void setBounds(Vector2 bounds, bool resizeContent);
-      void setPadding(Vector2 horizPadding, Vector2 vertPadding);
       void setOrigin(Vector2 origin) { m_bounds.x = origin.x; m_bounds.y = origin.y; }
       void setOrigin(int x, int y) { m_bounds.x = x; m_bounds.y = y; }
+
+      /// horizontal = {left, right}, vertical = {top, bottom}
+      void setPadding(Vector2 horizPadding, Vector2 vertPadding);
+      /// horizontal = left & right padding, vertical = top & bottom
+      void setPadding(float horizPadding, float vertPadding) { setPadding({ horizPadding, horizPadding }, { vertPadding, vertPadding }); }
+      /// even padding
+      void setPadding(float padding) { setPadding({ padding, padding }, { padding, padding }); }
 
       void setButtonColor(Color color) { m_buttonColor = color; }
       void setContentColor(Color color) { m_contentColor = color; }

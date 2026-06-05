@@ -1,7 +1,6 @@
 #include <pch/Precompiled.h>
 #include "DailyLayer.h"
 
-#include "Core/Logging.h"
 #include "App.h"
 
 void DailyLayer::OnEvent(Core::Event& e) {

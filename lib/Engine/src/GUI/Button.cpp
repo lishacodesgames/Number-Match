@@ -1,11 +1,6 @@
 #include <pch/Precompiled.h>
 #include "GUI/Button.h"
 
-#include <algorithm>
-#include <raymath.h>
-#include <raylib.h>
-#include <utility>
-
 namespace GUI 
 {
    static constexpr float ICON_PAD_MULTIPLIER = 1.5f;
@@ -124,6 +119,21 @@ namespace GUI
       recalculateLayout();
    }
 
+   void Button::setFontSize(int fontSize) {
+      m_fontSize = fontSize;
+      if(IsTextureValid(m_iconTexture)) {
+         float aspect = (float)m_iconImage.width / m_iconImage.height;
+         Image newIcon = ImageCopy(m_iconImage);
+         float newHeight = m_fontSize;
+         ImageResize(&newIcon, newHeight * aspect, newHeight);
+
+         UnloadTexture(m_iconTexture);
+         m_iconTexture = LoadTextureFromImage(newIcon);
+         UnloadImage(newIcon);
+      }
+      recalculateLayout();
+   }
+
    void Button::setBounds(Vector2 bounds, bool resizeContent) {
       Vector2 oldSize = { m_bounds.width, m_bounds.height };
       m_bounds.width = bounds.x;
@@ -167,7 +177,7 @@ namespace GUI
    void Button::recalculateLayout() {
       Vector2 textSize = MeasureTextEx(m_font, m_text.c_str(), m_fontSize, 1);
       bool iconExists = IsTextureValid(m_iconTexture);
-      float contentWidth = textSize.x + (iconExists ? m_iconTexture.width * ICON_PAD_MULTIPLIER : 0);
+      float contentWidth = textSize.x + (iconExists ? m_iconTexture.width * (m_text.empty() ? 1 : ICON_PAD_MULTIPLIER) : 0);
       float contentHeight = std::max(textSize.y, iconExists ? (float)m_iconTexture.height : 0.0f);
 
       m_bounds.width = contentWidth + m_horizontalPadding.x + m_horizontalPadding.y;

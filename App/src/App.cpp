@@ -1,7 +1,6 @@
 #include <pch/Precompiled.h>
 #include "App.h"
 
-#include "Core/Logging.h"
 #include "PanelLayer.h"
 #include "HomeLayer.h"
 #include "CoinLayer.h"
