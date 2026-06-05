@@ -7,14 +7,28 @@ The original Number match is a fun mobile game where you match up pairs of numbe
 
 My version is desktop-friendly, has no ads, and is just as addicting.
 
-### Controls
-The main game relies on mouse clicks only. <br>
-The only keybinding is: `Q` to go back to home from the game 
-
 ### Tech Stack
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white) 
 ![RayLib](https://img.shields.io/badge/RAYLIB-FFFFFF?style=for-the-badge&logo=raylib&logoColor=black)
 ![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)
+
+## How to Play
+The main game relies on mouse clicks only. <br>
+The only keybinding is: `Q` to go back to the home page from the game, and `Esc` to exit the Application
+
+**Main Objective:** Match numbers that either sum to 10, or are the same.
+- Matches happen on the same row, column, or diagonal; as long as there are no unmatched cells in between.
+- Once all cells in a row have been matched, that row is cleared.
+- Once all rows in the grid have been cleared, you move onto the next stage.
+- If there are no more matches available, click the plus at the bottom of the grid.
+- If you need help, click the hint icon at the bottom of the grid.
+- For more settings, or a tutorial, click the gear icon at the top right of the grid.
+
+There is no end to the game, there can be as many stages as you like. 
+
+### Some Additional Features
+- There are "tournament" games which feature an end goal of a certain amount of points.
+- Various Achievements to work towards.
 
 ## How to use
 
@@ -22,7 +36,8 @@ The only keybinding is: `Q` to go back to home from the game
 ```bash
 git clone --recursive --shallow-submodules https://github.com/lishacodesgames/Number-Match.git
 cd Number-Match
-cmake --preset Release && cmake --build --preset Release
+cmake --preset Release
+cmake --build --preset Release
 ```
 
 **NOTE: If you forgot the recursive flag in git clone, run:** <br>
@@ -34,7 +49,7 @@ cmake --preset Release && cmake --build --preset Release
 ### Run the Game
 **Windows**
 ```bash
-"bin\Release\NumberMatch.exe"
+bin\Release\NumberMatch.exe
 ```
 
 **Mac/Linux**
@@ -63,5 +78,6 @@ sudo apt install \
 ```
 
 ## Requirements
+* A C++ Compiler
 * CMake 3.20+
 * Ninja (not *required*, but it's what the presets use)
