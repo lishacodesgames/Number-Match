@@ -40,8 +40,9 @@ cmake --preset Release
 cmake --build --preset Release
 ```
 
-**NOTE: If you forgot the recursive flag in git clone, run:** <br>
-`git submodule update --init --recursive --depth 1` after regular `git clone`, and then the cmake command.
+**If you did regular `git clone` and forgot the `--recursive` flag, run:** <br>
+`git submodule update --init --recursive --depth 1` after regular `git clone` <br>
+And then the cmake commands.
 
 **If you have the repository cloned, but want to update, run:** <br>
 `git fetch && git pull` instead of clone, and then the cmake command.
