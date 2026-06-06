@@ -28,12 +28,14 @@ void CoinLayer::OnUpdate() {
 void CoinLayer::OnRender() {
    Vector2 coinAmountSize = MeasureTextEx(App::font_semibold, Storage::formatCoins().c_str(), m_fontSize, 1.5f);
 
-   DrawRectangleRounded(box, 5.0f, 5, WHITE);
-   DrawRectangleRoundedLinesEx(box, 5.0f, 5, 2, LIGHTGRAY);
+   int rs = 5; // Roundsness & Segments
+   DrawRectangleRounded(box, rs, rs, WHITE);
+   DrawRectangleRoundedLinesEx(box, rs, rs, 2, LIGHTGRAY);
+
    DrawTexture(m_coinTexture, box.x + m_coinTexture.width * 0.3f, box.y + (box.height - m_coinTexture.height) / 2, WHITE);
    DrawTextEx(
       App::font_semibold, Storage::formatCoins().c_str(),
-      { box.x + m_coinTexture.width * 1.5f,
+      {  box.x + m_coinTexture.width * 1.5f,
          box.y + (box.height - coinAmountSize.y) / 2 },
       m_fontSize, 1.5f, ColorAlpha(DARKERGRAY, 0.98f)
    );

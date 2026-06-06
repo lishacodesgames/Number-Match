@@ -1,6 +1,7 @@
 #include <pch/Precompiled.h>
 #include "Grid.h"
 
+#include "Layers/CoinLayer.h"
 #include "Colors.h"
 #include "App.h"
 
@@ -66,25 +67,35 @@ void Grid::Draw() const {
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          const GridCell cell = m_grid.at(row).at(col);
-         std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
-         Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), GridCell::numHeight, 1);
+         const std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
+         const Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), GridCell::numHeight, 1);
 
-         // default
-         numColor = BLACK;
-         bgColor = GridCell::restColor;
-         if(cell.getState() == CellState::Matched)
-            numColor = LIGHTGRAY;
-         else if(cell.getState() == CellState::Focused)
-            bgColor = GridCell::focusColor;
-         else if(cell.getState() == CellState::Hovered)
-            bgColor = GridCell::hoverColor;
+         // state cases
+         switch(cell.getState()) {
+            case CellState::Rest:
+               numColor = BLACK;
+               bgColor = GridCell::restColor;
+               break;
+            case CellState::Hovered:
+               numColor = BLACK;
+               bgColor = GridCell::hoverColor;
+               break;
+            case CellState::Focused:
+               numColor = BLACK;
+               bgColor = GridCell::focusColor;
+               break;
+            case CellState::Matched:
+               numColor = LIGHTGRAY;
+               bgColor = GridCell::restColor;
+               break;
+         }
 
          DrawRectangleRec(cell.bounds, bgColor);
          DrawRectangleLinesEx(cell.bounds, 1, ColorAlpha(LIGHTGRAY, 0.65f));
          DrawTextEx(
             App::font_semibold, value.c_str(),
-            { cell.bounds.x + cell.bounds.width / 2 - numSize.x / 2, 
-               cell.bounds.y + cell.bounds.height / 2 - numSize.y / 2 },
+            {  cell.bounds.x + (cell.bounds.width - numSize.x) / 2, 
+               cell.bounds.y + (cell.bounds.height - numSize.y) / 2 },
             GridCell::numHeight, 1, numColor
          );
       }
@@ -100,11 +111,13 @@ void Grid::resize() {
    GridCell::cellSize = std::clamp( // scaled based on smaller of the 2 screen dimensions
       std::min(GetScreenWidth(), GetScreenHeight()) * 0.7f / 9, 40.0f, 150.0f
    );
+   TraceLog(LISHA_SAYS, "RESIZE: Grid resized: cellSize = %f", GridCell::cellSize);
    GridCell::numHeight = GridCell::cellSize * 0.75f;
 
    // box is centered horizontally and has a fixed y value
    float boxX = (GetScreenWidth() - GridCell::cellSize * 9) / 2.0f;
-   float boxY = std::max(120.0f, (GetScreenHeight() - GridCell::cellSize * 9) / 2.0f); // min padding for score
+   float boxY = (GetScreenHeight() - GridCell::cellSize * (9.0f - 1.35f)) / 2.0f; // 1 extra row for the game info on top
+
    box = { boxX, boxY, GridCell::cellSize * 9, GridCell::cellSize * 9 };
 
    for(size_t row = 0; row < m_grid.size(); row++)

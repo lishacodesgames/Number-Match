@@ -130,15 +130,17 @@ void GameLayer::OnRender() {
    m_grid.Draw();
 
    // Game info
-   float tagFontSize = GridCell::numHeight * 0.55f;
-   float infoFontSize = tagFontSize * 0.90f;
-   float infoFontSpacing = 0.98f;
-
-   float infoY = m_grid.box.y - infoFontSize * 1.1f;
-   float tagY = infoY - tagFontSize - infoFontSize * 0.15f;
-
    Color tagColor = DARKGRAY;
    Color infoColor = DARKGRAY;
+
+   Rectangle gameInfoBox = { m_grid.box.x, m_grid.box.y - GridCell::cellSize * 0.7f, m_grid.box.width, GridCell::cellSize * 0.7f };
+
+   float tagY = gameInfoBox.y - gameInfoBox.height * 0.10f;
+   float tagFontSize = gameInfoBox.height * 0.5f;
+
+   float infoFontSpacing = 0.98f;
+   float infoFontSize = tagFontSize * 0.90f;
+   float infoY = m_grid.box.y - infoFontSize * 1.1f;
 
    // Stage
    DrawTextEx(App::font_retro, "Stage", { m_grid.box.x, tagY }, tagFontSize, infoFontSpacing, tagColor);
@@ -193,13 +195,12 @@ void GameLayer::OnRender() {
    }
 
    // Current Score
-   /// @bug currentScore sometimes gets hidden behind coin box
-   float remSpaceY = (GetScreenHeight() - tagY) - (CoinLayer::box.y + CoinLayer::box.height);
-   float currentScoreFontSize = std::min(GridCell::numHeight, remSpaceY * 0.7f);
+   float remSpaceY = tagY - (CoinLayer::box.y + CoinLayer::box.height);
+   float currentScoreFontSize = std::min(GridCell::numHeight, remSpaceY * 0.8f);
    Vector2 currentScoreSize = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), currentScoreFontSize, 1);
    DrawTextEx(
       App::font_black, Storage::formatCurrentScore().c_str(),
-      { (float)GetScreenWidth() / 2 - currentScoreSize.x / 2, m_grid.box.y - currentScoreSize.y * 2.0f },
+      { (float)GetScreenWidth() / 2 - currentScoreSize.x / 2, tagY - currentScoreSize.y * 1.2f },
       currentScoreFontSize, 1, DARKGRAY
    );
 }
@@ -267,12 +268,13 @@ void GameLayer::resize() {
    m_settingsButton.setOrigin({GetScreenWidth() - m_settingsButton.getSize().x * 1.3f, m_settingsButton.getSize().y * 0.3f});
 
    // gameplay buttons
-   float remSpaceY = GetScreenHeight() - (m_grid.box.y + m_grid.box.height);
-   float iconHeight = std::min(GridCell::numHeight, remSpaceY * 0.7f);
+   float remSpaceY = GetScreenHeight() - (m_grid.box.y + m_grid.box.height); // remaining space below grid
+   float iconHeight = std::min(GridCell::numHeight, remSpaceY * 0.5f);
+   float iconWidth = iconHeight; // for padding readability
    m_plusButton.setFontSize(iconHeight);
    m_hintButton.setFontSize(iconHeight);
-   m_plusButton.setPadding(iconHeight * 0.3f, iconHeight * 0.25f);
-   m_hintButton.setPadding(iconHeight * 0.3f, iconHeight * 0.25f);
+   m_plusButton.setPadding(iconWidth * 0.6f, iconHeight * 0.3f);
+   m_hintButton.setPadding(iconWidth * 0.6f, iconHeight * 0.3f);
 
    int gameButtonsY = m_grid.box.y + m_grid.box.height + (remSpaceY - m_plusButton.getSize().y) / 2;
    m_plusButton.setOrigin(GetScreenWidth() / 2 - m_plusButton.getSize().x * 1.3f, gameButtonsY);
