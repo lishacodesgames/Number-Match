@@ -9,17 +9,14 @@
 static constexpr int PANEL_HEIGHT = 35;
 static constexpr float BANNER_HEIGHT = 32.0f;
 
-static constexpr float BOUNDS_TARGETY = 100.0f;
-
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
+      targetY(GetScreenHeight() / 6.0f),
       m_bounds({
-         (float)(GetScreenWidth()) / 4, (float)(GetScreenHeight()), // to be animated to target height
-         (float)(GetScreenWidth()) / 2, (float)(GetScreenHeight()) / 2 + 100
-      }),
+         (float)(GetScreenWidth()) * 0.25f, (float)(GetScreenHeight()),  // to be animated to target height
+         (float)(GetScreenWidth()) * 0.50f, (float)(GetScreenHeight()) * 4.0f / 6.0f }),
       m_doneButton(
-         {m_bounds.x + m_bounds.width - 55, m_bounds.y + 7}, // origin 
-         {0, 0}, "Done", BLANK, BLUE, 20, {0, 0}, App::font_semibold
-      )
+         { m_bounds.x + m_bounds.width - 55, m_bounds.y + 7 },  // origin
+         { 2, 2 }, "Done", BLANK, BLUE, 20, { 0, 0 }, App::font_semibold)
 {
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
 
@@ -52,8 +49,13 @@ OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
    m_bannerNames[NO_ADS] = "Remove Ads";
 }
 
+OptionsLayer::~OptionsLayer() {
+   for(Texture& icon : m_bannerIcons)
+      UnloadTexture(icon);
+}
+
 void OptionsLayer::OnEvent(Core::Event& e) {
-   e.Handled = true; // don't want any events to pass through to gamelayer
+   e.Handled = true;  // don't want any events to pass through to gamelayer
    if(e.GetEventType() == Core::EventType::MouseClicked && m_doneButton.isHovered) {
       App::QueueLayerPop(this);
 
@@ -76,35 +78,31 @@ void OptionsLayer::OnUpdate() {
       setBannerPositions(m_bounds.y);
    }
 
-   if(m_bounds.y > BOUNDS_TARGETY) {
-      double dt = std::min(GetFrameTime(), 0.033f); // for a delay of atleast 33ms
+   if(m_bounds.y > targetY) {
+      double dt = std::min(GetFrameTime(), 0.033f);  // for a delay of atleast 33ms
       double speed = 160;
-      double diff = m_bounds.y - BOUNDS_TARGETY;
+      double diff = m_bounds.y - targetY;
 
-      m_bounds.y -= 0.1f * diff * speed * dt; // move 10% of remaining distance with delay and lag buffer
-      if(diff < 1.5) // within 1.5 pixels
-         m_bounds.y = BOUNDS_TARGETY; // snap to target, since %-based approach is an asymptote
-      
+      m_bounds.y -= 0.1f * diff * speed * dt;  // move 10% of remaining distance with delay and lag buffer
+      if(diff < 1.5)                           // within 1.5 pixels
+         m_bounds.y = targetY;                 // snap to target, since %-based approach is an asymptote
+
       setBannerPositions(m_bounds.y);
-      m_doneButton.setOrigin({m_doneButton.getOrigin().x, m_bounds.y + 7});
+      m_doneButton.setOrigin({ m_doneButton.getOrigin().x, m_bounds.y + 7 });
       return;
    }
 
-   m_doneButton.Update(); 
+   m_doneButton.Update();
 
-   if(m_doneButton.isHovered)
+   if(m_doneButton.isHovered || getHoveredBannerIndex() != -1)
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-
-   for(Rectangle banner : m_banners)
-      if(CheckCollisionPointRec(GetMousePosition(), banner))
-         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
 }
 
 void OptionsLayer::OnRender() {
-   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), {80, 80, 80, 180}); // to make the bg darker
-   DrawRectangleRounded(m_bounds, 0.1f, 6, LIGHTERGRAY);  // main popup
+   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), { 80, 80, 80, 180 });  // to make the bg darker
+   DrawRectangleRounded(m_bounds, 0.1f, 6, LIGHTERGRAY);                           // main popup
 
    renderTopPanel();
    renderBlankBanners();
@@ -115,30 +113,30 @@ void OptionsLayer::OnRender() {
 
 void OptionsLayer::setPanel() {
    m_bounds = {
-      (float)GetScreenWidth() * 0.25f, BOUNDS_TARGETY,
-      (float)GetScreenWidth() * 0.5f, (float)GetScreenHeight() * 0.5f + 100
+      GetScreenWidth() * 0.25f, targetY,
+      GetScreenWidth() * 0.6f, GetScreenHeight() * 0.7f
    };
 
-   m_doneButton.setOrigin({m_bounds.x + m_bounds.width - 55, m_bounds.y + 7});
+   m_doneButton.setOrigin({ m_bounds.x + m_bounds.width - 55, m_bounds.y + 7 });
 }
 
 void OptionsLayer::setBannerPositions(float boundsY) {
-   float originX = m_bounds.x + m_bounds.width * 0.16f / 2; // half of 16%
+   float originX = m_bounds.x + m_bounds.width * 0.16f / 2;  // half of 16%
    float originY = boundsY + PANEL_HEIGHT * 1.5f;
-   Vector2 size = {m_bounds.width * 0.85f, BANNER_HEIGHT}; // 85% of popup
+   Vector2 size = { m_bounds.width * 0.85f, BANNER_HEIGHT };  // 85% of popup
 
-   constexpr float spacing = BANNER_HEIGHT + 23; // Space between the top and 2 bottom banners (ref: settings.jpg)
+   constexpr float spacing = BANNER_HEIGHT + 23;  // Space between the top and 2 bottom banners (ref: settings.jpg)
 
-   m_banners[SETTINGS] = {originX, originY, size.x, size.y};
+   m_banners[SETTINGS] = { originX, originY, size.x, size.y };
 
-   m_banners[HOW_TO] = {originX, originY + spacing, size.x, size.y};
-   m_banners[HELP] = {originX, originY + spacing + BANNER_HEIGHT, size.x, size.y};
-   m_banners[ABOUT] = {originX, originY + spacing + BANNER_HEIGHT * 2, size.x, size.y};
-   m_banners[PRIVACY] = {originX, originY + spacing + BANNER_HEIGHT * 3, size.x, size.y};
-   m_banners[PREFS] = {originX, originY + spacing + BANNER_HEIGHT * 4, size.x, size.y};
+   m_banners[HOW_TO] = { originX, originY + spacing, size.x, size.y };
+   m_banners[HELP] = { originX, originY + spacing + BANNER_HEIGHT, size.x, size.y };
+   m_banners[ABOUT] = { originX, originY + spacing + BANNER_HEIGHT * 2, size.x, size.y };
+   m_banners[PRIVACY] = { originX, originY + spacing + BANNER_HEIGHT * 3, size.x, size.y };
+   m_banners[PREFS] = { originX, originY + spacing + BANNER_HEIGHT * 4, size.x, size.y };
 
-   m_banners[MATH] = {originX, originY + spacing * 2 + BANNER_HEIGHT * 4, size.x, size.y};
-   m_banners[NO_ADS] = {originX, originY + spacing * 3 + BANNER_HEIGHT * 4, size.x, size.y};
+   m_banners[MATH] = { originX, originY + spacing * 2 + BANNER_HEIGHT * 4, size.x, size.y };
+   m_banners[NO_ADS] = { originX, originY + spacing * 3 + BANNER_HEIGHT * 4, size.x, size.y };
 }
 
 void OptionsLayer::renderTopPanel() {
@@ -152,8 +150,8 @@ void OptionsLayer::renderTopPanel() {
    DrawRectangleRounded(panel, 0.8f, 6, WHITE);
    DrawRectangleRec(panelSharpBottom, WHITE);
    DrawTextEx(
-      App::font_semibold, "Options", 
-      {m_bounds.x + m_bounds.width / 2 - 30, m_bounds.y + 7}, 
+      App::font_semibold, "Options",
+      { m_bounds.x + m_bounds.width / 2 - 30, m_bounds.y + 7 },
       20, 1, BLACK
    );
 
@@ -161,36 +159,37 @@ void OptionsLayer::renderTopPanel() {
 }
 
 void OptionsLayer::renderBlankBanners() {
+   int hovered = getHoveredBannerIndex();
+
    // base banner shape
-   for(Rectangle banner : m_banners)
-      DrawRectangleRounded(banner, 0.5f, 4, WHITE);
+   for(size_t i = 0; i < m_banners.size(); i++) {
+      const Rectangle& banner = m_banners.at(i);
+      Color bg = ((int)i == hovered ? LIGHTGRAY : WHITE);
 
-   // sharp rectangle to cover touching rounded corners
-   Rectangle secondBanner = m_banners.at(HOW_TO);
-   DrawRectangleV(
-      {secondBanner.x, secondBanner.y + secondBanner.height/2},
-      {secondBanner.width, BANNER_HEIGHT*4}, // 5 rectangles but cutting out half a rect from top and bottom
-      WHITE
-   );
-
-   // lines between big block
-   for(int i = HOW_TO; i < PREFS; i++)
-      DrawLine(
-         m_banners.at(i).x, 
-         m_banners.at(i).y + m_banners.at(i).height,
-         m_banners.at(i).x + m_banners.at(i).width, 
-         m_banners.at(i).y + m_banners.at(i).height,
-         LIGHTERGRAY
-      );
+      if(i == SETTINGS || i == MATH || i == NO_ADS)   // round banners
+         DrawRectangleRounded(banner, 0.5f, 4, bg);
+      else if(i == HOW_TO || i == PREFS) {                  // partially round banners
+         Rectangle sharp = { banner.x, banner.y, banner.width, banner.height / 2 }; // top half sharp rectangle
+         if(i == HOW_TO) 
+            sharp.y += sharp.height;                                                // bottom half-ify
+         
+         DrawRectangleRounded(banner, 0.5f, 4, bg);
+         DrawRectangleRec(sharp, bg);
+      }
+      else                                                              // not-round-at-all banners
+         DrawRectangleRec(banner, bg);
+   }
 
    // right arrow icon on all except last 2
-   for(int i = SETTINGS; i <= PREFS; i++)
+   for(int i = SETTINGS; i <= PREFS; i++) {
+      const Rectangle& banner = m_banners.at(i);
       DrawTexture(
-         m_rightArrowTexture, 
-         m_banners.at(i).x + m_banners.at(i).width - 10*2,
-         m_banners.at(i).y + 10, 
-         LIGHTGRAY
+         m_rightArrowTexture,
+         banner.x + banner.width - m_rightArrowTexture.width * 1.7f,
+         banner.y + (banner.height - m_rightArrowTexture.height) / 2.0f,
+         MEDIUMLIGHTGRAY
       );
+   }
 }
 
 void OptionsLayer::renderBannerContent() {
@@ -203,16 +202,23 @@ void OptionsLayer::renderBannerContent() {
       icon = m_bannerIcons.at(i);
       banner = m_banners.at(i);
       name = m_bannerNames.at(i);
-      padding = (BANNER_HEIGHT - icon.height)/2;
+      padding = (BANNER_HEIGHT - icon.height) / 2;
 
-      Vector2 iconPos = {banner.x + padding * 1.5f, banner.y + padding};
-      DrawTextureEx(icon, iconPos, 0, 0.98f, WHITE); // new scaled height = 23.52
+      Vector2 iconPos = { banner.x + padding * 1.5f, banner.y + padding };
+      DrawTextureEx(icon, iconPos, 0, 0.98f, WHITE);  // new scaled height = 23.52
       DrawTextEx(
          App::font_semibold, name.c_str(),
-         {iconPos.x + icon.width + 15, iconPos.y + 2},
+         { iconPos.x + icon.width + 15, iconPos.y + 2 },
          20, 1, DARKGRAY
       );
    }
+}
+
+int OptionsLayer::getHoveredBannerIndex() {
+   for(size_t i = 0; i < m_banners.size(); i++)
+      if(CheckCollisionPointRec(GetMousePosition(), m_banners.at(i)))
+         return (int)i;
+   return -1;
 }
 
 #pragma endregion

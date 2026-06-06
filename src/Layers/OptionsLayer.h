@@ -10,10 +10,7 @@
 class OptionsLayer : public Core::Layer {
 public:
    OptionsLayer();
-   ~OptionsLayer() override {
-      for(Texture icon : m_bannerIcons)
-         UnloadTexture(icon);
-   }
+   ~OptionsLayer() override;
 
   void OnAttach() override {
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -26,6 +23,7 @@ public:
 private:
    Texture m_rightArrowTexture = {0};
 
+   float targetY = 0.0f;
    Rectangle m_bounds;
    GUI::Button m_doneButton;
 
@@ -42,4 +40,6 @@ private:
    void renderTopPanel();
    void renderBlankBanners();
    void renderBannerContent();
+
+   int getHoveredBannerIndex();
 };
