@@ -34,8 +34,8 @@ private:
    /// simply for more readability when looping over parts of the banners' arrays
    enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, PRIVACY, PREFS, MATH, NO_ADS}; 
 private:
-   void setPanel();
-   void setBannerPositions(float boundsY);
+   void setBounds();
+   void setBannerPositions();
 
    void renderTopPanel();
    void renderBlankBanners();

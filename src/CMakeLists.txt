@@ -21,12 +21,18 @@ else()
 endif()
 
 # (MSVC has different warning flags)
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+if (MSVC)
+   # turn on all warnings for better debugging
+   target_compile_options(${PROJECT_NAME} PRIVATE /W4)
+
+   # disable harmless warnings
+   target_compile_options(${PROJECT_NAME} PRIVATE /wd4458 /wd4244 /wd4267)
+else()
    # turn on all warnings for better debugging
    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 
    # disable harmless warnings
-   target_compile_options(${PROJECT_NAME} PRIVATE -Wno-missing-field-initializers -Wno-unused-result) 
+   target_compile_options(${PROJECT_NAME} PRIVATE -Wno-missing-field-initializers -Wno-unused-result -Wno-shadow)
 endif()
 
 # copy assets/ into bin/ to remove dependencies and weird paths in code
