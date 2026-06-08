@@ -23,8 +23,8 @@ public:
 private:
    Texture m_rightArrowTexture = {0};
 
-   float targetY = 0.0f;
-   Rectangle m_bounds;
+   float m_targetY = 0.0f;
+   Rectangle m_bounds = {};
    GUI::Button m_doneButton;
 
    std::array<Rectangle, 8> m_banners;
@@ -34,7 +34,7 @@ private:
    /// simply for more readability when looping over parts of the banners' arrays
    enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, PRIVACY, PREFS, MATH, NO_ADS}; 
 private:
-   void setBounds();
+   void setBounds(bool init = false); /// @param init whether to apply targetY or not (for animation)
    void setBannerPositions();
 
    void renderTopPanel();

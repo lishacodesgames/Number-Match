@@ -10,16 +10,12 @@ static constexpr float PANEL_PROPORTION = 0.085f;
 static constexpr float BANNER_PROPORTION = 0.075f;
 
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
-      targetY(GetScreenHeight() / 6.0f),
-      m_bounds({
-         (float)(GetScreenWidth()) * 0.25f, (float)(GetScreenHeight()),  // to be animated to target height
-         (float)(GetScreenWidth()) * 0.50f, (float)(GetScreenHeight()) * 4.0f / 6.0f }),
       m_doneButton(
          { m_bounds.x + m_bounds.width - 55, m_bounds.y + 7 },  // origin
          { 2, 2 }, "Done", BLANK, BLUE, 20, { 0, 0 }, App::font_semibold)
 {
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
-   setBounds();
+   setBounds(true);
 
    // banners
    setBannerPositions();
@@ -79,14 +75,14 @@ void OptionsLayer::OnUpdate() {
       setBannerPositions();
    }
 
-   if(m_bounds.y > targetY) {
-      double dt = std::max(GetFrameTime(), 0.033f);  // for a delay of atleast 33ms
+   if(m_bounds.y > m_targetY) {
+      double dt = std::min(GetFrameTime(), 0.033f);
       double speed = 160;
-      double diff = m_bounds.y - targetY;
+      double diff = m_bounds.y - m_targetY;
 
       m_bounds.y -= 0.1f * diff * speed * dt;  // move 10% of remaining distance with delay and lag buffer
       if(diff < 1.5)                           // within 1.5 pixels
-         m_bounds.y = targetY;                 // snap to target, since %-based approach is an asymptote
+         m_bounds.y = m_targetY;               // snap to target, since %-based approach is an asymptote
 
       setBannerPositions();
       m_doneButton.setOrigin({ m_doneButton.getOrigin().x, m_bounds.y + 7 });
@@ -112,13 +108,15 @@ void OptionsLayer::OnRender() {
 
 #pragma region Helpers
 
-void OptionsLayer::setBounds() {
+void OptionsLayer::setBounds(bool init) {
+   m_targetY = GetScreenHeight() / 6;
+
    // max aspect ratio of 4 : 3
    float aspect = std::min((float)GetScreenWidth() / GetScreenHeight(), 4.0f / 3.0f);
    float height = GetScreenHeight() * 0.7f;
    float width = height * aspect;
    m_bounds = {
-      (GetScreenWidth() - width) / 2, targetY,
+      (GetScreenWidth() - width) / 2, init ? GetScreenHeight() : m_targetY,
       width, height
    };
    
