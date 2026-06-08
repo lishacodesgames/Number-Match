@@ -78,6 +78,45 @@ void Storage::save(uint32_t stage, std::array<bool, 9> numbersCleared, uint32_t 
    save();  // call default save to write updated storage info to file
 }
 
+void Storage::saveWindow(int width, int height) {
+   json j;
+   
+   j["width"] = width;
+   j["height"] = height;
+
+   std::ofstream window("assets/window.json");
+   if(!window.is_open()) return;
+   window << j.dump(3);
+   window.close();
+
+   TraceLog(LISHA_SAYS, "Window size saved at: %d x %d", width, height);
+}
+
+std::pair<int, int> Storage::getWindowSize() {
+   std::ifstream window("assets/window.json");
+
+   if(!window.is_open()) {
+      TraceLog(LISHA_SAYS, "Error opening window save file for parse! Using default values...");
+      Storage::saveWindow(800, 650);
+      return { 800, 650 };
+   }
+
+   json j;
+   try {
+      window >> j;
+   } catch(const std::exception& e) {
+      TraceLog(LOG_ERROR, "Error parsing window save file: %s", e.what());
+      return { 800, 650 };
+   }
+   window.close();
+
+   int width = j["width"].get<int>();
+   int height = j["height"].get<int>();
+
+   TraceLog(LISHA_SAYS, "Window loaded at: %d x %d", width, height);
+   return { width, height };
+}
+
 std::string Storage::format(uint32_t num) {
    if(num >= 1000) {
       std::ostringstream oss;

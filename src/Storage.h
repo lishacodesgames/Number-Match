@@ -22,6 +22,10 @@ struct Storage {
 
    static void save(); /// update file with score, numbersCleared and stage from storage
    static void save(uint32_t stage, std::array<bool, 9> numbersCleared, uint32_t currentScore); /// for saving specific info
+
+   // only for App to call
+   static void saveWindow(int width, int height);
+   static std::pair<int, int> getWindowSize();
 private:
    static std::string format(uint32_t num); /// perfectly formats bestScore with commas
 };
