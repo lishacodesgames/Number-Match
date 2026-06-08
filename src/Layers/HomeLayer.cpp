@@ -146,7 +146,7 @@ void HomeLayer::resize() {
    // Buttons
    resizeThis(&m_newButton);
    if(m_newButton.getFontSize() != m_continueButton.getFontSize())
-      TraceLog(LOG_INFO, "Play button font resized to: %d", m_newButton.getFontSize());
+      LOG_RESIZE("Play buttons' font resized to: %d", m_newButton.getFontSize());
    resizeThis(&m_continueButton);
 
    Vector2 buttonOrigin = {
@@ -168,7 +168,7 @@ void HomeLayer::resize() {
    if(m_backgroundTexture.height != m_backgroundImage.height || m_backgroundTexture.width != m_backgroundImage.width) {
       UnloadTexture(m_backgroundTexture);
       m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
-      TraceLog(LOG_INFO, "RESIZE: Home background resized to: %d, %d", m_backgroundTexture.width, m_backgroundTexture.height);
+      LOG_RESIZE("Home background resized to: %d, %d", m_backgroundTexture.width, m_backgroundTexture.height);
    }
 
    // Best Score's Trophy Icon
@@ -177,6 +177,6 @@ void HomeLayer::resize() {
    if(m_trophyTexture.height != m_trophyImage.height) {
       UnloadTexture(m_trophyTexture);
       m_trophyTexture = LoadTextureFromImage(m_trophyImage);
-      TraceLog(LOG_INFO, "RESIZE: Best score icon resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
+      LOG_RESIZE("Best score icon resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
    }
 }

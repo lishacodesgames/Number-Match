@@ -104,11 +104,11 @@ void PanelLayer::resize() {
 
   if((int)weirdlyPerfectNumber != homeButton.getIcon().height) {
       homeButton.setFontSize(weirdlyPerfectNumber);
-      TraceLog(LOG_INFO, "RESIZE: Panel \"home\" icon resized to: %d, %d", homeButton.getIcon().width, homeButton.getIcon().height);
+      LOG_RESIZE("Panel \"home\" icon resized to: %d, %d", homeButton.getIcon().width, homeButton.getIcon().height);
       dailyButton.setFontSize(weirdlyPerfectNumber);
-      TraceLog(LOG_INFO, "RESIZE: Panel \"daily\" icon resized to: %d, %d", dailyButton.getIcon().width, dailyButton.getIcon().height);
+      LOG_RESIZE("Panel \"daily\" icon resized to: %d, %d", dailyButton.getIcon().width, dailyButton.getIcon().height);
       meButton.setFontSize(weirdlyPerfectNumber);
-      TraceLog(LOG_INFO, "RESIZE: Panel \"me\" icon resized to: %d, %d", meButton.getIcon().width, meButton.getIcon().height);
+      LOG_RESIZE("Panel \"me\" icon resized to: %d, %d", meButton.getIcon().width, meButton.getIcon().height);
    }
 
    // set origins using CSS's space-around formula

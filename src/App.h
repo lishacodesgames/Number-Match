@@ -6,7 +6,7 @@
 #include "Core/Event.h"
 #include "Core/Layer.h"
 
-/// Static class that manages the game loop and all game states (menu, gameplay, pause, etc.) 
+/// Static class that manages the game loop and all game states (menu, gameplay, pause, etc.)
 class App {
 public:
    App(const std::string& name);

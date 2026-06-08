@@ -108,11 +108,14 @@ void Grid::Draw() const {
 }
 
 void Grid::resize() {
+   float old = GridCell::cellSize;
    GridCell::cellSize = std::clamp( // scaled based on smaller of the 2 screen dimensions
       std::min(GetScreenWidth(), GetScreenHeight()) * 0.7f / 9, 40.0f, 150.0f
    );
-   TraceLog(LISHA_SAYS, "RESIZE: Grid resized: cellSize = %f", GridCell::cellSize);
    GridCell::numHeight = GridCell::cellSize * 0.75f;
+
+   if(std::abs(old - GridCell::cellSize) > 0.5f)
+      LOG_RESIZE("Grid resized: cellSize = %f", GridCell::cellSize);
 
    // box is centered horizontally and has a fixed y value
    float boxX = (GetScreenWidth() - GridCell::cellSize * 9) / 2.0f;

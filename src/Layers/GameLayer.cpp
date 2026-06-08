@@ -248,7 +248,7 @@ void GameLayer::resize() {
 
       m_trophyTexture = LoadTextureFromImage(bestScoreTrophy);
       UnloadImage(bestScoreTrophy);
-      TraceLog(LOG_INFO, "RESIZE: Best Score Trophy resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
+      LOG_RESIZE("Best Score Trophy resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
    }
 
    float tickScale = infoFontSize / m_tickTexture.height;
@@ -258,7 +258,7 @@ void GameLayer::resize() {
 
       m_tickTexture = LoadTextureFromImage(tick);
       UnloadImage(tick);
-      TraceLog(LOG_INFO, "RESIZE: Tick resized to: %d, %d", m_tickTexture.width, m_tickTexture.height);
+      LOG_RESIZE("Tick resized to: %d, %d", m_tickTexture.width, m_tickTexture.height);
    }
 
    // navigation buttons

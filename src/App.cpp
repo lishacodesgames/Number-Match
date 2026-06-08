@@ -53,7 +53,7 @@ void App::Run() {
 
    while(!WindowShouldClose()) {
       if(IsWindowResized())
-         TraceLog(LISHA_SAYS, "RESIZE: Window Resized: %d, %d", GetScreenWidth(), GetScreenHeight());
+         LOG_RESIZE("Window Resized: %d x %d", GetScreenWidth(), GetScreenHeight());
 
       // ---------------------------
       // 1. apply pending layer changes at the start of the current frame
