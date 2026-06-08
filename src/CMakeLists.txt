@@ -7,10 +7,9 @@ file(GLOB_RECURSE NM_SOURCES
 add_executable(${PROJECT_NAME} ${NM_SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Engine)
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN})
-
 target_include_directories(${PROJECT_NAME} PRIVATE 
-   ${CMAKE_SOURCE_DIR}/src
-   ${CMAKE_SOURCE_DIR}/lib/nlohmann # json library
+   ${CMAKE_CURRENT_SOURCE_DIR}
+   ${CMAKE_SOURCE_DIR}/lib/external
 )
 
 # Change debug logging based on preset
@@ -20,18 +19,12 @@ else()
    target_compile_definitions(${PROJECT_NAME} PRIVATE _DEBUGGING=0)
 endif()
 
-# (MSVC has different warning flags)
+# Turn on all warnings, and disable harmless, annoying ones
 if (MSVC)
-   # turn on all warnings for better debugging
    target_compile_options(${PROJECT_NAME} PRIVATE /W4)
-
-   # disable harmless warnings
    target_compile_options(${PROJECT_NAME} PRIVATE /wd4458 /wd4244 /wd4267)
 else()
-   # turn on all warnings for better debugging
    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
-
-   # disable harmless warnings
    target_compile_options(${PROJECT_NAME} PRIVATE -Wno-missing-field-initializers -Wno-unused-result -Wno-shadow)
 endif()
 

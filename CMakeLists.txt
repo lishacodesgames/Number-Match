@@ -11,15 +11,5 @@ message(STATUS "C++ Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
 
 message(STATUS "--")
 
-# go to cmakelists in subdirectories
-if(NOT EXISTS ${CMAKE_SOURCE_DIR}/lib/raylib/CMakeLists.txt)
-   message(FATAL_ERROR
-      "!! Raylib submodule is empty !! \n"
-      "Please refer to the README of this repository, or run the following command: \n"
-      "git submodule update --init --recursive --depth 1"
-   )
-else()
-   add_subdirectory(lib/raylib)
-endif()
-add_subdirectory(lib/Engine)
+add_subdirectory(lib)
 add_subdirectory(src)
