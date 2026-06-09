@@ -133,12 +133,10 @@ void HomeLayer::OnRender() {
 }
 
 void resizeThis(GUI::Button* button) {
-   Vector2 buttonBounds = {
-      std::max(GetScreenWidth() / 1.5f, 400.0f),
-      std::max(GetScreenHeight() / 20.0f, 40.0f)
-   };
+   float buttonWidth = std::max(GetScreenWidth() / 2.0f, 400.0f);
+   float buttonHeight = std::max(GetScreenHeight() / 20.0f, 40.0f);
 
-   button->setBounds(buttonBounds, true);
+   button->setBounds({ buttonWidth, buttonHeight }, true);
 }
 
 void HomeLayer::resize() {
@@ -149,8 +147,8 @@ void HomeLayer::resize() {
    resizeThis(&m_continueButton);
 
    Vector2 buttonOrigin = {
-      static_cast<float>(GetScreenWidth() - m_newButton.getSize().x) / 2,
-      static_cast<float>(GetScreenHeight() - PanelLayer::height - m_newButton.getSize().y * 3)
+      (GetScreenWidth() - m_newButton.getSize().x) / 2.0f,
+      (GetScreenHeight() - PanelLayer::height - m_newButton.getSize().y * 3.0f)
    };
 
    m_newButton.setOrigin(buttonOrigin);
