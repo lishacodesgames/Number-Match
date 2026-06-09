@@ -20,7 +20,7 @@ namespace GUI {
    class Button {
    public:
       void Update();
-      void Draw();
+      void Draw() const;
    public:
       // ----------------------
       // ---- CONSTRUCTORS ----

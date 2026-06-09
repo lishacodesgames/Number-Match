@@ -12,7 +12,7 @@ public:
    OptionsLayer();
    ~OptionsLayer() override;
 
-  void OnAttach() override {
+   void OnAttach() override {
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
       Core::Layer::OnAttach();
    }
@@ -20,8 +20,9 @@ public:
    void OnEvent(Core::Event& e) override;
    void OnUpdate() override;
    void OnRender() override;
+
 private:
-   Texture m_rightArrowTexture = {0};
+   Texture m_rightArrowTexture = { 0 };
 
    float m_targetY = 0.0f;
    Rectangle m_bounds = {};
@@ -32,14 +33,19 @@ private:
    std::array<std::string, 8> m_bannerNames;
 
    /// simply for more readability when looping over parts of the banners' arrays
-   enum BannerTypes {SETTINGS, HOW_TO, HELP, ABOUT, PRIVACY, PREFS, MATH, NO_ADS}; 
+   enum BannerTypes { SETTINGS, HOW_TO, HELP, ABOUT, PRIVACY, PREFS, MATH, NO_ADS }; 
+   enum class Page { Options, Settings }; // more later
+
+   Page currentPage = Page::Options;
 private:
-   void setBounds(bool init = false); /// @param init whether to apply targetY or not (for animation)
+   // per page members
+
+private:
+   void setBounds(bool init = false);  /// @param init whether to apply targetY or not (for animation)
    void setBannerPositions();
 
-   void renderTopPanel();
-   void renderBlankBanners();
-   void renderBannerContent();
+   void renderBlankBanners() const;
+   void renderBannerContent() const;
 
-   int getHoveredBannerIndex();
+   int getHoveredBannerIndex() const;
 };

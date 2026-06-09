@@ -20,7 +20,7 @@ namespace GUI
          isActive = false;
    }
 
-   void Button::Draw() {
+   void Button::Draw() const {
       // draw button
       if(!isHovered)
          DrawRectangleRounded(m_bounds, m_roundness.roundness, m_roundness.segments, buttonColor);

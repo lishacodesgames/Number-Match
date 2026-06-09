@@ -53,18 +53,28 @@ OptionsLayer::~OptionsLayer() {
 
 void OptionsLayer::OnEvent(Core::Event& e) {
    e.Handled = true;  // don't want any events to pass through to gamelayer
-   if(e.GetEventType() == Core::EventType::MouseClicked && m_doneButton.isHovered) {
-      App::QueueLayerPop(this);
+   if(e.GetEventType() == Core::EventType::MouseClicked) {
+      if(m_doneButton.isHovered) {
+         App::QueueLayerPop(this);
 
-      // we're sure that game exists bc OptionsLayer only exists in its context
-      App::GetLayerByName("Game Layer")->OnResume();
-      e.Handled = true;
+         // we're sure that game exists bc OptionsLayer only exists in its context
+         App::GetLayerByName("Game Layer")->OnResume();
+         e.Handled = true;
+      } else if(CheckCollisionPointRec(GetMousePosition(), m_banners.at(SETTINGS))) {
+         currentPage = Page::Settings;
+         e.Handled = true;
+      }
    } else if(e.GetEventType() == Core::EventType::KeyPressed) {
       char key = static_cast<Core::KeyPressedEvent&>(e).key;
+
+      /// @bug if we quit gamelayer from optionslayer then try to go back to game, game crashes
       if(key == 'q' || key == 'Q') {
-         App::GetLayerByName("Game Layer")->OnSuspend();
-         App::QueueLayerSwap(this, new HomeLayer());
-         e.Handled = true;
+         if(currentPage == Page::Options) {
+            App::GetLayerByName("Game Layer")->OnSuspend();
+            App::QueueLayerSwap(this, new HomeLayer());
+            e.Handled = true;
+         } else
+            currentPage = Page::Options;
       }
    }
 }
@@ -101,9 +111,33 @@ void OptionsLayer::OnRender() {
    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), DARKEN_GAME_BG);
    DrawRectangleRounded(m_bounds, 0.1f, 6, OPTIONS_BG); // main popup
 
-   renderTopPanel();
-   renderBlankBanners();
-   renderBannerContent();
+   Rectangle panel = m_bounds;
+   panel.height *= PANEL_PROPORTION;
+
+   Rectangle panelSharpBottom = panel;
+   panelSharpBottom.y += panel.height / 2;
+   panelSharpBottom.height = panel.height / 2;
+
+   DrawRectangleRounded(panel, 0.8f, 6, BRIGHT_BG);
+   DrawRectangleRec(panelSharpBottom, BRIGHT_BG);
+
+   float titleFontSize = m_doneButton.getFontSize() * 1.3f;
+   Vector2 titleSize = MeasureTextEx(App::font_semibold, "Options", titleFontSize, 1);
+   DrawTextEx(
+      App::font_semibold, "Options",
+      {  panel.x + (panel.width - titleSize.x) / 2,
+         panel.y + (panel.height - titleSize.y) / 2},
+      titleFontSize, 1.2f, OPTIONS_TITLE_COLOR
+   );
+
+   m_doneButton.Draw();
+
+   if(currentPage == Page::Options) {
+      renderBlankBanners();
+      renderBannerContent();
+   } else if(currentPage == Page::Settings) {
+      DrawTextEx(GetFontDefault(), "Hello World!", { m_bounds.x + 20, m_bounds.y + 50 }, 20, 1, PURPLE);
+   }
 }
 
 #pragma region Helpers
@@ -148,30 +182,7 @@ void OptionsLayer::setBannerPositions() {
    m_banners[NO_ADS] = { originX, originY + spacing * 3 + m_bounds.height * BANNER_PROPORTION * 4, size.x, size.y };
 }
 
-void OptionsLayer::renderTopPanel() {
-   Rectangle panel = m_bounds;
-   panel.height *= PANEL_PROPORTION;
-
-   Rectangle panelSharpBottom = panel;
-   panelSharpBottom.y += panel.height / 2;
-   panelSharpBottom.height = panel.height / 2;
-
-   DrawRectangleRounded(panel, 0.8f, 6, BRIGHT_BG);
-   DrawRectangleRec(panelSharpBottom, BRIGHT_BG);
-
-   float titleFontSize = m_doneButton.getFontSize() * 1.3f;
-   Vector2 titleSize = MeasureTextEx(App::font_semibold, "Options", titleFontSize, 1);
-   DrawTextEx(
-      App::font_semibold, "Options",
-      {  panel.x + (panel.width - titleSize.x) / 2,
-         panel.y + (panel.height - titleSize.y) / 2},
-      titleFontSize, 1.2f, OPTIONS_TITLE_COLOR
-   );
-
-   m_doneButton.Draw();
-}
-
-void OptionsLayer::renderBlankBanners() {
+void OptionsLayer::renderBlankBanners() const {
    int hovered = getHoveredBannerIndex();
 
    // base banner shape
@@ -211,7 +222,7 @@ void OptionsLayer::renderBlankBanners() {
    }
 }
 
-void OptionsLayer::renderBannerContent() {
+void OptionsLayer::renderBannerContent() const {
    for(int i = SETTINGS; i <= NO_ADS; i++) {
       const Texture& icon = m_bannerIcons.at(i);
       const Rectangle& banner = m_banners.at(i);
@@ -228,7 +239,7 @@ void OptionsLayer::renderBannerContent() {
    }
 }
 
-int OptionsLayer::getHoveredBannerIndex() {
+int OptionsLayer::getHoveredBannerIndex() const {
    for(size_t i = 0; i < m_banners.size(); i++)
       if(CheckCollisionPointRec(GetMousePosition(), m_banners.at(i)))
          return (int)i;
