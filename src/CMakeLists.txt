@@ -12,13 +12,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
    ${CMAKE_SOURCE_DIR}/lib/external
 )
 
-# Change debug logging based on preset
-if(_DEBUGGING)
-   target_compile_definitions(${PROJECT_NAME} PRIVATE _DEBUGGING=1)
-else()
-   target_compile_definitions(${PROJECT_NAME} PRIVATE _DEBUGGING=0)
-endif()
-
 # Turn on all warnings, and disable harmless, annoying ones
 if (MSVC)
    target_compile_options(${PROJECT_NAME} PRIVATE /W4)

@@ -21,7 +21,7 @@
          "inherits": "base",
          "cacheVariables": {
             "CMAKE_BUILD_TYPE": "Debug",
-            "_DEBUGGING": "ON"
+            "CMAKE_CXX_FLAGS": "-D_DEBUGGING="
          }
       },
       {
@@ -29,15 +29,14 @@
          "inherits": "base",
          "cacheVariables": {
             "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-            "_DEBUGGING": "ON"
+            "CMAKE_CXX_FLAGS": "-D_DEBUGGING="
          }
       },
       {
          "name": "Release",
          "inherits": "base",
          "cacheVariables": {
-            "CMAKE_BUILD_TYPE": "Release",
-            "_DEBUGGING": "OFF"
+            "CMAKE_BUILD_TYPE": "Release"
          }
       }
    ],
