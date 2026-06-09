@@ -1,3 +1,15 @@
+// ---- INTERNAL? ----
+#include "Core/Event.h"
+#include "Core/Layer.h"
+#include "Core/LayerStack.h"
+#include "Core/Logging.h"
+// no gui stuff cuz I change that quite often
+
+// ---- EXTERNAL ----
+#include <nlohmann/json.hpp>
+#include <raymath.h>
+#include <raylib.h>
+
 // ---- STL ----
 #include <unordered_map>
 #include <string>
@@ -10,15 +22,10 @@
 #include <fstream>
 #include <iomanip>
 #include <cstdio>
-#include "Core/Logging.h"
-
-// ---- RAYLIB ----
-#include <raylib.h>
-#include <raymath.h>
 
 // ---- TYPES AND...STUFF ----
-#include <typeinfo>
 #include <stdarg.h>
+#include <typeinfo>
 #include <utility>
 #include <cstdint>
 

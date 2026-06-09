@@ -1,16 +1,10 @@
-set(BIN ${CMAKE_SOURCE_DIR}/bin/${OUTFILE})
-file(GLOB_RECURSE NM_SOURCES 
-   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp 
-   ${CMAKE_CURRENT_SOURCE_DIR}/*.h
-)
-
+file(GLOB_RECURSE NM_SOURCES *.cpp *.h)
 add_executable(${PROJECT_NAME} ${NM_SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Engine)
+
+set(BIN ${CMAKE_SOURCE_DIR}/bin/${OUTFILE})
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN})
-target_include_directories(${PROJECT_NAME} PRIVATE 
-   ${CMAKE_CURRENT_SOURCE_DIR}
-   ${CMAKE_SOURCE_DIR}/lib/external
-)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Turn on all warnings, and disable harmless, annoying ones
 if (MSVC)
