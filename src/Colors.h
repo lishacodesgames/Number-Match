@@ -35,4 +35,5 @@ constexpr Color BRIGHTSKYBLUE = {42, 187, 235, 255}; /// Bright lightblue
    #define TITLE_SHADOW Color{3, 21, 41, 255}
 
    #define OPTIONS_BG LIGHTERGRAY
+   #define OPTIONS_TITLE_COLOR DARKERGRAY
 #endif

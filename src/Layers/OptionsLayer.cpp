@@ -159,11 +159,13 @@ void OptionsLayer::renderTopPanel() {
    DrawRectangleRounded(panel, 0.8f, 6, BRIGHT_BG);
    DrawRectangleRec(panelSharpBottom, BRIGHT_BG);
 
-   float OptionsWidth = MeasureTextEx(App::font_semibold, "Options", m_doneButton.getFontSize(), 1).x;
+   float titleFontSize = m_doneButton.getFontSize() * 1.3f;
+   Vector2 titleSize = MeasureTextEx(App::font_semibold, "Options", titleFontSize, 1);
    DrawTextEx(
       App::font_semibold, "Options",
-      { m_bounds.x + (m_bounds.width - OptionsWidth) / 2, m_doneButton.getOrigin().y },
-      m_doneButton.getFontSize(), 1, TITLE_SHADOW
+      {  panel.x + (panel.width - titleSize.x) / 2,
+         panel.y + (panel.height - titleSize.y) / 2},
+      titleFontSize, 1.2f, OPTIONS_TITLE_COLOR
    );
 
    m_doneButton.Draw();
