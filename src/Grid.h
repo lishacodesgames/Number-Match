@@ -10,8 +10,6 @@ struct GridCell {
    GridCell(int value = 0) : value(value), bounds({ 0, 0, 0, 0 }) {}
 
    static float cellSize, numHeight;
-   static constexpr Color restColor = RAYWHITE;
-   static Color hoverColor, focusColor;
 
    int value;  /// 0 for empty, 1-9 otherwise
    Rectangle bounds;

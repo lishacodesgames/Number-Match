@@ -7,10 +7,10 @@
 
 float GridCell::cellSize = 45.0f;
 float GridCell::numHeight = 0;
-Color GridCell::hoverColor = ColorAlpha(BLIZZARDBLUE, 0.5f);
-Color GridCell::focusColor = ColorAlpha(SKYBLUE, 0.5f);
 
-Grid::Grid() : focusedCell(nullptr) {
+Grid::Grid() : focusedCell(nullptr),
+      m_scrollBar({ 0, 0, 0, 0 }, 10.0f, GRID_SCROLL_THUMB, GRID_SCROLL_TRACK)
+{
    m_grid.assign(9, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }),  // 9 rows of all blank cells
    srand(time(0));
 
@@ -26,7 +26,6 @@ Grid::Grid() : focusedCell(nullptr) {
    }
 
    resize();
-   m_scrollBar.setThumbWidth(10.0f);
    m_scrollBar.setTrackBounds({ box.x + box.width + 25, box.y, 2, box.height });
 }
 
@@ -73,25 +72,25 @@ void Grid::Draw() const {
          // state cases
          switch(cell.getState()) {
             case CellState::Rest:
-               numColor = BLACK;
-               bgColor = GridCell::restColor;
+               numColor = GRIDCELL_NOT_MATCHED;
+               bgColor = OFF_BRIGHT_BG;
                break;
             case CellState::Hovered:
-               numColor = BLACK;
-               bgColor = GridCell::hoverColor;
+               numColor = GRIDCELL_NOT_MATCHED;
+               bgColor = GRIDCELL_HOVER;
                break;
             case CellState::Focused:
-               numColor = BLACK;
-               bgColor = GridCell::focusColor;
+               numColor = GRIDCELL_NOT_MATCHED;
+               bgColor = GRIDCELL_FOCUS;
                break;
             case CellState::Matched:
-               numColor = LIGHTGRAY;
-               bgColor = GridCell::restColor;
+               numColor = GRIDCELL_MATCHED;
+               bgColor = OFF_BRIGHT_BG;
                break;
          }
 
          DrawRectangleRec(cell.bounds, bgColor);
-         DrawRectangleLinesEx(cell.bounds, 1, ColorAlpha(LIGHTGRAY, 0.65f));
+         DrawRectangleLinesEx(cell.bounds, 1, SHADOW_FOR_OFF_BRIGHT);
          DrawTextEx(
             App::font_semibold, value.c_str(),
             {  cell.bounds.x + (cell.bounds.width - numSize.x) / 2, 
@@ -102,7 +101,7 @@ void Grid::Draw() const {
    }
    EndScissorMode();
 
-   DrawRectangleLinesEx(box, 3, ColorAlpha(DARKGRAY, 0.8f));
+   DrawRectangleLinesEx(box, 3, GRIDBOX_COLOR);
    if(m_grid.size() > 9)
       m_scrollBar.Draw();
 }

@@ -177,7 +177,7 @@ void OptionsLayer::renderBlankBanners() {
    // base banner shape
    for(size_t i = 0; i < m_banners.size(); i++) {
       const Rectangle& banner = m_banners.at(i);
-      Color bg = ((int)i == hovered ? LIGHTGRAY : WHITE);
+      Color bg = ((int)i == hovered ? SHADOW_FOR_BRIGHT : BRIGHT_BG);
 
       if(i == SETTINGS || i == MATH || i == NO_ADS)   // round banners
          DrawRectangleRounded(banner, 0.5f, 4, bg);
@@ -196,7 +196,7 @@ void OptionsLayer::renderBlankBanners() {
    // lines for middle banner block
    for(int i = HOW_TO; i < PREFS; i++) {
       const Rectangle& banner = m_banners.at(i + 1);
-      DrawLineEx({ banner.x, banner.y }, { banner.x + banner.width, banner.y }, 1, LIGHTGRAY);
+      DrawLineEx({ banner.x, banner.y }, { banner.x + banner.width, banner.y }, 1, SHADOW_FOR_BRIGHT);
    }
 
    // right arrow icon on all except last 2
@@ -206,7 +206,7 @@ void OptionsLayer::renderBlankBanners() {
          m_rightArrowTexture,
          banner.x + banner.width - m_rightArrowTexture.width * 1.7f,
          banner.y + (banner.height - m_rightArrowTexture.height) / 2.0f,
-         MEDIUMLIGHTGRAY
+         OPTIONS_ARROW_COLOR
       );
    }
 }
@@ -223,7 +223,7 @@ void OptionsLayer::renderBannerContent() {
       DrawTextEx(
          App::font_semibold, name.c_str(),
          { iconPos.x + icon.width + 15, iconPos.y + 2 },
-         20, 1, DARKGRAY
+         20, 1, OPTIONS_TEXT_COLOR
       );
    }
 }
