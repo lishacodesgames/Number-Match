@@ -77,10 +77,10 @@ void HomeLayer::OnRender() {
 
    // title
    const char* gameName = "Number Match";
-   float titleFontSize = std::clamp(GetScreenHeight() / 10.0f, 45.0f, 70.0f);
+   float titleFontSize = std::max(GetScreenHeight() / 10.0f, 45.0f);
    Vector2 titleSize = MeasureTextEx(App::font_black, gameName, titleFontSize, 3);
    Vector2 titleOrigin = {
-      static_cast<float>(GetScreenWidth() - titleSize.x) / 2,
+      (GetScreenWidth() - titleSize.x) / 2.0f,
       GetScreenHeight() / 4.0f
    };
 
@@ -134,8 +134,8 @@ void HomeLayer::OnRender() {
 
 void resizeThis(GUI::Button* button) {
    Vector2 buttonBounds = {
-      std::clamp(GetScreenWidth() / 1.5f, 400.0f, 550.0f),
-      std::clamp(GetScreenHeight() / 20.0f, 40.0f, 60.0f)
+      std::max(GetScreenWidth() / 1.5f, 400.0f),
+      std::max(GetScreenHeight() / 20.0f, 40.0f)
    };
 
    button->setBounds(buttonBounds, true);

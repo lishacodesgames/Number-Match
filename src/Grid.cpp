@@ -108,8 +108,8 @@ void Grid::Draw() const {
 
 void Grid::resize() {
    float old = GridCell::cellSize;
-   GridCell::cellSize = std::clamp( // scaled based on smaller of the 2 screen dimensions
-      std::min(GetScreenWidth(), GetScreenHeight()) * 0.7f / 9, 40.0f, 150.0f
+   GridCell::cellSize = std::max( // scaled based on smaller of the 2 screen dimensions
+      std::min(GetScreenWidth(), GetScreenHeight()) * 0.7f / 9, 40.0f
    );
    GridCell::numHeight = GridCell::cellSize * 0.75f;
 
