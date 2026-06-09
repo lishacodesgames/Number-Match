@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include "Core/LayerStack.h"
-#include "Core/Event.h"
 #include "Core/Layer.h"
 
 /// Static class that manages the game loop and all game states (menu, gameplay, pause, etc.)

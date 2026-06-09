@@ -1,8 +1,6 @@
 #pragma once
-#include "Core/Event.h" 
 #include "Core/Layer.h"
 #include "GUI/Button.h"
-#include "App.h"
 
 enum class Menu {None, Home, Daily, Me};
 
@@ -19,7 +17,7 @@ public:
 public:   
    static int height;
    static float buttonSpacing;
-   
+
    Core::Layer* currentLayer;
 
    GUI::Button homeButton;

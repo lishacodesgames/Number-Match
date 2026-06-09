@@ -28,7 +28,7 @@
 			"${workspaceFolder:lib}/nlohmann/**": true
 		},
 		"C_Cpp.default.browse.path": [
-			"${workspaceFolder:repo}"
+			"${workspaceFolder:App}"
 		],
 
 		// pretty backgrounds

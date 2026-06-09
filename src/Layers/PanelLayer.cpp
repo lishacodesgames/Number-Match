@@ -2,26 +2,25 @@
 #include "PanelLayer.h"
 
 #include "DailyLayer.h"
-#include "Core/Event.h"
 #include "GUI/Button.h"
 #include "HomeLayer.h"
 #include "MeLayer.h"
+#include "Colors.h"
 #include "App.h"
 
 float PanelLayer::buttonSpacing = 0.0f;
 int PanelLayer::height = 50;
 
 PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
-      homeButton({0, 0}, {0, 0}, "Main", BLANK, BLUE, 30, {0.0f, 0}, App::font_semibold),
-      dailyButton({0, 0}, {0, 0}, "Daily Challenges", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold),
-      meButton({0, 0}, {0, 0}, "Me", BLANK, GRAY, 30, {0.0f, 0}, App::font_semibold) 
-{
-   homeButton.setFocus(true, BLANK, BLUE);
+      homeButton({ 0, 0 }, { 0, 0 }, "Main", BLANK, PANEL_ACTIVE, 30, { 0.0f, 0 }, App::font_semibold),
+      dailyButton({ 0, 0 }, { 0, 0 }, "Daily Challenges", BLANK, PANEL_REST, 30, { 0.0f, 0 }, App::font_semibold),
+      meButton({ 0, 0 }, { 0, 0 }, "Me", BLANK, PANEL_REST, 30, { 0.0f, 0 }, App::font_semibold) {
+   homeButton.isFocused = true;
 
    homeButton.setIcon("assets/icons/menus/home_20x20.png");
    dailyButton.setIcon("assets/icons/menus/daily_20x20.png");
    meButton.setIcon("assets/icons/menus/me_20x20.png");
-   
+
    resize();
 }
 
@@ -50,8 +49,8 @@ void PanelLayer::OnEvent(Core::Event& e) {
             newLayer = new MeLayer();
       }
       if(newLayer) {
-         previousButton->setFocus(false, BLANK, GRAY);
-         activeButton->setFocus(true, BLANK, BLUE);
+         previousButton->setFocus(false, BLANK, PANEL_REST);
+         activeButton->setFocus(true, BLANK, PANEL_ACTIVE);
          App::QueueLayerSwap(currentLayer, newLayer);
          currentLayer = newLayer;
          previousButton = activeButton;
@@ -70,26 +69,28 @@ void PanelLayer::OnUpdate() {
    static GUI::Button* previousButton = &homeButton;
    GUI::Button* hoveredButton = findHoveredButton();
 
-   if (hoveredButton) {
-      hoveredButton->setContentColor(DARKBLUE);
+   /// @bug in Debug mode, mouse visually glitches out between pointing and regular in all three menu layers
+   // need to optimise somehow
+   if(hoveredButton) {
+      hoveredButton->setContentColor(PANEL_HOVER);
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-   } // else case will be handled by below layers, since this one is an overlay
+   }  // else case will be handled by below layers, since this one is an overlay
 
    if(previousButton && hoveredButton != previousButton) {
       // new button is focused, so we must reset previous one
       if(previousButton->isFocused)
-         previousButton->setContentColor(BLUE);
+         previousButton->setContentColor(PANEL_ACTIVE);
       else
-         previousButton->setContentColor(GRAY);
+         previousButton->setContentColor(PANEL_REST);
    }
    previousButton = hoveredButton;
 }
 
 void PanelLayer::OnRender() {
-   DrawLine(0, GetScreenHeight() - height, GetScreenWidth(), GetScreenHeight() - height, {180, 180, 180, 255});
+   DrawLine(0, GetScreenHeight() - height, GetScreenWidth(), GetScreenHeight() - height, { 180, 180, 180, 255 });
    DrawRectangleV(
-      {0.0f, (float)(GetScreenHeight() - height)}, 
-      {(float)(GetScreenWidth()), (float)height}, WHITE
+      { 0.0f, (float)(GetScreenHeight() - height) },
+      { (float)(GetScreenWidth()), (float)height }, WHITE
    );
 
    homeButton.Draw();
@@ -100,9 +101,9 @@ void PanelLayer::OnRender() {
 void PanelLayer::resize() {
    // set size
    height = std::max(40, GetScreenHeight() / 15);
-   float weirdlyPerfectNumber = height * (5.0f / 7) * 0.9f; // dont ask why
+   float weirdlyPerfectNumber = height * (5.0f / 7) * 0.9f;  // dont ask why
 
-  if((int)weirdlyPerfectNumber != homeButton.getIcon().height) {
+   if((int)weirdlyPerfectNumber != homeButton.getIcon().height) {
       homeButton.setFontSize(weirdlyPerfectNumber);
       LOG_RESIZE("Panel \"home\" icon resized to: %d, %d", homeButton.getIcon().width, homeButton.getIcon().height);
       dailyButton.setFontSize(weirdlyPerfectNumber);
@@ -112,16 +113,16 @@ void PanelLayer::resize() {
    }
 
    // set origins using CSS's space-around formula
-   float totalButtonsWidth = homeButton.getSize().x + dailyButton.getSize().x + meButton.getSize().x * 1.3f; // daily button is huge, me button is tiny, makes the "equal" spacing seem unequal
+   float totalButtonsWidth = homeButton.getSize().x + dailyButton.getSize().x + meButton.getSize().x * 1.3f;  // daily button is huge, me button is tiny, makes the "equal" spacing seem unequal
    float remainingSpace = GetScreenWidth() - totalButtonsWidth;
-   float spaceUnit = remainingSpace/(2*3); // each item gets space on left & right, so we divide by twice the no. of items
+   float spaceUnit = remainingSpace / (2 * 3);  // each item gets space on left & right, so we divide by twice the no. of items
    buttonSpacing = 2 * spaceUnit;
 
    float verticalSpace = height - homeButton.getSize().y;
-   
+
    // |<- (1X) ->[ ITEM 1 ]<- (2X) ->[ ITEM 2 ]<- (2X) ->[ ITEM 3 ]<- (1X) ->|
 
-   homeButton.setOrigin({spaceUnit, GetScreenHeight() - height + verticalSpace / 2});
-   dailyButton.setOrigin(homeButton.getOrigin()+ Vector2{buttonSpacing + homeButton.getSize().x, 0});
-   meButton.setOrigin(dailyButton.getOrigin() + Vector2{buttonSpacing + dailyButton.getSize().x, 0});
+   homeButton.setOrigin({ spaceUnit, GetScreenHeight() - height + verticalSpace / 2 });
+   dailyButton.setOrigin(homeButton.getOrigin() + Vector2{ buttonSpacing + homeButton.getSize().x, 0 });
+   meButton.setOrigin(dailyButton.getOrigin() + Vector2{ buttonSpacing + dailyButton.getSize().x, 0 });
 }
