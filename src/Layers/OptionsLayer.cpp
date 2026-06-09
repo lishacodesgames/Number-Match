@@ -10,12 +10,12 @@ static constexpr float PANEL_PROPORTION = 0.085f;
 static constexpr float BANNER_PROPORTION = 0.075f;
 
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
-      m_doneButton(
-         { m_bounds.x + m_bounds.width - 55, m_bounds.y + 7 },  // origin
-         { 2, 2 }, "Done", BLANK, GAME_BUTTON_TEXT, 20, { 0, 0 }, App::font_semibold)
+      m_doneButton({ 0, 0 }, { 2, 2 }, "Done", BLANK, GAME_NAV_COLOR, 20, { 0, 0 }, App::font_semibold),
+      m_gobackButton({ 0, 0 }, { 2, 2 }, "", BLANK, GAME_NAV_COLOR)
 {
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
-   setBounds(true);
+   m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
+   setBounds(GetScreenHeight());
 
    // banners
    setBannerPositions();
@@ -63,6 +63,8 @@ void OptionsLayer::OnEvent(Core::Event& e) {
       } else if(CheckCollisionPointRec(GetMousePosition(), m_banners.at(SETTINGS))) {
          currentPage = Page::Settings;
          e.Handled = true;
+      } else if(m_gobackButton.isHovered) {
+         currentPage = Page::Options;
       }
    } else if(e.GetEventType() == Core::EventType::KeyPressed) {
       char key = static_cast<Core::KeyPressedEvent&>(e).key;
@@ -81,7 +83,7 @@ void OptionsLayer::OnEvent(Core::Event& e) {
 
 void OptionsLayer::OnUpdate() {
    if(IsWindowResized()) {
-      setBounds();
+      setBounds(m_targetY);
       setBannerPositions();
    }
 
@@ -94,14 +96,16 @@ void OptionsLayer::OnUpdate() {
       if(diff < 1.5)                           // within 1.5 pixels
          m_bounds.y = m_targetY;               // snap to target, since %-based approach is an asymptote
 
+      setBounds(m_bounds.y);   
       setBannerPositions();
-      m_doneButton.setOrigin({ m_doneButton.getOrigin().x, m_bounds.y + 7 });
       return;
    }
 
    m_doneButton.Update();
+   if(currentPage == Page::Settings)
+      m_gobackButton.Update();
 
-   if(m_doneButton.isHovered || getHoveredBannerIndex() != -1)
+   if(m_doneButton.isHovered || m_gobackButton.isHovered || getHoveredBannerIndex() != -1)
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -137,12 +141,13 @@ void OptionsLayer::OnRender() {
       renderBannerContent();
    } else if(currentPage == Page::Settings) {
       DrawTextEx(GetFontDefault(), "Hello World!", { m_bounds.x + 20, m_bounds.y + 50 }, 20, 1, PURPLE);
+      m_gobackButton.Draw();
    }
 }
 
 #pragma region Helpers
 
-void OptionsLayer::setBounds(bool init) {
+void OptionsLayer::setBounds(float targetY) {
    m_targetY = GetScreenHeight() / 6;
 
    // max aspect ratio of 4 : 3
@@ -150,16 +155,23 @@ void OptionsLayer::setBounds(bool init) {
    float height = GetScreenHeight() * 0.7f;
    float width = height * aspect;
    m_bounds = {
-      (GetScreenWidth() - width) / 2, init ? GetScreenHeight() : m_targetY,
+      (GetScreenWidth() - width) / 2, targetY,
       width, height
    };
    
-   // panel
+   // panel buttons
    const float panelHeight = m_bounds.height * PANEL_PROPORTION;
+
    m_doneButton.setFontSize((int)(panelHeight / 2));
    m_doneButton.setOrigin({
       m_bounds.x + m_bounds.width - m_doneButton.getSize().x * 1.3f,
       m_bounds.y + (panelHeight - m_doneButton.getSize().y) / 2
+   });
+
+   m_gobackButton.setFontSize(m_doneButton.getFontSize());
+   m_gobackButton.setOrigin({
+      m_bounds.x + m_gobackButton.getSize().x * 0.75f,
+      m_bounds.y + (panelHeight - m_gobackButton.getSize().y) / 2
    });
 }
 

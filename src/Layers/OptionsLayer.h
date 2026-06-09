@@ -39,9 +39,9 @@ private:
    Page currentPage = Page::Options;
 private:
    // per page members
-
+   GUI::Button m_gobackButton;
 private:
-   void setBounds(bool init = false);  /// @param init whether to apply targetY or not (for animation)
+   void setBounds(float targetY);  /// @param init whether to apply targetY or not (for animation)
    void setBannerPositions();
 
    void renderBlankBanners() const;
