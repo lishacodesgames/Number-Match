@@ -87,10 +87,10 @@ void PanelLayer::OnUpdate() {
 }
 
 void PanelLayer::OnRender() {
-   DrawLine(0, GetScreenHeight() - height, GetScreenWidth(), GetScreenHeight() - height, { 180, 180, 180, 255 });
+   DrawLine(0, GetScreenHeight() - height, GetScreenWidth(), GetScreenHeight() - height, SHADOW_FOR_BRIGHT);
    DrawRectangleV(
       { 0.0f, (float)(GetScreenHeight() - height) },
-      { (float)(GetScreenWidth()), (float)height }, WHITE
+      { (float)(GetScreenWidth()), (float)height }, BRIGHT_BG
    );
 
    homeButton.Draw();
