@@ -1,6 +1,7 @@
 #include <pch/Precompiled.h>
 #include "DailyLayer.h"
 
+#include "Colors.h"
 #include "App.h"
 
 void DailyLayer::OnEvent(Core::Event& e) {
@@ -15,6 +16,6 @@ void DailyLayer::OnUpdate() {
 }
 
 void DailyLayer::OnRender() {
-   Vector2 textPos = {static_cast<float>(GetScreenWidth())/2-150, static_cast<float>(GetScreenHeight())/2-100};
-   DrawTextEx(App::font_semibold, "Coming soon...", textPos, 35, 2.5f, DARKGRAY);
+   Vector2 textPos = { GetScreenWidth() / 2.0f - 150, GetScreenHeight() / 2.0f - 100 };
+   DrawTextEx(App::font_semibold, "Coming soon...", textPos, 35, 2.5f, TEXT_FOR_OFF_BRIGHT);
 }

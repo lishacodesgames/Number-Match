@@ -5,6 +5,7 @@
 #include "Layers/HomeLayer.h"
 #include "Layers/CoinLayer.h"
 #include "Storage.h"
+#include "Colors.h"
 
 // font must be loaded after InitWindow()
 Font App::font_semibold = GetFontDefault();
@@ -103,7 +104,7 @@ void App::Run() {
       // ---------------------------
       
       BeginDrawing();
-      ClearBackground(RAYWHITE);
+      ClearBackground(OFF_BRIGHT_BG);
 
       for(Core::Layer* layer : m_layerStack)
          layer->OnRender();

@@ -12,7 +12,7 @@ static constexpr float BANNER_PROPORTION = 0.075f;
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
       m_doneButton(
          { m_bounds.x + m_bounds.width - 55, m_bounds.y + 7 },  // origin
-         { 2, 2 }, "Done", BLANK, BLUE, 20, { 0, 0 }, App::font_semibold)
+         { 2, 2 }, "Done", BLANK, GAME_BUTTON_TEXT, 20, { 0, 0 }, App::font_semibold)
 {
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
    setBounds(true);
@@ -98,8 +98,8 @@ void OptionsLayer::OnUpdate() {
 }
 
 void OptionsLayer::OnRender() {
-   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), { 80, 80, 80, 180 });  // to make the bg darker
-   DrawRectangleRounded(m_bounds, 0.1f, 6, LIGHTERGRAY);                           // main popup
+   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), DARKEN_GAME_BG);
+   DrawRectangleRounded(m_bounds, 0.1f, 6, OPTIONS_BG); // main popup
 
    renderTopPanel();
    renderBlankBanners();
@@ -156,14 +156,14 @@ void OptionsLayer::renderTopPanel() {
    panelSharpBottom.y += panel.height / 2;
    panelSharpBottom.height = panel.height / 2;
 
-   DrawRectangleRounded(panel, 0.8f, 6, WHITE);
-   DrawRectangleRec(panelSharpBottom, WHITE);
+   DrawRectangleRounded(panel, 0.8f, 6, BRIGHT_BG);
+   DrawRectangleRec(panelSharpBottom, BRIGHT_BG);
 
    float OptionsWidth = MeasureTextEx(App::font_semibold, "Options", m_doneButton.getFontSize(), 1).x;
    DrawTextEx(
       App::font_semibold, "Options",
       { m_bounds.x + (m_bounds.width - OptionsWidth) / 2, m_doneButton.getOrigin().y },
-      m_doneButton.getFontSize(), 1, BLACK
+      m_doneButton.getFontSize(), 1, TITLE_SHADOW
    );
 
    m_doneButton.Draw();

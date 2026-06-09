@@ -72,50 +72,5 @@
 			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/panel/4.png",
 			"https://raw.githubusercontent.com/lishacodesgames/Number-Match/main/vscode-backgrounds/panel/5.png"
 		],
-	},
-
-   // editor colors
-   "editor.tokenColorCustomizations": {
-      "textMateRules": [
-         {
-            "scope": "comment",
-            "settings": {
-               "foreground": "#653F31",
-               "fontStyle": "italic bold"
-            }
-         },
-         { // anything in quotes
-            "scope": ["string.quoted.double", "string.quoted.single"],
-            "settings": {
-               "foreground": "#95d7ca",
-            },
-         },
-         { // operators like +, -, ==, etc
-            "scope": ["keyword.operator", "punctuation.separator"],
-            "settings": {
-               "foreground": "#4a8bbc",
-            },
-         },
-         { // numeric constants
-            "scope": ["constant.character", "constant.numeric"],
-            "settings": {
-               "foreground": "#5bad6e",
-            },
-         },
-      ],
-   },
-   "editor.semanticTokenColorCustomizations": {
-      "rules": {
-         "namespace": "#ff5100",
-         "property": { // class members
-            "foreground": "#eaa3a3",
-            "fontStyle": "italic",
-         },
-         "method": "#fb8c8c", // class methods
-         "operator": "#477aa1", // operators like +, -, ==, etc
-         "variable": { // local variables
-            "foreground": "#6cbde5",
-         },
-      },
-   },
+	}
 }

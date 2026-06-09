@@ -1,4 +1,9 @@
+# folders
 build/
 bin/
 .vscode/
+.vs/
 .DS_Store
+
+# changes every time i run, let the cloner generate it themselves
+window.json 
