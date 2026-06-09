@@ -23,19 +23,19 @@ namespace GUI
    void Button::Draw() {
       // draw button
       if(!isHovered)
-         DrawRectangleRounded(m_bounds, m_roundness.roundness, m_roundness.segments, m_buttonColor);
+         DrawRectangleRounded(m_bounds, m_roundness.roundness, m_roundness.segments, buttonColor);
       else {
-         if(m_buttonColor == WHITE)  // darker for contrast cuz nothings lighter than white
+         if(buttonColor == WHITE)  // darker for contrast cuz nothings lighter than white
             DrawRectangleRounded(
-               m_bounds, m_roundness.roundness, m_roundness.segments, ColorBrightness(m_buttonColor, -0.04232f)
+               m_bounds, m_roundness.roundness, m_roundness.segments, ColorBrightness(buttonColor, -0.04232f)
             );
          else  // lighter cuz it gives a satisfying pseudo-growth to button
             DrawRectangleRounded(
-               m_bounds, m_roundness.roundness, m_roundness.segments, ColorBrightness(m_buttonColor, 0.069f)
+               m_bounds, m_roundness.roundness, m_roundness.segments, ColorBrightness(buttonColor, 0.069f)
             );
 
          DrawRectangleRoundedLinesEx(
-            m_bounds, m_roundness.roundness, m_roundness.segments, 2, ColorBrightness(m_buttonColor, -0.12f)
+            m_bounds, m_roundness.roundness, m_roundness.segments, 2, ColorBrightness(buttonColor, -0.12f)
          );
       }
 
@@ -44,13 +44,13 @@ namespace GUI
       Vector2 iconOrigin = getIconOrigin();
 
       if(IsTextureValid(m_iconTexture))
-         DrawTexture(m_iconTexture, iconOrigin.x, iconOrigin.y, m_contentColor);
+         DrawTexture(m_iconTexture, iconOrigin.x, iconOrigin.y, contentColor);
 
       // center text
       float remTextSpaceY = m_bounds.height - m_verticalPadding.x - m_verticalPadding.y - textSize.y;
       float textOriginY = m_bounds.y + m_verticalPadding.x + remTextSpaceY / 2;
 
-      DrawTextEx(m_font, m_text.c_str(), { iconOrigin.x + m_iconTexture.width * ICON_PAD_MULTIPLIER, textOriginY }, m_fontSize, 1, m_contentColor);
+      DrawTextEx(m_font, m_text.c_str(), { iconOrigin.x + m_iconTexture.width * ICON_PAD_MULTIPLIER, textOriginY }, m_fontSize, 1, contentColor);
    }
 
 #pragma endregion
@@ -69,7 +69,7 @@ namespace GUI
       Color buttonColor, Color contentColor,
       int fontSize, Roundness roundness,  // default args
       Font font
-   ) : m_bounds(exactBounds), m_roundness(roundness), m_text(text), m_fontSize(fontSize), m_buttonColor(buttonColor), m_contentColor(contentColor), m_font(font)
+   ) : m_bounds(exactBounds), m_roundness(roundness), m_text(text), m_fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), m_font(font)
    {
       Vector2 textSize = MeasureTextEx(m_font, text, m_fontSize, 1);
       float x = (m_bounds.width - textSize.x) / 2;
@@ -85,7 +85,7 @@ namespace GUI
       Color buttonColor, Color contentColor,
       int fontSize, Roundness roundness, // default args
       Font font
-   ) : m_roundness(roundness),m_text(text), m_fontSize(fontSize), m_buttonColor(buttonColor), m_contentColor(contentColor), m_font(font)
+   ) : m_roundness(roundness),m_text(text), m_fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), m_font(font)
    {
       setOrigin(origin);
       setPadding({ padding.x, padding.x }, { padding.y, padding.y });
@@ -98,7 +98,7 @@ namespace GUI
       Color buttonColor, Color contentColor,
       int fontSize, Roundness roundness, // default args
       Font font
-   ) : m_roundness(roundness), m_text(text), m_fontSize(fontSize), m_buttonColor(buttonColor), m_contentColor(contentColor), m_font(font)
+   ) : m_roundness(roundness), m_text(text), m_fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), m_font(font)
    {
       setOrigin(origin);
       setPadding(horizPadding, vertPadding);
@@ -170,8 +170,8 @@ namespace GUI
 
    void Button::setFocus(bool isFocused, Color buttonColor, Color contentColor) {
       this->isFocused = isFocused;
-      m_buttonColor = buttonColor;
-      m_contentColor = contentColor;
+      this->buttonColor = buttonColor;
+      this->contentColor = contentColor;
    }
 
    void Button::recalculateLayout() {
@@ -226,8 +226,8 @@ bool GUI::operator==(const GUI::Button& first, const GUI::Button& second) {
    return (
       first.m_text == second.m_text &&
       first.m_fontSize == second.m_fontSize &&
-      first.m_buttonColor == second.m_buttonColor &&
-      first.m_contentColor == second.m_contentColor &&
+      first.buttonColor == second.buttonColor &&
+      first.contentColor == second.contentColor &&
       first.m_bounds == second.m_bounds &&
       first.m_horizontalPadding == second.m_horizontalPadding &&
       first.m_verticalPadding == second.m_verticalPadding

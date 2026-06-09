@@ -9,6 +9,8 @@ target_sources(Engine PRIVATE
    # GUI
    GUI/Button.cpp
    GUI/ScrollBar.cpp
+   GUI/Toggle.cpp
+   GUI/Roundness.h
 )
 
 target_include_directories(Engine PUBLIC

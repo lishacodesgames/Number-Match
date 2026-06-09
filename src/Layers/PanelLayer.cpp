@@ -72,16 +72,16 @@ void PanelLayer::OnUpdate() {
    /// @bug in Debug mode, mouse visually glitches out between pointing and regular in all three menu layers
    // need to optimise somehow
    if(hoveredButton) {
-      hoveredButton->setContentColor(PANEL_HOVER);
+      hoveredButton->contentColor = PANEL_HOVER;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    }  // else case will be handled by below layers, since this one is an overlay
 
    if(previousButton && hoveredButton != previousButton) {
       // new button is focused, so we must reset previous one
       if(previousButton->isFocused)
-         previousButton->setContentColor(PANEL_ACTIVE);
+         previousButton->contentColor = PANEL_ACTIVE;
       else
-         previousButton->setContentColor(PANEL_REST);
+         previousButton->contentColor = PANEL_REST;
    }
    previousButton = hoveredButton;
 }

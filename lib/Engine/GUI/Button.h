@@ -2,13 +2,9 @@
 #include <raylib.h>
 #include <utility>
 #include <string>
+#include "Roundness.h"
 
 namespace GUI {
-   struct Roundness {
-      float roundness = 0.8f; /// 0.0f - 1.0f, 0.8f by default
-      int segments = 8;       /// number of segments to use for drawing rounded corners, 8 by default
-   };
-
    /** Constructor parameters' organisation
     *
     *  -- compulsory --
@@ -86,9 +82,6 @@ namespace GUI {
       /// even padding
       void setPadding(float padding) { setPadding({ padding, padding }, { padding, padding }); }
 
-      void setButtonColor(Color color) { m_buttonColor = color; }
-      void setContentColor(Color color) { m_contentColor = color; }
-
       void setFocus(bool isFocused, Color buttonColor, Color contentColor);
    public:
       // -----------------
@@ -135,9 +128,8 @@ namespace GUI {
       Rectangle m_bounds;
       Vector2 m_horizontalPadding;  /// {left, right}
       Vector2 m_verticalPadding;    /// {top, bottom}
-
-      Color m_buttonColor = BLACK, m_contentColor = WHITE;
-
+   public:
+      Color buttonColor = BLACK, contentColor = WHITE;
    private:
       // -----------------
       // ---- HELPERS ----
