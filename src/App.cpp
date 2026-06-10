@@ -31,6 +31,8 @@ App::App(const std::string& name) {
    font_black = LoadFontEx("assets/fonts/RedHatDisplay-Black.ttf", 70, NULL, 0);
 
    Storage::load();
+   Palette::SetDarkMode();
+   
    HomeLayer* home = new HomeLayer();
    m_layerStack.PushLayer(home);
    PanelLayer* panel = new PanelLayer();
@@ -104,7 +106,7 @@ void App::Run() {
       // ---------------------------
       
       BeginDrawing();
-      ClearBackground(OFF_BRIGHT_BG);
+      ClearBackground(Palette::off_bright_bg);
 
       for(Core::Layer* layer : m_layerStack)
          layer->OnRender();

@@ -12,9 +12,9 @@ float PanelLayer::buttonSpacing = 0.0f;
 int PanelLayer::height = 50;
 
 PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
-      homeButton({ 0, 0 }, { 0, 0 }, "Main", BLANK, PANEL_ACTIVE, 30, { 0.0f, 0 }, App::font_semibold),
-      dailyButton({ 0, 0 }, { 0, 0 }, "Daily Challenges", BLANK, PANEL_REST, 30, { 0.0f, 0 }, App::font_semibold),
-      meButton({ 0, 0 }, { 0, 0 }, "Me", BLANK, PANEL_REST, 30, { 0.0f, 0 }, App::font_semibold) {
+      homeButton({ 0, 0 }, { 0, 0 }, "Main", BLANK, Palette::panel_active, 30, { 0.0f, 0 }, App::font_semibold),
+      dailyButton({ 0, 0 }, { 0, 0 }, "Daily Challenges", BLANK, Palette::panel_rest, 30, { 0.0f, 0 }, App::font_semibold),
+      meButton({ 0, 0 }, { 0, 0 }, "Me", BLANK, Palette::panel_rest, 30, { 0.0f, 0 }, App::font_semibold) {
    homeButton.isFocused = true;
 
    homeButton.setIcon("assets/icons/menus/home_20x20.png");
@@ -49,8 +49,8 @@ void PanelLayer::OnEvent(Core::Event& e) {
             newLayer = new MeLayer();
       }
       if(newLayer) {
-         previousButton->setFocus(false, BLANK, PANEL_REST);
-         activeButton->setFocus(true, BLANK, PANEL_ACTIVE);
+         previousButton->setFocus(false, BLANK, Palette::panel_rest);
+         activeButton->setFocus(true, BLANK, Palette::panel_active);
          App::QueueLayerSwap(currentLayer, newLayer);
          currentLayer = newLayer;
          previousButton = activeButton;
@@ -72,26 +72,27 @@ void PanelLayer::OnUpdate() {
    /// @bug in Debug mode, mouse visually glitches out between pointing and regular in all three menu layers
    // need to optimise somehow
    if(hoveredButton) {
-      hoveredButton->contentColor = PANEL_HOVER;
+      hoveredButton->contentColor = Palette::panel_hover;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    }  // else case will be handled by below layers, since this one is an overlay
 
    if(previousButton && hoveredButton != previousButton) {
       // new button is focused, so we must reset previous one
       if(previousButton->isFocused)
-         previousButton->contentColor = PANEL_ACTIVE;
+         previousButton->contentColor = Palette::panel_active;
       else
-         previousButton->contentColor = PANEL_REST;
+         previousButton->contentColor = Palette::panel_rest;
    }
    previousButton = hoveredButton;
 }
 
 void PanelLayer::OnRender() {
-   DrawLine(0, GetScreenHeight() - height, GetScreenWidth(), GetScreenHeight() - height, SHADOW_FOR_BRIGHT);
+   DrawLine(
+      0, GetScreenHeight() - height,
+      GetScreenWidth(), GetScreenHeight() - height, Palette::shadow_for_bright);
    DrawRectangleV(
       { 0.0f, (float)(GetScreenHeight() - height) },
-      { (float)(GetScreenWidth()), (float)height }, BRIGHT_BG
-   );
+      { (float)(GetScreenWidth()), (float)height }, Palette::bright_bg);
 
    homeButton.Draw();
    dailyButton.Draw();

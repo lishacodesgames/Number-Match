@@ -12,10 +12,10 @@
 /// @todo make scoring system into an enum class (diagonal matches > non-adjacent matches > adjacent matches)
 
 GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
-      m_gobackButton({ 15, 15 }, { 6, 1 }, { 1, 1 }, "", BLANK, GAME_NAV_COLOR, 20, { 0, 0 }),
-      m_settingsButton({ 0, 0 }, { 1, 1 }, "", BLANK, GAME_NAV_COLOR, 20, { 0, 0 }),
-      m_plusButton({ 0, 0 }, { 12, 10 }, "", GAME_BUTTON_BG, GAME_BUTTON_TEXT, 25, { 1.0f, 8 }),
-      m_hintButton({ 0, 0 }, { 12, 10 }, "", GAME_BUTTON_BG, GAME_BUTTON_TEXT, 25, { 1.0f, 8 }) 
+      m_gobackButton({ 15, 15 }, { 6, 1 }, { 1, 1 }, "", BLANK, Palette::game_nav_color, 20, { 0, 0 }),
+      m_settingsButton({ 0, 0 }, { 1, 1 }, "", BLANK, Palette::game_nav_color, 20, { 0, 0 }),
+      m_plusButton({ 0, 0 }, { 12, 10 }, "", Palette::game_button_bg, Palette::game_button_text, 25, { 1.0f, 8 }),
+      m_hintButton({ 0, 0 }, { 12, 10 }, "", Palette::game_button_bg, Palette::game_button_text, 25, { 1.0f, 8 }) 
 {
    m_trophyImage = LoadImage("assets/icons/game/trophy_16x16.png");
    m_trophyTexture = LoadTextureFromImage(m_trophyImage);
@@ -140,8 +140,8 @@ void GameLayer::OnRender() {
    float infoY = m_grid.box.y - infoFontSize * 1.1f;
 
    // Stage
-   DrawTextEx(App::font_retro, "Stage", { m_grid.box.x, tagY }, tagFontSize, infoFontSpacing, GAME_INFO_COLOR);
-   DrawTextEx(App::font_semibold, std::to_string(Storage::stage).c_str(), { m_grid.box.x + 5, infoY }, infoFontSize + 3, infoFontSpacing, GAME_INFO_COLOR);
+   DrawTextEx(App::font_retro, "Stage", { m_grid.box.x, tagY }, tagFontSize, infoFontSpacing, Palette::game_info_color);
+   DrawTextEx(App::font_semibold, std::to_string(Storage::stage).c_str(), { m_grid.box.x + 5, infoY }, infoFontSize + 3, infoFontSpacing, Palette::game_info_color);
 
    float scoreTagWidth = MeasureTextEx(App::font_retro, "Best Score", tagFontSize, infoFontSpacing).x;
    float scoreTagX = m_grid.box.x + m_grid.box.width - scoreTagWidth;
@@ -149,18 +149,18 @@ void GameLayer::OnRender() {
    float scoreInfoX = m_grid.box.x + m_grid.box.width - scoreValueWidth - m_trophyTexture.width - 2;
 
    // Best Score
-   DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, infoFontSpacing, GAME_INFO_COLOR);
-   DrawTexture(m_trophyTexture, scoreInfoX, infoY, GAME_INFO_COLOR);
+   DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, infoFontSpacing, Palette::game_info_color);
+   DrawTexture(m_trophyTexture, scoreInfoX, infoY, Palette::game_info_color);
    DrawTextEx(
       App::font_semibold, Storage::formatBestScore().c_str(),
       { scoreInfoX + m_trophyTexture.width + 2, infoY },
-      infoFontSize, infoFontSpacing, GAME_INFO_COLOR
+      infoFontSize, infoFontSpacing, Palette::game_info_color
    );
 
    // Numbers Cleared
    float numbersTagWidth = MeasureTextEx(App::font_retro, "Numbers Cleared", tagFontSize, infoFontSpacing).x;
    float numbersTagX = m_grid.box.x + m_grid.box.width / 2 - numbersTagWidth / 2;
-   DrawTextEx(App::font_retro, "Numbers Cleared", { numbersTagX, tagY }, tagFontSize, infoFontSpacing, GAME_INFO_COLOR);
+   DrawTextEx(App::font_retro, "Numbers Cleared", { numbersTagX, tagY }, tagFontSize, infoFontSpacing, Palette::game_info_color);
 
    // measure
    float allNumsWidth = 0.0f;
@@ -183,10 +183,12 @@ void GameLayer::OnRender() {
       float thisNumWidth;
 
       if(Storage::numbersCleared.at(i)) {
-         DrawTexture(m_tickTexture, soFarX, infoY, GAME_INFO_COLOR);
+         DrawTexture(m_tickTexture, soFarX, infoY, Palette::game_info_color);
          thisNumWidth = m_tickTexture.width;
       } else {
-         DrawTextEx(App::font_semibold, num.c_str(), { soFarX, infoY }, infoFontSize, infoFontSpacing, GAME_INFO_COLOR);
+         DrawTextEx(
+            App::font_semibold, num.c_str(), { soFarX, infoY },
+            infoFontSize, infoFontSpacing, Palette::game_info_color);
          thisNumWidth = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, infoFontSpacing).x;
       }
 
@@ -200,7 +202,7 @@ void GameLayer::OnRender() {
    DrawTextEx(
       App::font_black, Storage::formatCurrentScore().c_str(),
       { (float)GetScreenWidth() / 2 - currentScoreSize.x / 2, tagY - currentScoreSize.y * 1.2f },
-      currentScoreFontSize, 1, TEXT_FOR_OFF_BRIGHT
+      currentScoreFontSize, 1, Palette::text_for_off_bright
    );
 }
 

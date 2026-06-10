@@ -10,8 +10,8 @@ static constexpr float PANEL_PROPORTION = 0.085f;
 static constexpr float BANNER_PROPORTION = 0.075f;
 
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
-      m_doneButton({ 0, 0 }, { 2, 2 }, "Done", BLANK, GAME_NAV_COLOR, 20, { 0, 0 }, App::font_semibold),
-      m_gobackButton({ 0, 0 }, { 2, 2 }, "", BLANK, GAME_NAV_COLOR)
+      m_doneButton({ 0, 0 }, { 2, 2 }, "Done", BLANK, Palette::game_nav_color, 20, { 0, 0 }, App::font_semibold),
+      m_gobackButton({ 0, 0 }, { 2, 2 }, "", BLANK, Palette::game_nav_color)
 {
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
@@ -112,8 +112,8 @@ void OptionsLayer::OnUpdate() {
 }
 
 void OptionsLayer::OnRender() {
-   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), DARKEN_GAME_BG);
-   DrawRectangleRounded(m_bounds, 0.1f, 6, OPTIONS_BG); // main popup
+   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Palette::darken_game_bg);
+   DrawRectangleRounded(m_bounds, 0.1f, 6, Palette::options_bg); // main popup
 
    Rectangle panel = m_bounds;
    panel.height *= PANEL_PROPORTION;
@@ -122,8 +122,8 @@ void OptionsLayer::OnRender() {
    panelSharpBottom.y += panel.height / 2;
    panelSharpBottom.height = panel.height / 2;
 
-   DrawRectangleRounded(panel, 0.8f, 6, BRIGHT_BG);
-   DrawRectangleRec(panelSharpBottom, BRIGHT_BG);
+   DrawRectangleRounded(panel, 0.8f, 6, Palette::bright_bg);
+   DrawRectangleRec(panelSharpBottom, Palette::bright_bg);
 
    float titleFontSize = m_doneButton.getFontSize() * 1.3f;
    Vector2 titleSize = MeasureTextEx(App::font_semibold, "Options", titleFontSize, 1);
@@ -131,7 +131,7 @@ void OptionsLayer::OnRender() {
       App::font_semibold, "Options",
       {  panel.x + (panel.width - titleSize.x) / 2,
          panel.y + (panel.height - titleSize.y) / 2},
-      titleFontSize, 1.2f, OPTIONS_TITLE_COLOR
+      titleFontSize, 1.2f, Palette::options_title_color
    );
 
    m_doneButton.Draw();
@@ -200,7 +200,7 @@ void OptionsLayer::renderBlankBanners() const {
    // base banner shape
    for(size_t i = 0; i < m_banners.size(); i++) {
       const Rectangle& banner = m_banners.at(i);
-      Color bg = ((int)i == hovered ? SHADOW_FOR_BRIGHT : BRIGHT_BG);
+      Color bg = ((int)i == hovered ? Palette::shadow_for_bright : Palette::bright_bg);
 
       if(i == SETTINGS || i == MATH || i == NO_ADS)   // round banners
          DrawRectangleRounded(banner, 0.5f, 4, bg);
@@ -219,7 +219,7 @@ void OptionsLayer::renderBlankBanners() const {
    // lines for middle banner block
    for(int i = HOW_TO; i < PREFS; i++) {
       const Rectangle& banner = m_banners.at(i + 1);
-      DrawLineEx({ banner.x, banner.y }, { banner.x + banner.width, banner.y }, 1, SHADOW_FOR_BRIGHT);
+      DrawLineEx({ banner.x, banner.y }, { banner.x + banner.width, banner.y }, 1, Palette::shadow_for_bright);
    }
 
    // right arrow icon on all except last 2
@@ -229,7 +229,7 @@ void OptionsLayer::renderBlankBanners() const {
          m_rightArrowTexture,
          banner.x + banner.width - m_rightArrowTexture.width * 1.7f,
          banner.y + (banner.height - m_rightArrowTexture.height) / 2.0f,
-         OPTIONS_ARROW_COLOR
+         Palette::options_arrow_color
       );
    }
 }
@@ -246,7 +246,7 @@ void OptionsLayer::renderBannerContent() const {
       DrawTextEx(
          App::font_semibold, name.c_str(),
          { iconPos.x + icon.width + 15, iconPos.y + 2 },
-         20, 1, OPTIONS_TEXT_COLOR
+         20, 1, Palette::options_text_color
       );
    }
 }

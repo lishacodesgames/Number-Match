@@ -13,11 +13,11 @@
 HomeLayer::HomeLayer() : Layer("Home Layer"),
       m_newButton(
          { 0, 0, 533, 40 },
-         "New Game", HOME_BUTTON_1, HOME_BUTTON_2, 30, { 0.8f, 8 }, App::font_semibold
+         "New Game", Palette::home_button_1, Palette::home_button_2, 30, { 0.8f, 8 }, App::font_semibold
       ),
       m_continueButton(
          { 0, 0, 533, 40 },
-         "Continue Game", HOME_BUTTON_2, HOME_BUTTON_1, 30, { 0.8f, 8 }, App::font_semibold
+         "Continue Game", Palette::home_button_2, Palette::home_button_1, 30, { 0.8f, 8 }, App::font_semibold
       )
 {
    m_backgroundImage = LoadImage("assets/backgrounds/home_background_800x1417.png");
@@ -73,7 +73,7 @@ void HomeLayer::OnUpdate() {
 }
 
 void HomeLayer::OnRender() {
-   DrawTexture(m_backgroundTexture, 0, 0, HOME_BG_OVERLAY);  // background
+   DrawTexture(m_backgroundTexture, 0, 0, Palette::home_bg_overlay);  // background
 
    // title
    const char* gameName = "Number Match";
@@ -86,8 +86,8 @@ void HomeLayer::OnRender() {
 
    float shadowOffset = titleFontSize / 15.0f;
 
-   DrawTextEx(App::font_black, gameName, titleOrigin + shadowOffset, titleFontSize, 3.0f, TITLE_SHADOW);
-   DrawTextEx(App::font_black, gameName, titleOrigin, titleFontSize, 3.0f, TITLE_COLOR);
+   DrawTextEx(App::font_black, gameName, titleOrigin + shadowOffset, titleFontSize, 3.0f, Palette::title_shadow);
+   DrawTextEx(App::font_black, gameName, titleOrigin, titleFontSize, 3.0f, Palette::title_color);
 
    // score
    const char* scoreTag = "All-Time Best Score";
@@ -98,7 +98,7 @@ void HomeLayer::OnRender() {
       titleOrigin.y + titleFontSize * 1.05f
    };
    
-   DrawTextEx(App::font_semibold, scoreTag, scoreTagOrigin, scoreTagFontSize, 1.5f, GAME_INFO_COLOR);
+   DrawTextEx(App::font_semibold, scoreTag, scoreTagOrigin, scoreTagFontSize, 1.5f, Palette::game_info_color);
 
    float bestScoreFontSize = titleFontSize * 0.7f;
    Vector2 bestScoreSize = MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), bestScoreFontSize, 2.0f);
@@ -124,7 +124,7 @@ void HomeLayer::OnRender() {
    DrawTexture(m_trophyTexture, trophyOrigin.x, trophyOrigin.y, WHITE);
    DrawTextEx(
       App::font_semibold, Storage::formatBestScore().c_str(),
-      bestScoreOrigin, bestScoreFontSize, 2.0f, TEXT_FOR_BRIGHT
+      bestScoreOrigin, bestScoreFontSize, 2.0f, Palette::text_for_bright
    );
 
    // game buttons

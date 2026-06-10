@@ -9,7 +9,7 @@ float GridCell::cellSize = 45.0f;
 float GridCell::numHeight = 0;
 
 Grid::Grid() : focusedCell(nullptr),
-      m_scrollBar({ 0, 0, 0, 0 }, 10.0f, GRID_SCROLL_THUMB, GRID_SCROLL_TRACK)
+      m_scrollBar({ 0, 0, 0, 0 }, 10.0f, Palette::grid_scroll_thumb, Palette::grid_scroll_track)
 {
    m_grid.assign(9, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }),  // 9 rows of all blank cells
    srand(time(0));
@@ -72,25 +72,25 @@ void Grid::Draw() const {
          // state cases
          switch(cell.getState()) {
             case CellState::Rest:
-               numColor = GRIDCELL_NOT_MATCHED;
-               bgColor = OFF_BRIGHT_BG;
+               numColor = Palette::gridcell_not_matched;
+               bgColor = Palette::off_bright_bg;
                break;
             case CellState::Hovered:
-               numColor = GRIDCELL_NOT_MATCHED;
-               bgColor = GRIDCELL_HOVER;
+               numColor = Palette::gridcell_not_matched;
+               bgColor = Palette::gridcell_hover;
                break;
             case CellState::Focused:
-               numColor = GRIDCELL_NOT_MATCHED;
-               bgColor = GRIDCELL_FOCUS;
+               numColor = Palette::gridcell_not_matched;
+               bgColor = Palette::gridcell_focus;
                break;
             case CellState::Matched:
-               numColor = GRIDCELL_MATCHED;
-               bgColor = OFF_BRIGHT_BG;
+               numColor = Palette::gridcell_matched;
+               bgColor = Palette::off_bright_bg;
                break;
          }
 
          DrawRectangleRec(cell.bounds, bgColor);
-         DrawRectangleLinesEx(cell.bounds, 1, SHADOW_FOR_OFF_BRIGHT);
+         DrawRectangleLinesEx(cell.bounds, 1, Palette::shadow_for_off_bright);
          DrawTextEx(
             App::font_semibold, value.c_str(),
             {  cell.bounds.x + (cell.bounds.width - numSize.x) / 2, 
@@ -101,7 +101,7 @@ void Grid::Draw() const {
    }
    EndScissorMode();
 
-   DrawRectangleLinesEx(box, 3, GRIDBOX_COLOR);
+   DrawRectangleLinesEx(box, 3, Palette::gridbox_color);
    if(m_grid.size() > 9)
       m_scrollBar.Draw();
 }
