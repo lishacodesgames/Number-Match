@@ -5,11 +5,12 @@
 using json = nlohmann::json;     // type alias
 namespace fs = std::filesystem;  // namespace alias
 
-uint32_t Storage::coins = 0;
 uint32_t Storage::bestScore = 0;
+uint32_t Storage::coins = 0;
 uint32_t Storage::currentScore = 0;
-uint32_t Storage::stage = 1;
+bool Storage::isDarkMode = true;
 std::array<bool, 9> Storage::numbersCleared = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint32_t Storage::stage = 1;
 
 fs::file_time_type Storage::lastSaveTime = fs::file_time_type::min();
 
@@ -28,11 +29,12 @@ void Storage::load() {
    }
    save.close();
 
-   coins = j["coins"].get<uint32_t>();
    bestScore = j["bestScore"].get<uint32_t>();
+   coins = j["coins"].get<uint32_t>();
    currentScore = j["currentScore"].get<uint32_t>();
-   stage = j["stage"].get<uint32_t>();
+   isDarkMode = j["isDarkMode"].get<bool>();
    numbersCleared = j["numbersCleared"].get<std::array<bool, 9>>();
+   stage = j["stage"].get<uint32_t>();
 }
 
 bool Storage::hotReload() {
@@ -58,11 +60,12 @@ bool Storage::hotReload() {
 void Storage::save() {
    json j;
 
-   j["coins"] = coins;
    j["bestScore"] = bestScore;
+   j["coins"] = coins;
    j["currentScore"] = currentScore;
-   j["stage"] = stage;
+   j["isDarkMode"] = isDarkMode;
    j["numbersCleared"] = numbersCleared;
+   j["stage"] = stage;
 
    std::ofstream save("assets/save.json");
    if(!save.is_open()) return;

@@ -31,7 +31,10 @@ App::App(const std::string& name) {
    font_black = LoadFontEx("assets/fonts/RedHatDisplay-Black.ttf", 70, NULL, 0);
 
    Storage::load();
-   Palette::SetDarkMode();
+   if(Storage::isDarkMode)
+      Palette::SetDarkMode();
+   else
+      Palette::SetLightMode();
    
    HomeLayer* home = new HomeLayer();
    m_layerStack.PushLayer(home);

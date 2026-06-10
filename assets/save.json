@@ -2,6 +2,7 @@
    "bestScore": 13500,
    "coins": 638870,
    "currentScore": 0,
+   "isDarkMode": true,
    "numbersCleared": [
       false,
       false,

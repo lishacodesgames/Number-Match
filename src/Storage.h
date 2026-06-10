@@ -6,11 +6,12 @@
 struct Storage {
    Storage() { lastSaveTime = std::filesystem::last_write_time("assets/save.json"); }
 
-   static uint32_t stage;
-   static std::array<bool, 9> numbersCleared; /// if 'n' is cleared, [n-1] is true
-   static uint32_t coins;
    static uint32_t bestScore;
+   static uint32_t coins;
    static uint32_t currentScore;
+   static bool isDarkMode;
+   static std::array<bool, 9> numbersCleared; /// if 'n' is cleared, [n-1] is true
+   static uint32_t stage;
 
    static std::string formatCoins() { return format(coins); }
    static std::string formatBestScore() { return format(bestScore); }
