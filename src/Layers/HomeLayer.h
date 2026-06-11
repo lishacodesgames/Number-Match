@@ -8,18 +8,20 @@ public:
    HomeLayer();
    ~HomeLayer() override { UnloadTexture(m_backgroundTexture); }
 
-   void OnEvent(Core::Event &e) override;
+   void OnEvent(Core::Event& e) override;
    void OnUpdate() override;
    void OnRender() override;
-private:
-   Image m_backgroundImage = {0};
-   Texture m_backgroundTexture = {0};
 
-   Image m_trophyImage = {0};
-   Texture m_trophyTexture = {0};
+private:
+   Image m_backgroundImage = { 0 };
+   Texture m_backgroundTexture = { 0 };
+
+   Image m_trophyImage = { 0 };
+   Texture m_trophyTexture = { 0 };
 
    GUI::Button m_newButton;
    GUI::Button m_continueButton;
+
 private:
    void resize();
 
@@ -33,4 +35,4 @@ private:
    }
 };
 
-inline Vector2 operator+(const Vector2& vec, const float& fl) { return {vec.x+fl, vec.y+fl}; }
+inline Vector2 operator+(Vector2 vec, float fl) { return { vec.x + fl, vec.y + fl }; }

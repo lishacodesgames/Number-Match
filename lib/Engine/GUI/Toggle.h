@@ -2,30 +2,68 @@
 #include <raylib.h>
 #include "Roundness.h"
 
-namespace GUI
-{
+namespace GUI {
+   /// @todo add separate (almost)everything based on state
+   /// @todo add dragability (maybe make a flag for it? m_draggable)
    class Toggle {
    public:
       Color bgColor = LIGHTGRAY, knobColor = RED;
+      Roundness roundness;
+      bool isHovered;  /// true IF knob is hovered
+
+      void Update();
+      void Draw() const;
+
+      ~Toggle() {
+         if(IsTextureValid(m_knobTexture))
+            UnloadTexture(m_knobTexture);
+         if(IsImageValid(m_knobImage))
+            UnloadImage(m_knobImage);
+      }
 
       Toggle() = default;
       Toggle(
          const Rectangle& bounds, Roundness roundness, float padding,
          Color bg = LIGHTGRAY, Color knob = RED
-      );
+      ) : m_bounds(bounds), roundness(roundness), m_padding(padding), bgColor(bg), knobColor(knob)
+         { setKnob(); }
+
    public:
       // -----------------
       // ---- SETTERS ----
       // -----------------
 
-      void setOrigin(Vector2 origin) { m_bounds.x = origin.x; m_bounds.y = origin.y; }
-      void setSize(Vector2 size);
-      void setBounds(const Rectangle& bounds);
+      void setOrigin(Vector2 origin) {
+         m_bounds.x = origin.x;
+         m_bounds.y = origin.y;
+      }
 
-      void setRoundness(Roundness roundness);
-      void setPadding(float padding);
+      void setSize(Vector2 size) {
+         m_bounds.width = size.x;
+         m_bounds.height = size.y;
+         setKnob();
+      }
 
-      void setKnobIcon(const char* filepath, Vector2 dimensios = { 0, 0 });
+      void setBounds(const Rectangle& bounds) {
+         m_bounds = bounds;
+         setKnob();
+      }
+
+      void setState(bool state) {
+         m_state = state;
+         setKnob();
+      }
+
+      void setPadding(float padding) {
+         m_padding = padding;
+         setKnob();
+      }
+
+      /// @param padding the padding INSIDE knob AROUND texture
+      void setKnobIcon(const char* filepath, float padding);
+   private:
+      void setKnob();
+
    public:
       // -----------------
       // ---- GETTERS ----
@@ -34,16 +72,23 @@ namespace GUI
       Vector2 getSize() const { return { m_bounds.width, m_bounds.height }; }
       Rectangle getBounds() const { return m_bounds; }
 
-      Roundness getRoundness() const { return m_roundness; }
+      bool getState() const { return m_state; }  /// false = left, true = right
       float getPadding() const { return m_padding; }
-      
-      Texture getKnobIcon() const { return m_knobIcon; }
-      float getKnobSize() const;
+
+      Texture getKnobIcon() const { return m_knobTexture; }
+      Vector2 getKnobSize() const {
+         return { m_bounds.width / 2 - m_padding * 2, m_bounds.height - m_padding * 2 };
+      }
+
    private:
-      Rectangle m_bounds;
-      Roundness m_roundness;
+      Rectangle m_bounds, m_knob{};
+
+      bool m_state = false;
       float m_padding = 0.0f;
 
-      Texture m_knobIcon = {0};
+      Image m_knobImage = { 0 };
+      Texture m_knobTexture = { 0 };
    };
-}
+}  // namespace GUI
+
+inline Vector2 operator-(Vector2 vec, float fl) { return { vec.x - fl, vec.y - fl }; }
