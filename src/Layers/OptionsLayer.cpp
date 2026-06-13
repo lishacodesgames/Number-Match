@@ -3,6 +3,7 @@
 
 #include "HomeLayer.h"
 #include "Core/Event.h"
+#include "Storage.h"
 #include "Colors.h"
 #include "App.h"
 
@@ -15,8 +16,11 @@ OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
 {
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
+
    m_darkModeToggle.bgColor = Palette::off_bright_bg;
    m_darkModeToggle.knobColor = Palette::shadow_for_off_bright;
+   if(Storage::isDarkMode)
+      m_darkModeToggle.setState(true);
 
    resize(GetScreenHeight());
    setBannerPositions();
@@ -62,10 +66,10 @@ void OptionsLayer::OnEvent(Core::Event& e) {
       } else if(m_gobackButton.isHovered) {
          currentPage = Page::Options;
       } else if(m_darkModeToggle.isHovered) {
-         if(Palette::Current == Palette::Mode::Light)
-            Palette::SetDarkMode();
-         else
+         if(Storage::isDarkMode)
             Palette::SetLightMode();
+         else
+            Palette::SetDarkMode();
 
          m_darkModeToggle.bgColor = Palette::off_bright_bg;
          m_darkModeToggle.knobColor = Palette::shadow_for_off_bright;
@@ -188,8 +192,9 @@ void OptionsLayer::resize(float targetY) {
       m_bounds.y + (panelHeight - m_gobackButton.getSize().y) / 2
    });
 
-   Vector2 oldToggleSize = m_darkModeToggle.getSize();
-   Vector2 newToggleSize = { std::max(m_bounds.width / 2.5f, 200.0f), m_bounds.height / 4.0f };
+   Vector2 newToggleSize, oldToggleSize = m_darkModeToggle.getSize();
+   newToggleSize.x = std::max(m_bounds.width / 2.5f, 200.0f);
+   newToggleSize.y = std::min(m_bounds.height / 4.0f, newToggleSize.x / 2.1f);
    m_darkModeToggle.setSize(newToggleSize);
 
    if(absDiff(oldToggleSize, newToggleSize) >= 0.5f)

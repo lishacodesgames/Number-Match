@@ -50,6 +50,7 @@ namespace GUI {
       }
 
       /// @todo add animation
+      /// true = right side 
       void setState(bool state) {
          m_state = state;
          setKnob();

@@ -120,17 +120,19 @@ namespace GUI
    }
 
    void Button::setFontSize(int fontSize) {
+      int old = m_fontSize;
       m_fontSize = fontSize;
-      if(IsTextureValid(m_iconTexture)) {
+
+      if(std::abs(old - m_fontSize) >= 5 && IsTextureValid(m_iconTexture)) {
          float aspect = (float)m_iconImage.width / m_iconImage.height;
          Image newIcon = ImageCopy(m_iconImage);
-         float newHeight = m_fontSize;
-         ImageResize(&newIcon, newHeight * aspect, newHeight);
+         ImageResize(&newIcon, m_fontSize * aspect, m_fontSize);
 
          UnloadTexture(m_iconTexture);
          m_iconTexture = LoadTextureFromImage(newIcon);
          UnloadImage(newIcon);
       }
+
       recalculateLayout();
    }
 

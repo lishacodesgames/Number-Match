@@ -104,14 +104,9 @@ void PanelLayer::resize() {
    height = std::max(40, GetScreenHeight() / 15);
    float weirdlyPerfectNumber = height * (5.0f / 7) * 0.9f;  // dont ask why
 
-   if((int)weirdlyPerfectNumber != homeButton.getIcon().height) {
-      homeButton.setFontSize(weirdlyPerfectNumber);
-      LOG_RESIZE("Panel \"home\" icon resized to: %d, %d", homeButton.getIcon().width, homeButton.getIcon().height);
-      dailyButton.setFontSize(weirdlyPerfectNumber);
-      LOG_RESIZE("Panel \"daily\" icon resized to: %d, %d", dailyButton.getIcon().width, dailyButton.getIcon().height);
-      meButton.setFontSize(weirdlyPerfectNumber);
-      LOG_RESIZE("Panel \"me\" icon resized to: %d, %d", meButton.getIcon().width, meButton.getIcon().height);
-   }
+   homeButton.setFontSize(weirdlyPerfectNumber);
+   dailyButton.setFontSize(weirdlyPerfectNumber);
+   meButton.setFontSize(weirdlyPerfectNumber);
 
    // set origins using CSS's space-around formula
    float totalButtonsWidth = homeButton.getSize().x + dailyButton.getSize().x + meButton.getSize().x * 1.3f;  // daily button is huge, me button is tiny, makes the "equal" spacing seem unequal

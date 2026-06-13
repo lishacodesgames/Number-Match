@@ -45,7 +45,8 @@ App::App(const std::string& name) {
    TraceLog(LISHA_SAYS, "App Loaded!");
 }
 
-App::~App() { 
+App::~App() {
+   Storage::save();
    Storage::saveWindow(GetScreenWidth(), GetScreenHeight());
 
    m_layerStack.Delete(); /// Must be done before CloseWindow()
@@ -56,10 +57,14 @@ App::~App() {
 
 void App::Run() {
    TraceLog(LISHA_SAYS, "Working Directory: %s", GetWorkingDirectory());
+   int width = GetScreenWidth(), height = GetScreenHeight();
 
    while(!WindowShouldClose()) {
-      if(IsWindowResized())
+      if(IsWindowResized() && (std::abs(width - GetScreenWidth()) > 10 || std::abs(height - GetScreenHeight()) > 10))
          LOG_RESIZE("Window Resized: %d x %d", GetScreenWidth(), GetScreenHeight());
+
+      width = GetScreenWidth();
+      height = GetScreenHeight();
 
       // ---------------------------
       // 1. apply pending layer changes at the start of the current frame
@@ -99,7 +104,6 @@ void App::Run() {
       // (eg. pause menu can override gameplay input)
       // ---------------------------
       
-      Storage::hotReload();
       for(Core::Layer* layer : m_layerStack)
          layer->OnUpdate();
       

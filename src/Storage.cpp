@@ -37,26 +37,6 @@ void Storage::load() {
    stage = j["stage"].get<uint32_t>();
 }
 
-bool Storage::hotReload() {
-   namespace chr = std::chrono;
-   const auto now = chr::steady_clock::now(); // steady_clock bcz it's unaffected by system time changes
-   static auto lastCheck = now; 
-
-   if(chr::duration_cast<chr::seconds>(now - lastCheck).count() < 2)
-      return false;  // only check every 2 seconds to avoid excessive file system access
-
-   auto currentSaveTime = fs::last_write_time("assets/save.json");
-
-   if(currentSaveTime != lastSaveTime) {
-      lastSaveTime = currentSaveTime;
-      load();
-      lastCheck = now;
-      return true;  // file was modified, successfully reloaded
-   }
-
-   return false; // file was not modified, no reload needed
-}
-
 void Storage::save() {
    json j;
 
@@ -71,6 +51,8 @@ void Storage::save() {
    if(!save.is_open()) return;
    save << j.dump(3);
    save.close();
+
+   TraceLog(LISHA_SAYS, "\nGame info saved:\n%s", j.dump(3).c_str());
 }
 
 void Storage::save(uint32_t stage, std::array<bool, 9> numbersCleared, uint32_t currentScore) {

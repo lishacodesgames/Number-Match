@@ -30,8 +30,6 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
 
    if(!App::GetLayerByName("Coin Layer"))
       App::QueueLayerPush(new CoinLayer());
-
-   Storage::load();
 }
 
 void HomeLayer::OnEvent(Core::Event& e) {

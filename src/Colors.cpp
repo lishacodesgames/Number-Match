@@ -1,12 +1,12 @@
 #include <pch/Precompiled.h>
 #include "Colors.h"
 
+#include "Storage.h"
+
 namespace Palette
 {
-   Mode Current = Mode::Dark;
-
    void SetLightMode() {
-      Current = Mode::Light;
+      Storage::isDarkMode = false;
       TraceLog(LISHA_SAYS, "THEME: Light Mode set");
 
       bright_bg = WHITE;
@@ -51,7 +51,7 @@ namespace Palette
    }
 
    void SetDarkMode() {
-      Current = Mode::Dark;
+      Storage::isDarkMode = true;
       TraceLog(LISHA_SAYS, "THEME: Dark Mode set");
 
       bright_bg = Color{ 28, 32, 40, 255 };

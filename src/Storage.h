@@ -19,10 +19,9 @@ struct Storage {
 
    static std::filesystem::file_time_type lastSaveTime;
    static void load(); /// update score, numbersCleared and stage from file to storage
-   static bool hotReload(); /// reloads save file if it has been modified since last load/save, returns success
 
    static void save(); /// update file with score, numbersCleared and stage from storage
-   static void save(uint32_t stage, std::array<bool, 9> numbersCleared, uint32_t currentScore); /// for saving specific info
+   static void save(uint32_t stage, std::array<bool, 9> numbersCleared, uint32_t currentScore); /// for saving game info
 
    // only for App to call
    static void saveWindow(int width, int height);

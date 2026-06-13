@@ -31,8 +31,6 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
 
    if(reset)
       Storage::save(1, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 0);  // reset storage to default values
-   else
-      Storage::load();
 }
 
 #pragma region Methods
@@ -126,14 +124,14 @@ void GameLayer::OnRender() {
    m_settingsButton.Draw();
 
    // if theme is changed, we must update the colors
-   static Palette::Mode previous = Palette::Current;
-   if(previous != Palette::Current) {
+   static bool previous = Storage::isDarkMode;
+   if(previous != Storage::isDarkMode) {
       m_plusButton.bgColor = Palette::game_button_bg;
       m_plusButton.contentColor = Palette::game_button_text;
       m_hintButton.bgColor = Palette::game_button_bg;
       m_hintButton.contentColor = Palette::game_button_text;
    }
-   previous = Palette::Current;
+   previous = Storage::isDarkMode;
 
    m_plusButton.Draw();
    m_hintButton.Draw();
@@ -219,8 +217,6 @@ void GameLayer::OnRender() {
 
 void GameLayer::OnResume() {
    resize();
-   Storage::load();
-
    Layer::OnResume();
 }
 #pragma endregion
@@ -254,20 +250,22 @@ void GameLayer::resize() {
 
    float infoFontSize = GridCell::numHeight * 0.55f * 0.9f;
    float trophyScale = infoFontSize / m_trophyTexture.height;
-   if(trophyScale > 0.5f) {
+   if(trophyScale > 1.25f || trophyScale < 0.75f) {
       Image bestScoreTrophy = ImageCopy(m_trophyImage);
       ImageResize(&bestScoreTrophy, m_trophyTexture.width * trophyScale, m_trophyTexture.height * trophyScale);
 
+      UnloadTexture(m_trophyTexture);
       m_trophyTexture = LoadTextureFromImage(bestScoreTrophy);
       UnloadImage(bestScoreTrophy);
       LOG_RESIZE("Best Score Trophy resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
    }
 
    float tickScale = infoFontSize / m_tickTexture.height;
-   if(tickScale > 0.5f) {
+   if(tickScale > 1.25f || tickScale < 0.75f) {
       Image tick = ImageCopy(m_tickImage);
       ImageResize(&tick, m_tickTexture.width * tickScale, m_tickTexture.height * tickScale);
 
+      UnloadTexture(m_tickTexture);
       m_tickTexture = LoadTextureFromImage(tick);
       UnloadImage(tick);
       LOG_RESIZE("Tick resized to: %d, %d", m_tickTexture.width, m_tickTexture.height);
