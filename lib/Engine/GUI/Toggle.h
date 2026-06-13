@@ -36,6 +36,7 @@ namespace GUI {
       void setOrigin(Vector2 origin) {
          m_bounds.x = origin.x;
          m_bounds.y = origin.y;
+         setKnob();
       }
 
       void setSize(Vector2 size) {
@@ -49,11 +50,13 @@ namespace GUI {
          setKnob();
       }
 
-      /// @todo add animation
       /// true = right side 
       void setState(bool state) {
+         if(m_state == state)
+            return;
+
          m_state = state;
-         setKnob();
+         m_isSliding = true;
       }
 
       void setPadding(float padding) {
@@ -83,9 +86,10 @@ namespace GUI {
       }
 
    private:
-      Rectangle m_bounds, m_knob{};
+      Rectangle m_bounds{}, m_knob{};
 
-      bool m_state = false;
+      bool m_state = false, m_isSliding = false;
+      [[nodiscard]] float m_targetX() { return m_bounds.x + m_padding + (m_state ? m_bounds.width / 2.0f : 0.0f); }
       float m_padding = 0.0f;
 
       Image m_knobImage = { 0 };

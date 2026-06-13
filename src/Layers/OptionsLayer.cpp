@@ -96,12 +96,12 @@ void OptionsLayer::OnUpdate() {
    }
 
    if(m_bounds.y > m_targetY) {
-      double dt = std::min(GetFrameTime(), 0.033f);
-      double speed = 160;
-      double diff = m_bounds.y - m_targetY;
+      float dt = std::min(GetFrameTime(), 0.033f);
+      float speed = 160.0f;
+      float diff = m_bounds.y - m_targetY;
 
       m_bounds.y -= 0.1f * diff * speed * dt;  // move 10% of remaining distance with delay and lag buffer
-      if(diff < 1.5)                           // within 1.5 pixels
+      if(diff < 1.5f)                          // within 1.5 pixels
          m_bounds.y = m_targetY;               // snap to target, since %-based approach is an asymptote
 
       resize(m_bounds.y);   
@@ -161,7 +161,7 @@ float absDiff(Vector2 first, Vector2 second) {
    return (std::abs(first.x - second.x) + std::abs(first.y - second.y)) / 2.0f;
 }
 
-void OptionsLayer::resize(float targetY) {
+void OptionsLayer::resize(float boundsY) {
    m_targetY = GetScreenHeight() / 6;
    Vector2 oldSize = Vector2{ m_bounds.width, m_bounds.height };
 
@@ -170,7 +170,7 @@ void OptionsLayer::resize(float targetY) {
    float height = GetScreenHeight() * 0.7f;
    float width = height * aspect;
    m_bounds = {
-      (GetScreenWidth() - width) / 2, targetY,
+      (GetScreenWidth() - width) / 2, boundsY,
       width, height
    };
 
@@ -196,6 +196,7 @@ void OptionsLayer::resize(float targetY) {
    newToggleSize.x = std::max(m_bounds.width / 2.5f, 200.0f);
    newToggleSize.y = std::min(m_bounds.height / 4.0f, newToggleSize.x / 2.1f);
    m_darkModeToggle.setSize(newToggleSize);
+   m_darkModeToggle.setPadding(std::min(newToggleSize.x, newToggleSize.y) * 0.075f);
 
    if(absDiff(oldToggleSize, newToggleSize) >= 0.5f)
       LOG_RESIZE("Dark mode toggle resized to: %f, %f", newToggleSize.x, newToggleSize.y);
@@ -204,7 +205,6 @@ void OptionsLayer::resize(float targetY) {
       m_bounds.x + (m_bounds.width - newToggleSize.x) / 2.0f,
       m_bounds.y + (m_bounds.height - newToggleSize.y) / 2.0f
    });
-   m_darkModeToggle.setPadding(std::min(newToggleSize.x, newToggleSize.y) * 0.075f);
 }
 
 void OptionsLayer::setBannerPositions() {

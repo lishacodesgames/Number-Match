@@ -5,6 +5,20 @@ namespace GUI
 {
 #pragma region Methods
    void Toggle::Update() {
+      if(m_isSliding) {
+         float dt = std::min(GetFrameTime(), 0.033f);
+         float speed = 160;
+         float diff = m_knob.x - m_targetX();
+
+         m_knob.x -= 0.1f * diff * speed * dt;  // move 10% of remaining distance with delay and lag buffer
+         if(std::abs(diff) < 1.5f) {                      // within 1.5 pixels
+            m_knob.x = m_targetX();             // snap to target, since %-based approach is an asymptote
+            m_isSliding = false;
+         }
+
+         return;
+      }
+
       // update hover flag
       if(CheckCollisionPointRec(GetMousePosition(), m_knob))
          isHovered = true;
@@ -53,7 +67,7 @@ namespace GUI
          m_knobTexture = LoadTextureFromImage(m_knobImage);
       }
    }
-
+   
    void Toggle::setKnob() {
       m_knob = {
          m_bounds.x + m_padding + (m_state ? m_bounds.width / 2 : 0),

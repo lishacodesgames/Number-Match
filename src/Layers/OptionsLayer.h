@@ -44,7 +44,7 @@ private:
    GUI::Button m_gobackButton;
    GUI::Toggle m_darkModeToggle;
 private:
-   void resize(float targetY);  /// @param init whether to apply targetY or not (for animation)
+   void resize(float boundsY);
    void setBannerPositions();
 
    void renderBlankBanners() const;
