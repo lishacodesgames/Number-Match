@@ -1,8 +1,8 @@
 #include <pch/Precompiled.h>
 #include "OptionsLayer.h"
 
+#include "GUI/Animation.h"
 #include "HomeLayer.h"
-#include "Core/Event.h"
 #include "Storage.h"
 #include "Colors.h"
 #include "App.h"
@@ -96,15 +96,7 @@ void OptionsLayer::OnUpdate() {
    }
 
    if(m_bounds.y > m_targetY) {
-      float dt = std::min(GetFrameTime(), 0.033f);
-      float speed = 160.0f;
-      float diff = m_bounds.y - m_targetY;
-
-      m_bounds.y -= 0.1f * diff * speed * dt;  // move 10% of remaining distance with delay and lag buffer
-      if(diff < 1.5f)                          // within 1.5 pixels
-         m_bounds.y = m_targetY;               // snap to target, since %-based approach is an asymptote
-
-      resize(m_bounds.y);   
+      resize(GUI::LERP(m_bounds.y, m_targetY, 160.0f, 2.0f));   
       setBannerPositions();
       return;
    }
