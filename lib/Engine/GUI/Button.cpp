@@ -23,19 +23,19 @@ namespace GUI
    void Button::Draw() const {
       // draw button
       if(!isHovered)
-         DrawRectangleRounded(m_bounds, m_roundness.roundness, m_roundness.segments, buttonColor);
+         DrawRectangleRounded(m_bounds, m_roundness.roundness, m_roundness.segments, bgColor);
       else {
-         if(buttonColor == WHITE)  // darker for contrast cuz nothings lighter than white
+         if(bgColor == WHITE)  // darker for contrast cuz nothings lighter than white
             DrawRectangleRounded(
-               m_bounds, m_roundness.roundness, m_roundness.segments, ColorBrightness(buttonColor, -0.04232f)
+               m_bounds, m_roundness.roundness, m_roundness.segments, ColorBrightness(bgColor, -0.04232f)
             );
          else  // lighter cuz it gives a satisfying pseudo-growth to button
             DrawRectangleRounded(
-               m_bounds, m_roundness.roundness, m_roundness.segments, ColorBrightness(buttonColor, 0.069f)
+               m_bounds, m_roundness.roundness, m_roundness.segments, ColorBrightness(bgColor, 0.069f)
             );
 
          DrawRectangleRoundedLinesEx(
-            m_bounds, m_roundness.roundness, m_roundness.segments, 2, ColorBrightness(buttonColor, -0.12f)
+            m_bounds, m_roundness.roundness, m_roundness.segments, 2, ColorBrightness(bgColor, -0.12f)
          );
       }
 
@@ -66,10 +66,10 @@ namespace GUI
    Button::Button(
       Rectangle exactBounds,
       const char* text,
-      Color buttonColor, Color contentColor,
+      Color bgColor, Color contentColor,
       int fontSize, Roundness roundness,  // default args
       Font font
-   ) : m_bounds(exactBounds), m_roundness(roundness), m_text(text), m_fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), m_font(font)
+   ) : m_bounds(exactBounds), m_roundness(roundness), m_text(text), m_fontSize(fontSize), bgColor(bgColor), contentColor(contentColor), m_font(font)
    {
       Vector2 textSize = MeasureTextEx(m_font, text, m_fontSize, 1);
       float x = (m_bounds.width - textSize.x) / 2;
@@ -82,10 +82,10 @@ namespace GUI
    Button::Button(
       Vector2 origin, Vector2 padding, 
       const char* text, 
-      Color buttonColor, Color contentColor,
+      Color bgColor, Color contentColor,
       int fontSize, Roundness roundness, // default args
       Font font
-   ) : m_roundness(roundness),m_text(text), m_fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), m_font(font)
+   ) : m_roundness(roundness),m_text(text), m_fontSize(fontSize), bgColor(bgColor), contentColor(contentColor), m_font(font)
    {
       setOrigin(origin);
       setPadding({ padding.x, padding.x }, { padding.y, padding.y });
@@ -95,10 +95,10 @@ namespace GUI
       Vector2 origin, 
       Vector2 horizPadding, Vector2 vertPadding, 
       const char* text, 
-      Color buttonColor, Color contentColor,
+      Color bgColor, Color contentColor,
       int fontSize, Roundness roundness, // default args
       Font font
-   ) : m_roundness(roundness), m_text(text), m_fontSize(fontSize), buttonColor(buttonColor), contentColor(contentColor), m_font(font)
+   ) : m_roundness(roundness), m_text(text), m_fontSize(fontSize), bgColor(bgColor), contentColor(contentColor), m_font(font)
    {
       setOrigin(origin);
       setPadding(horizPadding, vertPadding);
@@ -168,9 +168,9 @@ namespace GUI
       recalculateLayout();
    }
 
-   void Button::setFocus(bool isFocused, Color buttonColor, Color contentColor) {
+   void Button::setFocus(bool isFocused, Color bgColor, Color contentColor) {
       this->isFocused = isFocused;
-      this->buttonColor = buttonColor;
+      this->bgColor = bgColor;
       this->contentColor = contentColor;
    }
 
@@ -226,7 +226,7 @@ bool GUI::operator==(const GUI::Button& first, const GUI::Button& second) {
    return (
       first.m_text == second.m_text &&
       first.m_fontSize == second.m_fontSize &&
-      first.buttonColor == second.buttonColor &&
+      first.bgColor == second.bgColor &&
       first.contentColor == second.contentColor &&
       first.m_bounds == second.m_bounds &&
       first.m_horizontalPadding == second.m_horizontalPadding &&

@@ -124,6 +124,17 @@ void GameLayer::OnRender() {
 
    m_gobackButton.Draw();
    m_settingsButton.Draw();
+
+   // if theme is changed, we must update the colors
+   static Palette::Mode previous = Palette::Current;
+   if(previous != Palette::Current) {
+      m_plusButton.bgColor = Palette::game_button_bg;
+      m_plusButton.contentColor = Palette::game_button_text;
+      m_hintButton.bgColor = Palette::game_button_bg;
+      m_hintButton.contentColor = Palette::game_button_text;
+   }
+   previous = Palette::Current;
+
    m_plusButton.Draw();
    m_hintButton.Draw();
 

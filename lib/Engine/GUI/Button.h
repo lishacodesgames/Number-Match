@@ -32,7 +32,7 @@ namespace GUI {
       Button(
          Rectangle exactBounds, 
          const char* text, 
-         Color buttonColor, Color contentColor,
+         Color bgColor, Color contentColor,
          int fontSize = 20, Roundness roundness = {0.8f, 8},
          Font font = GetFontDefault()
       );
@@ -42,7 +42,7 @@ namespace GUI {
          Vector2 origin, 
          Vector2 padding, 
          const char* text, 
-         Color buttonColor, Color contentColor,
+         Color bgColor, Color contentColor,
          int fontSize = 20, Roundness roundness = {0.8f, 8},
          Font font = GetFontDefault()
       );
@@ -52,7 +52,7 @@ namespace GUI {
          Vector2 origin,
          Vector2 horizPadding, Vector2 vertPadding,
          const char* text, 
-         Color buttonColor, Color contentColor,
+         Color bgColor, Color contentColor,
          int fontSize = 20, Roundness roundness = {0.8f, 8},
          Font font = GetFontDefault()
       );
@@ -82,7 +82,7 @@ namespace GUI {
       /// even padding
       void setPadding(float padding) { setPadding({ padding, padding }, { padding, padding }); }
 
-      void setFocus(bool isFocused, Color buttonColor, Color contentColor);
+      void setFocus(bool isFocused, Color bgColor, Color contentColor);
    public:
       // -----------------
       // ---- GETTERS ----
@@ -129,7 +129,7 @@ namespace GUI {
       Vector2 m_horizontalPadding;  /// {left, right}
       Vector2 m_verticalPadding;    /// {top, bottom}
    public:
-      Color buttonColor = BLACK, contentColor = WHITE;
+      Color bgColor = BLACK, contentColor = WHITE;
    private:
       // -----------------
       // ---- HELPERS ----

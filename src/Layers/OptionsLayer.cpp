@@ -11,14 +11,14 @@ static constexpr float BANNER_PROPORTION = 0.075f;
 
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
       m_doneButton({ 0, 0 }, { 2, 2 }, "Done", BLANK, Palette::game_nav_color, 20, { 0, 0 }, App::font_semibold),
-      m_gobackButton({ 0, 0 }, { 2, 2 }, "", BLANK, Palette::game_nav_color),
-      m_darkModeToggle({ 0, 0, 30, 15 }, { 0.8f, 8 }, 5, Palette::off_bright_bg, Palette::text_for_off_bright)
+      m_gobackButton({ 0, 0 }, { 2, 2 }, "", BLANK, Palette::game_nav_color)
 {
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
-   setBounds(GetScreenHeight());
+   m_darkModeToggle.bgColor = Palette::off_bright_bg;
+   m_darkModeToggle.knobColor = Palette::shadow_for_off_bright;
 
-   // banners
+   resize(GetScreenHeight());
    setBannerPositions();
 
    // banner icons
@@ -30,11 +30,6 @@ OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
    m_bannerIcons[PREFS] = LoadTexture("assets/icons/options/prefs_24x24.png");
    m_bannerIcons[MATH] = LoadTexture("assets/icons/options/math_24x24.png");
    m_bannerIcons[NO_ADS] = LoadTexture("assets/icons/options/noads_24x24.png");
-
-   // verification
-   for(int i = SETTINGS; i <= NO_ADS; i++)
-      if(!IsTextureValid(m_bannerIcons.at(i)))
-         TraceLog(LOG_ERROR, "Banner icon at index %d failed to load!", i);
 
    // banner names, no map bcz i wanna use indices in iteration
    m_bannerNames[SETTINGS] = "Settings";
@@ -71,6 +66,9 @@ void OptionsLayer::OnEvent(Core::Event& e) {
             Palette::SetDarkMode();
          else
             Palette::SetLightMode();
+
+         m_darkModeToggle.bgColor = Palette::off_bright_bg;
+         m_darkModeToggle.knobColor = Palette::shadow_for_off_bright;
       }
    } else if(e.GetEventType() == Core::EventType::KeyPressed) {
       char key = static_cast<Core::KeyPressedEvent&>(e).key;
@@ -89,7 +87,7 @@ void OptionsLayer::OnEvent(Core::Event& e) {
 
 void OptionsLayer::OnUpdate() {
    if(IsWindowResized()) {
-      setBounds(m_targetY);
+      resize(m_targetY);
       setBannerPositions();
    }
 
@@ -102,7 +100,7 @@ void OptionsLayer::OnUpdate() {
       if(diff < 1.5)                           // within 1.5 pixels
          m_bounds.y = m_targetY;               // snap to target, since %-based approach is an asymptote
 
-      setBounds(m_bounds.y);   
+      resize(m_bounds.y);   
       setBannerPositions();
       return;
    }
@@ -148,7 +146,6 @@ void OptionsLayer::OnRender() {
       renderBlankBanners();
       renderBannerContent();
    } else if(currentPage == Page::Settings) {
-      DrawTextEx(GetFontDefault(), "Hello World!", { m_bounds.x + 20, m_bounds.y + 50 }, 20, 1, PURPLE);
       m_gobackButton.Draw();
       m_darkModeToggle.Draw();
    }
@@ -156,8 +153,13 @@ void OptionsLayer::OnRender() {
 
 #pragma region Helpers
 
-void OptionsLayer::setBounds(float targetY) {
+float absDiff(Vector2 first, Vector2 second) {
+   return (std::abs(first.x - second.x) + std::abs(first.y - second.y)) / 2.0f;
+}
+
+void OptionsLayer::resize(float targetY) {
    m_targetY = GetScreenHeight() / 6;
+   Vector2 oldSize = Vector2{ m_bounds.width, m_bounds.height };
 
    // max aspect ratio of 4 : 3
    float aspect = std::min((float)GetScreenWidth() / GetScreenHeight(), 4.0f / 3.0f);
@@ -167,7 +169,10 @@ void OptionsLayer::setBounds(float targetY) {
       (GetScreenWidth() - width) / 2, targetY,
       width, height
    };
-   
+
+   if(absDiff(oldSize, Vector2{ m_bounds.width, m_bounds.height }) >= 0.5f)
+      LOG_RESIZE("Options panel resized to: %f, %f", m_bounds.width, m_bounds.height);
+
    // panel buttons
    const float panelHeight = m_bounds.height * PANEL_PROPORTION;
 
@@ -183,11 +188,18 @@ void OptionsLayer::setBounds(float targetY) {
       m_bounds.y + (panelHeight - m_gobackButton.getSize().y) / 2
    });
 
-   m_darkModeToggle.setSize({ m_bounds.width / 2.5f, m_bounds.height / 4.0f });
+   Vector2 oldToggleSize = m_darkModeToggle.getSize();
+   Vector2 newToggleSize = { std::max(m_bounds.width / 2.5f, 200.0f), m_bounds.height / 4.0f };
+   m_darkModeToggle.setSize(newToggleSize);
+
+   if(absDiff(oldToggleSize, newToggleSize) >= 0.5f)
+      LOG_RESIZE("Dark mode toggle resized to: %f, %f", newToggleSize.x, newToggleSize.y);
+
    m_darkModeToggle.setOrigin({
-      m_bounds.x + (m_bounds.width - m_darkModeToggle.getSize().x) / 2.0f,
-      m_bounds.y + (m_bounds.height - m_darkModeToggle.getSize().y) / 2.0f
+      m_bounds.x + (m_bounds.width - newToggleSize.x) / 2.0f,
+      m_bounds.y + (m_bounds.height - newToggleSize.y) / 2.0f
    });
+   m_darkModeToggle.setPadding(std::min(newToggleSize.x, newToggleSize.y) * 0.075f);
 }
 
 void OptionsLayer::setBannerPositions() {

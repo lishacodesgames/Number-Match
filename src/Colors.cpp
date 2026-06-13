@@ -7,6 +7,7 @@ namespace Palette
 
    void SetLightMode() {
       Current = Mode::Light;
+      TraceLog(LISHA_SAYS, "THEME: Light Mode set");
 
       bright_bg = WHITE;
       shadow_for_bright = LIGHTGRAY;
@@ -51,6 +52,7 @@ namespace Palette
 
    void SetDarkMode() {
       Current = Mode::Dark;
+      TraceLog(LISHA_SAYS, "THEME: Dark Mode set");
 
       bright_bg = Color{ 28, 32, 40, 255 };
       shadow_for_bright = Color{ 70, 75, 90, 255 };
