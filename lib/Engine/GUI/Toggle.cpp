@@ -13,7 +13,7 @@ namespace GUI
 
       // update active flag
       if(IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && isHovered)
-         m_state = !m_state;
+         setState(!m_state);
    }
 
    void Toggle::Draw() const {

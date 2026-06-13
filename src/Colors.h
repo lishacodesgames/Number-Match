@@ -12,8 +12,11 @@ constexpr Color BLIZZARDBLUE = { 172, 229, 238, 255 };  /// A pleasant pale ligh
 constexpr Color BRIGHTSKYBLUE = { 42, 187, 235, 255 };  /// Bright lightblue
 
 namespace Palette {
+   enum class Mode { Light = 0, Dark = 1 };
+
    void SetLightMode();
    void SetDarkMode();
+   extern Mode Current;
 
    // default is purple bcz it's not used anywhere else
    extern Color bright_bg;

@@ -2,6 +2,7 @@
 #include "Core/Event.h"
 #include "Core/Layer.h"
 #include "GUI/Button.h"
+#include "GUI/Toggle.h"
 
 #include <raylib.h>
 #include <string>
@@ -26,6 +27,7 @@ private:
 
    float m_targetY = 0.0f;
    Rectangle m_bounds = {};
+
    GUI::Button m_doneButton;
 
    std::array<Rectangle, 8> m_banners;
@@ -40,6 +42,7 @@ private:
 private:
    // per page members
    GUI::Button m_gobackButton;
+   GUI::Toggle m_darkModeToggle;
 private:
    void setBounds(float targetY);  /// @param init whether to apply targetY or not (for animation)
    void setBannerPositions();

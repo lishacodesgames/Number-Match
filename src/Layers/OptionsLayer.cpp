@@ -11,7 +11,8 @@ static constexpr float BANNER_PROPORTION = 0.075f;
 
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
       m_doneButton({ 0, 0 }, { 2, 2 }, "Done", BLANK, Palette::game_nav_color, 20, { 0, 0 }, App::font_semibold),
-      m_gobackButton({ 0, 0 }, { 2, 2 }, "", BLANK, Palette::game_nav_color)
+      m_gobackButton({ 0, 0 }, { 2, 2 }, "", BLANK, Palette::game_nav_color),
+      m_darkModeToggle({ 0, 0, 30, 15 }, { 0.8f, 8 }, 5, Palette::off_bright_bg, Palette::text_for_off_bright)
 {
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
@@ -65,6 +66,11 @@ void OptionsLayer::OnEvent(Core::Event& e) {
          e.Handled = true;
       } else if(m_gobackButton.isHovered) {
          currentPage = Page::Options;
+      } else if(m_darkModeToggle.isHovered) {
+         if(Palette::Current == Palette::Mode::Light)
+            Palette::SetDarkMode();
+         else
+            Palette::SetLightMode();
       }
    } else if(e.GetEventType() == Core::EventType::KeyPressed) {
       char key = static_cast<Core::KeyPressedEvent&>(e).key;
@@ -102,8 +108,10 @@ void OptionsLayer::OnUpdate() {
    }
 
    m_doneButton.Update();
-   if(currentPage == Page::Settings)
+   if(currentPage == Page::Settings) {
       m_gobackButton.Update();
+      m_darkModeToggle.Update();
+   }
 
    if(m_doneButton.isHovered || m_gobackButton.isHovered || getHoveredBannerIndex() != -1)
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
@@ -142,6 +150,7 @@ void OptionsLayer::OnRender() {
    } else if(currentPage == Page::Settings) {
       DrawTextEx(GetFontDefault(), "Hello World!", { m_bounds.x + 20, m_bounds.y + 50 }, 20, 1, PURPLE);
       m_gobackButton.Draw();
+      m_darkModeToggle.Draw();
    }
 }
 
@@ -172,6 +181,12 @@ void OptionsLayer::setBounds(float targetY) {
    m_gobackButton.setOrigin({
       m_bounds.x + m_gobackButton.getSize().x * 0.75f,
       m_bounds.y + (panelHeight - m_gobackButton.getSize().y) / 2
+   });
+
+   m_darkModeToggle.setSize({ m_bounds.width / 2.5f, m_bounds.height / 4.0f });
+   m_darkModeToggle.setOrigin({
+      m_bounds.x + (m_bounds.width - m_darkModeToggle.getSize().x) / 2.0f,
+      m_bounds.y + (m_bounds.height - m_darkModeToggle.getSize().y) / 2.0f
    });
 }
 

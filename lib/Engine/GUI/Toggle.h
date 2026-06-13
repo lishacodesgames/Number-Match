@@ -25,7 +25,7 @@ namespace GUI {
       Toggle(
          const Rectangle& bounds, Roundness roundness, float padding,
          Color bg = LIGHTGRAY, Color knob = RED
-      ) : m_bounds(bounds), roundness(roundness), m_padding(padding), bgColor(bg), knobColor(knob)
+      ) : bgColor(bg), knobColor(knob), roundness(roundness), m_bounds(bounds), m_padding(padding)
          { setKnob(); }
 
    public:
@@ -49,6 +49,7 @@ namespace GUI {
          setKnob();
       }
 
+      /// @todo add animation
       void setState(bool state) {
          m_state = state;
          setKnob();

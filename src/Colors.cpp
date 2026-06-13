@@ -3,7 +3,11 @@
 
 namespace Palette
 {
+   Mode Current = Mode::Dark;
+
    void SetLightMode() {
+      Current = Mode::Light;
+
       bright_bg = WHITE;
       shadow_for_bright = LIGHTGRAY;
       text_for_bright = ColorAlpha(DARKERGRAY, 0.98f);
@@ -46,6 +50,8 @@ namespace Palette
    }
 
    void SetDarkMode() {
+      Current = Mode::Dark;
+
       bright_bg = Color{ 28, 32, 40, 255 };
       shadow_for_bright = Color{ 70, 75, 90, 255 };
       text_for_bright = Color{ 235, 238, 245, 255 };
