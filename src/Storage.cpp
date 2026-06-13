@@ -51,8 +51,6 @@ void Storage::save() {
    if(!save.is_open()) return;
    save << j.dump(3);
    save.close();
-
-   TraceLog(LISHA_SAYS, "\nGame info saved:\n%s", j.dump(3).c_str());
 }
 
 void Storage::save(uint32_t stage, std::array<bool, 9> numbersCleared, uint32_t currentScore) {
