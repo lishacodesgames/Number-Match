@@ -49,8 +49,8 @@ namespace Palette {
 
    extern Color gridcell_hover;
    extern Color gridcell_focus;
-   extern Color gridcell_matched;
-   extern Color gridcell_not_matched;
+   extern Color gridnum_matched;
+   extern Color gridnum_not_matched;
    extern Color gridbox_color;
 
    extern Color grid_scroll_thumb;

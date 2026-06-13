@@ -232,11 +232,12 @@ void GameLayer::handleMatch(GridCell* cell) {
    if(m_grid.isRowClear(row1))
       m_grid.clearRow(row1);
    
-   if(row1 != row2 && m_grid.isRowClear(row2)) {
+   if(row1 != row2) {
       if(row2 > row1)
          row2--;
-
-      m_grid.clearRow(row2);
+      
+      if(m_grid.isRowClear(row2))
+         m_grid.clearRow(row2);
    }
 
    m_grid.focusedCell = nullptr;

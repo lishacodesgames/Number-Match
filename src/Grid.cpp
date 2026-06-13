@@ -72,19 +72,19 @@ void Grid::Draw() const {
          // state cases
          switch(cell.getState()) {
             case CellState::Rest:
-               numColor = Palette::gridcell_not_matched;
+               numColor = Palette::gridnum_not_matched;
                bgColor = Palette::off_bright_bg;
                break;
             case CellState::Hovered:
-               numColor = Palette::gridcell_not_matched;
+               numColor = Palette::gridnum_not_matched;
                bgColor = Palette::gridcell_hover;
                break;
             case CellState::Focused:
-               numColor = Palette::gridcell_not_matched;
+               numColor = Palette::gridnum_not_matched;
                bgColor = Palette::gridcell_focus;
                break;
             case CellState::Matched:
-               numColor = Palette::gridcell_matched;
+               numColor = Palette::gridnum_matched;
                bgColor = Palette::off_bright_bg;
                break;
          }

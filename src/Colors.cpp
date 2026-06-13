@@ -42,8 +42,8 @@ namespace Palette
       
       gridcell_hover = ColorAlpha(BLIZZARDBLUE, 0.5f);
       gridcell_focus = ColorAlpha(SKYBLUE, 0.5f);
-      gridcell_matched = LIGHTGRAY;
-      gridcell_not_matched = BLACK;
+      gridnum_matched = LIGHTGRAY;
+      gridnum_not_matched = Color{ 122, 5, 26, 255 };
       gridbox_color = ColorAlpha(DARKGRAY, 0.8f);
       
       grid_scroll_thumb = GRAY;
@@ -87,8 +87,9 @@ namespace Palette
       
       gridcell_hover = Color{ 76, 109, 138, 127 };
       gridcell_focus = Color{ 118, 149, 173, 127 };
-      gridcell_matched = Color{ 65, 75, 90, 255 };
-      gridcell_not_matched = Color{ 255, 87, 87, 255 };
+      gridnum_matched = Color{ 65, 75, 90, 255 };
+      // gridnum_not_matched = Color{ 255, 87, 87, 255 };
+      gridnum_not_matched = Color{ 255, 168, 128, 255 };
       gridbox_color = Color{ 120, 140, 180, 90 };
       
       grid_scroll_thumb = Color{ 140, 150, 170, 255 };
@@ -128,8 +129,8 @@ namespace Palette
 
    Color gridcell_hover = PURPLE;
    Color gridcell_focus = PURPLE;
-   Color gridcell_matched = PURPLE;
-   Color gridcell_not_matched = PURPLE;
+   Color gridnum_matched = PURPLE;
+   Color gridnum_not_matched = PURPLE;
    Color gridbox_color = PURPLE;
 
    Color grid_scroll_thumb = PURPLE;
