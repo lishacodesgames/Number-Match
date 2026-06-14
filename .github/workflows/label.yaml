@@ -1,0 +1,17 @@
+name: Change label on close
+
+on:
+   issues:
+      types: [closed]
+
+jobs:
+   fix-label:
+      runs-on: ubuntu-latest
+      permissions:
+         issues: write
+      steps:
+         -  name: Add "Done" and remove "In-Progress"
+            run: |
+               gh issue edit ${{ github.event.issue.number }} --add-label "Done" --remove-label "In-Progress" --repo "$GITHUB_REPOSITORY"
+            env:
+               GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
