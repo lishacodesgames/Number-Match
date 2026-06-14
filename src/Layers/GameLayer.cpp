@@ -11,12 +11,14 @@
 
 /// @todo make scoring system into an enum class (diagonal matches > non-adjacent matches > adjacent matches)
 
-GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
+GameLayer::GameLayer() : Core::Layer("Game Layer"),
       m_gobackButton({ 15, 15 }, { 6, 1 }, { 1, 1 }, "", BLANK, Palette::game_nav_color, 20, { 0, 0 }),
       m_settingsButton({ 0, 0 }, { 1, 1 }, "", BLANK, Palette::game_nav_color, 20, { 0, 0 }),
       m_plusButton({ 0, 0 }, { 12, 10 }, "", Palette::game_button_bg, Palette::game_button_text, 25, { 1.0f, 8 }),
       m_hintButton({ 0, 0 }, { 12, 10 }, "", Palette::game_button_bg, Palette::game_button_text, 25, { 1.0f, 8 }) 
 {
+   TraceLog(LISHA_SAYS, "Loading a new game...");
+
    m_trophyImage = LoadImage("assets/icons/game/trophy_16x16.png");
    m_trophyTexture = LoadTextureFromImage(m_trophyImage);
    m_tickImage = LoadImage("assets/icons/game/tick_16x16.png");
@@ -29,11 +31,12 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
 
    resize();
 
-   if(reset) {
-      Storage::stage = 1;
-      Storage::numbersCleared.fill(false);
-      Storage::currentScore = 0;
-   }
+   /// @todo add new vs continue distinction
+   Storage::stage = 1;
+   Storage::numbersCleared.fill(false);
+   Storage::currentScore = 0;
+
+   TraceLog(LISHA_SAYS, "New game loaded!");
 }
 
 #pragma region Methods
@@ -170,6 +173,9 @@ void GameLayer::OnRender() {
    );
 
    // Numbers Cleared
+
+   /// @bug fix number width — make it equal to tick texture for each num, center each num so it feels equal
+   /// and doesn't change the position of nums every time a number is cleared
    float numbersTagWidth = MeasureTextEx(App::font_retro, "Numbers Cleared", tagFontSize, infoFontSpacing).x;
    float numbersTagX = m_grid.box.x + m_grid.box.width / 2 - numbersTagWidth / 2;
    DrawTextEx(App::font_retro, "Numbers Cleared", { numbersTagX, tagY }, tagFontSize, infoFontSpacing, Palette::game_info_color);
@@ -227,6 +233,17 @@ void GameLayer::OnResume() {
 void GameLayer::handleMatch(GridCell* cell) {
    m_grid.focusedCell->setState(CellState::Matched);
    cell->setState(CellState::Matched);
+   
+   /// @bug cell in the middle of the grid becomes blank
+
+   // check if either cell's number is clear
+   int num1 = m_grid.focusedCell->value;
+   int num2 = cell->value;
+
+   if(m_grid.isNumClear(num1))
+      Storage::numbersCleared[num1 - 1] = true;
+   if(num1 != num2 && m_grid.isNumClear(num2))
+      Storage::numbersCleared[num2 - 1] = true;
 
    // check if either cell's row is clear
    int row1 = m_grid.getCellPos(m_grid.focusedCell).first;
@@ -238,7 +255,7 @@ void GameLayer::handleMatch(GridCell* cell) {
    if(row1 != row2) {
       if(row2 > row1)
          row2--;
-      
+
       if(m_grid.isRowClear(row2))
          m_grid.clearRow(row2);
    }

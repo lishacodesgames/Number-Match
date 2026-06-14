@@ -137,8 +137,6 @@ namespace GUI {
       void recalculateLayout();
       friend bool operator==(const Button& first, const Button& second);
    };
-
-   bool operator==(const Button& first, const Button& second);
 }  // namespace GUI
 
 bool operator==(const Color& first, const Color& second);

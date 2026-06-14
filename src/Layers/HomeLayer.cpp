@@ -45,13 +45,11 @@ void HomeLayer::OnEvent(Core::Event& e) {
 
       Core::Layer* game = App::GetLayerByName("Game Layer");
 
-      if(activeButton == &m_continueButton)  // continue pressed & previous game exists
-         if(game)
-            game->OnResume();
-         else
-            App::QueueLayerPush(new GameLayer(false));
-      else  // new pressed or continue pressed but there was no previous game (hence suspended is false)
-         App::QueueLayerPush(new GameLayer(true));
+      if(activeButton == &m_continueButton && game)  // continue pressed & previous game exists
+         game->OnResume();
+      /// @todo add loading from storage for continue button instead of making new game
+      else  // new pressed or continue pressed but there was no previous game
+         App::QueueLayerPush(new GameLayer());
 
       e.Handled = true;
    }

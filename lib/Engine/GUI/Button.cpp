@@ -225,32 +225,29 @@ namespace GUI
 
 #pragma region Operators
 bool GUI::operator==(const GUI::Button& first, const GUI::Button& second) {
-   return (
+   return
       first.m_text == second.m_text &&
       first.m_fontSize == second.m_fontSize &&
       first.bgColor == second.bgColor &&
       first.contentColor == second.contentColor &&
       first.m_bounds == second.m_bounds &&
       first.m_horizontalPadding == second.m_horizontalPadding &&
-      first.m_verticalPadding == second.m_verticalPadding
-   );
+      first.m_verticalPadding == second.m_verticalPadding;
 }
 
 bool operator==(const Color& first, const Color& second) {
-   return (
+   return
       first.r == second.r &&
       first.g == second.g &&
       first.b == second.b &&
-      first.a == second.a
-   );
+      first.a == second.a;
 }
 
 bool operator==(const Rectangle& first, const Rectangle& second) {
-   return (
+   return
       first.x == second.x &&
       first.y == second.y &&
       first.width == second.width &&
-      first.height == second.height
-   );
+      first.height == second.height;
 }
 #pragma endregion

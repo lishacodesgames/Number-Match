@@ -6,7 +6,7 @@
 
 class GameLayer : public Core::Layer {
 public:
-   GameLayer(bool reset); /// @param reset : if true, resets the storage saves, otherwise loads game layer with existing info.
+   GameLayer();
    ~GameLayer() = default;
 
    void OnAttach() override {

@@ -55,7 +55,7 @@ void Storage::save() {
    s << gamesave;
    s.close();
 
-   TraceLog(LISHA_SAYS, "Game info saved at:\n%s", gamesave);
+   TraceLog(LISHA_SAYS, "Game info saved at:\n%s", gamesave.c_str());
 }
 
 void Storage::saveWindow(int width, int height) {

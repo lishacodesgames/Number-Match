@@ -2,6 +2,7 @@
 #include "Grid.h"
 
 #include "Layers/CoinLayer.h"
+#include "Storage.h"
 #include "Colors.h"
 #include "App.h"
 
@@ -188,17 +189,30 @@ void Grid::clearRow(int row) {
 }
 
 bool Grid::isRowClear(int row) {
-   for(const GridCell& cell : m_grid.at(row)) {
-      if(cell.getState() != CellState::Matched && cell.value != 0)
+   for(const GridCell& cell : m_grid.at(row))
+      if(cell.getState() != CellState::Matched && cell != 0)
          return false;
-   }
+
+   return true;
+}
+
+bool Grid::isNumClear(int num) {
+   if(Storage::numbersCleared.at(num - 1))
+      return true;
+
+   for(const auto& row : m_grid)
+      for(const GridCell& cell : row)
+         if(cell == num) // operator also checks if both are unmatched
+            return false;
+
+   TraceLog(LISHA_SAYS, "%d CLEARED!", num);
    return true;
 }
 
 void Grid::setCellBounds(GridCell* cell) {
    std::pair<int, int> pos = getCellPos(cell);
    cell->bounds = {
-      box.x + pos.second * GridCell::cellSize,  // x
+      box.x + pos.second * GridCell::cellSize, // x
       box.y + pos.first * GridCell::cellSize,  // y
       GridCell::cellSize, GridCell::cellSize
    };
@@ -219,18 +233,15 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
    if(!focusedCell)
       return false;
 
-   GridCell cell1 = *focusedCell;
+   // no const bcz I call std::swap
+   GridCell& cell1 = *focusedCell;
    GridCell cell2 = m_grid.at(pos.first).at(pos.second);
    std::pair<int, int> pos1 = getCellPos(focusedCell);
-   std::pair<int, int> pos2 = pos;
-
-   if(cell1.getState() == CellState::Matched || cell2.getState() == CellState::Matched)
-      return false;  // matched cells are not compatible with any cell
+   std::pair<int, int>& pos2 = pos;
 
    // 1. Value Compatibility
    bool areValuesCompatible =  // cells sum to 10 or are equal but are not empty.
-         (cell1 + cell2 == 10) ||
-         (cell1 == cell2 && cell1 != 0);
+         (cell1 + cell2 == 10 || cell1 == cell2) && cell1 != 0;
    if(!areValuesCompatible)
       return false;
 

@@ -36,6 +36,7 @@ struct Grid {
 
    void clearRow(int row);
    bool isRowClear(int row); /// @return true IF all cells in row are either matched or empty (value = 0)
+   bool isNumClear(int num); /// @return true IF no instance of num found in grid
 
    // --- iteration ---
    inline auto begin() { return m_grid.begin(); }
@@ -66,5 +67,13 @@ private:
 
 inline int operator+(const GridCell& a, const GridCell& b) { return a.value + b.value; }
 
-inline bool operator==(const GridCell& a, const GridCell& b) { return a.value == b.value; }
-inline bool operator==(const GridCell& a, int b) { return a.value == b; }
+inline bool operator==(const GridCell& a, int b) {
+   return a.value == b && a.getState() != CellState::Matched;
+}
+
+inline bool operator==(const GridCell& a, const GridCell& b) {
+   return
+      a.value == b.value &&
+      a.getState() != CellState::Matched &&
+      b.getState() != CellState::Matched;
+}
