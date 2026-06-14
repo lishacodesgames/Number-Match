@@ -29,8 +29,11 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"),
 
    resize();
 
-   if(reset)
-      Storage::save(1, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 0);  // reset storage to default values
+   if(reset) {
+      Storage::stage = 1;
+      Storage::numbersCleared.fill(false);
+      Storage::currentScore = 0;
+   }
 }
 
 #pragma region Methods

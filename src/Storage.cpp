@@ -15,19 +15,20 @@ uint32_t Storage::stage = 1;
 fs::file_time_type Storage::lastSaveTime = fs::file_time_type::min();
 
 void Storage::load() {
-   std::ifstream save("assets/save.json");
-   if(!save.is_open()) {
-      TraceLog(LOG_ERROR, "Error opening save file for parse!");
+   std::ifstream s("assets/save.json");
+   if(!s.is_open()) {
+      TraceLog(LISHA_SAYS, "Game save file not found! Using default values...");
+      save();
       return;
    }
    json j;
    try {
-      save >> j;
+      s >> j;
    } catch(const std::exception& e) {
       TraceLog(LOG_ERROR, "Error parsing save file: %s", e.what());
       return;
    }
-   save.close();
+   s.close();
 
    bestScore = j["bestScore"].get<uint32_t>();
    coins = j["coins"].get<uint32_t>();
@@ -47,18 +48,14 @@ void Storage::save() {
    j["numbersCleared"] = numbersCleared;
    j["stage"] = stage;
 
-   std::ofstream save("assets/save.json");
-   if(!save.is_open()) return;
-   save << j.dump(3);
-   save.close();
-}
+   std::ofstream s("assets/save.json");
+   if(!s.is_open()) return;
 
-void Storage::save(uint32_t stage, std::array<bool, 9> numbersCleared, uint32_t currentScore) {
-   Storage::stage = stage;
-   Storage::numbersCleared = numbersCleared;
-   Storage::currentScore = currentScore;
+   std::string gamesave = j.dump(3);
+   s << gamesave;
+   s.close();
 
-   save();  // call default save to write updated storage info to file
+   TraceLog(LISHA_SAYS, "Game info saved at:\n%s", gamesave);
 }
 
 void Storage::saveWindow(int width, int height) {
@@ -67,31 +64,31 @@ void Storage::saveWindow(int width, int height) {
    j["width"] = width;
    j["height"] = height;
 
-   std::ofstream window("assets/window.json");
-   if(!window.is_open()) return;
-   window << j.dump(3);
-   window.close();
+   std::ofstream s("assets/window.json");
+   if(!s.is_open()) return;
+   s << j.dump(3);
+   s.close();
 
    TraceLog(LISHA_SAYS, "Window size saved at: %d x %d", width, height);
 }
 
 std::pair<int, int> Storage::getWindowSize() {
-   std::ifstream window("assets/window.json");
+   std::ifstream s("assets/window.json");
 
-   if(!window.is_open()) {
-      TraceLog(LISHA_SAYS, "Error opening window save file for parse! Using default values...");
-      Storage::saveWindow(800, 650);
+   if(!s.is_open()) {
+      TraceLog(LISHA_SAYS, "Window save file not found! Using default values...");
+      saveWindow(800, 650);
       return { 800, 650 };
    }
 
    json j;
    try {
-      window >> j;
+      s >> j;
    } catch(const std::exception& e) {
       TraceLog(LOG_ERROR, "Error parsing window save file: %s", e.what());
       return { 800, 650 };
    }
-   window.close();
+   s.close();
 
    int width = j["width"].get<int>();
    int height = j["height"].get<int>();

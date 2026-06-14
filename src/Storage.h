@@ -18,10 +18,9 @@ struct Storage {
    static std::string formatCurrentScore() { return format(currentScore); }
 
    static std::filesystem::file_time_type lastSaveTime;
-   static void load(); /// update score, numbersCleared and stage from file to storage
+   static void load(); /// update storage variables from file
 
-   static void save(); /// update file with score, numbersCleared and stage from storage
-   static void save(uint32_t stage, std::array<bool, 9> numbersCleared, uint32_t currentScore); /// for saving game info
+   static void save(); /// update file with storage variables
 
    // only for App to call
    static void saveWindow(int width, int height);
