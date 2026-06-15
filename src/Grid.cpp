@@ -15,13 +15,17 @@ Grid::Grid() : focusedCell(nullptr),
    m_grid.assign(9, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }),  // 9 rows of all blank cells
    srand(time(0));
 
+   Storage::numbersCleared.fill(true);
+   int value;
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          if(row < 3 || (row == 3 && col < 5)) // first 3 rows & half of 4th row
-            m_grid[row][col].value = 1 + rand() % 9;
+            value = 1 + rand() % 9;
          else
-            m_grid[row][col].value = 0;
+            value = 0;
+         Storage::numbersCleared[value - 1] = false;
 
+         m_grid[row][col].value = value;
          m_grid[row][col].setState(CellState::Rest);
       }
    }

@@ -33,8 +33,8 @@ GameLayer::GameLayer() : Core::Layer("Game Layer"),
 
    /// @todo add new vs continue distinction
    Storage::stage = 1;
-   Storage::numbersCleared.fill(false);
    Storage::currentScore = 0;
+   // numbersCleared initalisation is handled by Grid constructor
 
    TraceLog(LISHA_SAYS, "New game loaded!");
 }
@@ -148,10 +148,10 @@ void GameLayer::OnRender() {
    Rectangle gameInfoBox = { m_grid.box.x, m_grid.box.y - GridCell::cellSize * 0.7f, m_grid.box.width, GridCell::cellSize * 0.7f };
 
    float tagY = gameInfoBox.y - gameInfoBox.height * 0.10f;
-   float tagFontSize = gameInfoBox.height * 0.5f;
+   float tagFontSize = gameInfoBox.height * 0.55f;
 
    float infoFontSpacing = 0.98f;
-   float infoFontSize = tagFontSize * 0.90f;
+   float infoFontSize = tagFontSize * 0.94f;
    float infoY = m_grid.box.y - infoFontSize * 1.1f;
 
    // Stage
@@ -174,43 +174,27 @@ void GameLayer::OnRender() {
 
    // Numbers Cleared
 
-   /// @bug fix number width — make it equal to tick texture for each num, center each num so it feels equal
-   /// and doesn't change the position of nums every time a number is cleared
    float numbersTagWidth = MeasureTextEx(App::font_retro, "Numbers Cleared", tagFontSize, infoFontSpacing).x;
    float numbersTagX = m_grid.box.x + m_grid.box.width / 2 - numbersTagWidth / 2;
    DrawTextEx(App::font_retro, "Numbers Cleared", { numbersTagX, tagY }, tagFontSize, infoFontSpacing, Palette::game_info_color);
 
-   // measure
-   float allNumsWidth = 0.0f;
-   const float padding = MeasureTextEx(App::font_semibold, "5", infoFontSize, infoFontSpacing).x * 0.5f;
-   for(uint32_t i = 0; i < 9; i++) {
-      float thisNumWidth = 0.0f;
-      if(Storage::numbersCleared.at(i))
-         thisNumWidth = m_tickTexture.width;
-      else
-         thisNumWidth = MeasureTextEx(App::font_semibold, std::to_string(i + 1).c_str(), infoFontSize, infoFontSpacing).x;
-      
-      allNumsWidth += thisNumWidth + (i == 8 ? 0 : padding); // add padding after every number except the last one
-   }
+   float numAndPadWidth = m_tickTexture.width * 1.15f; // 50% width for padding per num
+   float allNumsWidth = numAndPadWidth * 9 - m_tickTexture.width * 0.5f; // 8 pads for 9 nums
+   float numX = m_grid.box.x + (m_grid.box.width - allNumsWidth) / 2;
 
-   // draw
-   const float firstNumX = m_grid.box.x + (m_grid.box.width - allNumsWidth) / 2;
-   float soFarX = firstNumX;
-   for(uint32_t i = 0; i < 9; i++) {
+   for(int i = 0; i < 9; i++) {
       std::string num = std::to_string(i + 1);
-      float thisNumWidth;
 
+      // DrawRectangleLines(numX, infoY, m_tickTexture.width, m_tickTexture.height, RED);
       if(Storage::numbersCleared.at(i)) {
-         DrawTexture(m_tickTexture, soFarX, infoY, Palette::game_info_color);
-         thisNumWidth = m_tickTexture.width;
+         DrawTexture(m_tickTexture, numX, infoY, Palette::game_info_color);
       } else {
-         DrawTextEx(
-            App::font_semibold, num.c_str(), { soFarX, infoY },
-            infoFontSize, infoFontSpacing, Palette::game_info_color);
-         thisNumWidth = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, infoFontSpacing).x;
+         Vector2 numSize = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, infoFontSpacing);
+         Vector2 numPos = { numX + (m_tickTexture.width - numSize.x) / 2, infoY + (m_tickTexture.height - numSize.y) / 2 };
+         DrawTextEx(App::font_semibold, num.c_str(), numPos, infoFontSize, infoFontSpacing, Palette::game_info_color);
       }
 
-      soFarX += thisNumWidth + padding;
+      numX += numAndPadWidth;
    }
 
    // Current Score
