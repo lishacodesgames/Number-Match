@@ -11,6 +11,8 @@
 
 /// @todo make scoring system into an enum class (diagonal matches > non-adjacent matches > adjacent matches)
 
+std::array<Vector2, 9> numSizes{};
+
 GameLayer::GameLayer() : Core::Layer("Game Layer"),
       m_gobackButton({ 15, 15 }, { 6, 1 }, { 1, 1 }, "", BLANK, Palette::game_nav_color, 20, { 0, 0 }),
       m_settingsButton({ 0, 0 }, { 1, 1 }, "", BLANK, Palette::game_nav_color, 20, { 0, 0 }),
@@ -63,8 +65,7 @@ void GameLayer::OnEvent(Core::Event& e) {
          } else if(activeButton == &m_settingsButton) {
             OnSuspend(true);  // suspend but render
             App::QueueLayerPush(new OptionsLayer());
-         }
-         else if(activeButton == &m_plusButton)
+         } else if(activeButton == &m_plusButton)
             m_grid.plus();
          else if(activeButton == &m_hintButton)
             TraceLog(LISHA_SAYS, "HINT");  // temp
@@ -83,9 +84,10 @@ void GameLayer::OnEvent(Core::Event& e) {
                if(m_grid.focusedCell)
                   m_grid.focusedCell->setState(CellState::Rest);
 
-               m_grid.focusedCell = activeCell;
-               if(*activeCell != 0) // empty cells cannot be focused
+               if(*activeCell != 0) { // empty cells cannot be focused
+                  m_grid.focusedCell = activeCell;
                   activeCell->setState(CellState::Focused);
+               }
             }
          } else {  // clicking the already focused cell should deselect it
             activeCell->setState(CellState::Hovered);
@@ -130,14 +132,15 @@ void GameLayer::OnRender() {
    m_settingsButton.Draw();
 
    // if theme is changed, we must update the colors
+   /// @todo I don't like this. Pls fix
    static bool previous = Storage::isDarkMode;
    if(previous != Storage::isDarkMode) {
       m_plusButton.bgColor = Palette::game_button_bg;
       m_plusButton.contentColor = Palette::game_button_text;
       m_hintButton.bgColor = Palette::game_button_bg;
       m_hintButton.contentColor = Palette::game_button_text;
+      previous = Storage::isDarkMode;
    }
-   previous = Storage::isDarkMode;
 
    m_plusButton.Draw();
    m_hintButton.Draw();
@@ -146,37 +149,43 @@ void GameLayer::OnRender() {
 
    // Game info
    Rectangle gameInfoBox = { m_grid.box.x, m_grid.box.y - GridCell::cellSize * 0.7f, m_grid.box.width, GridCell::cellSize * 0.7f };
+   float spacing = 0.98f;
 
    float tagY = gameInfoBox.y - gameInfoBox.height * 0.10f;
    float tagFontSize = gameInfoBox.height * 0.55f;
 
-   float infoFontSpacing = 0.98f;
    float infoFontSize = tagFontSize * 0.94f;
    float infoY = m_grid.box.y - infoFontSize * 1.1f;
 
    // Stage
-   DrawTextEx(App::font_retro, "Stage", { m_grid.box.x, tagY }, tagFontSize, infoFontSpacing, Palette::game_info_color);
-   DrawTextEx(App::font_semibold, std::to_string(Storage::stage).c_str(), { m_grid.box.x + 5, infoY }, infoFontSize + 3, infoFontSpacing, Palette::game_info_color);
-
-   float scoreTagWidth = MeasureTextEx(App::font_retro, "Best Score", tagFontSize, infoFontSpacing).x;
-   float scoreTagX = m_grid.box.x + m_grid.box.width - scoreTagWidth;
-   float scoreValueWidth = MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), infoFontSize, infoFontSpacing).x;
-   float scoreInfoX = m_grid.box.x + m_grid.box.width - scoreValueWidth - m_trophyTexture.width - 2;
+   DrawTextEx(
+      App::font_retro, "Stage", { m_grid.box.x, tagY },
+      tagFontSize, spacing, Palette::game_info_color);
+   DrawTextEx(
+      App::font_semibold, std::to_string(Storage::stage).c_str(), { m_grid.box.x + 5, infoY },
+      infoFontSize + 3, spacing, Palette::game_info_color);
 
    // Best Score
-   DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, infoFontSpacing, Palette::game_info_color);
+   float scoreTagX =
+      m_grid.box.x + m_grid.box.width
+         - MeasureTextEx(App::font_retro, "Best Score", tagFontSize, spacing).x;
+   float scoreInfoX =
+      m_grid.box.x + m_grid.box.width
+         - MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), infoFontSize, spacing).x
+         - m_trophyTexture.width - 2;
+
+   DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, spacing, Palette::game_info_color);
    DrawTexture(m_trophyTexture, scoreInfoX, infoY, Palette::game_info_color);
    DrawTextEx(
       App::font_semibold, Storage::formatBestScore().c_str(),
       { scoreInfoX + m_trophyTexture.width + 2, infoY },
-      infoFontSize, infoFontSpacing, Palette::game_info_color
-   );
+      infoFontSize, spacing, Palette::game_info_color);
 
    // Numbers Cleared
-
-   float numbersTagWidth = MeasureTextEx(App::font_retro, "Numbers Cleared", tagFontSize, infoFontSpacing).x;
-   float numbersTagX = m_grid.box.x + m_grid.box.width / 2 - numbersTagWidth / 2;
-   DrawTextEx(App::font_retro, "Numbers Cleared", { numbersTagX, tagY }, tagFontSize, infoFontSpacing, Palette::game_info_color);
+   float numbersTagX =
+      m_grid.box.x + m_grid.box.width / 2.0f
+         - MeasureTextEx(App::font_retro, "Numbers Cleared", tagFontSize, spacing).x / 2.0f;
+   DrawTextEx(App::font_retro, "Numbers Cleared", { numbersTagX, tagY }, tagFontSize, spacing, Palette::game_info_color);
 
    float numAndPadWidth = m_tickTexture.width * 1.15f; // 50% width for padding per num
    float allNumsWidth = numAndPadWidth * 9 - m_tickTexture.width * 0.5f; // 8 pads for 9 nums
@@ -185,13 +194,15 @@ void GameLayer::OnRender() {
    for(int i = 0; i < 9; i++) {
       std::string num = std::to_string(i + 1);
 
-      // DrawRectangleLines(numX, infoY, m_tickTexture.width, m_tickTexture.height, RED);
-      if(Storage::numbersCleared.at(i)) {
+      if(Storage::numbersCleared.at(i))
          DrawTexture(m_tickTexture, numX, infoY, Palette::game_info_color);
-      } else {
-         Vector2 numSize = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, infoFontSpacing);
-         Vector2 numPos = { numX + (m_tickTexture.width - numSize.x) / 2, infoY + (m_tickTexture.height - numSize.y) / 2 };
-         DrawTextEx(App::font_semibold, num.c_str(), numPos, infoFontSize, infoFontSpacing, Palette::game_info_color);
+      else {
+         Vector2 numSize = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, spacing);
+         DrawTextEx(
+            App::font_semibold, num.c_str(),
+            { numX + (m_tickTexture.width - numSize.x) / 2.0f,
+               infoY + (m_tickTexture.height - numSize.y) / 2.0f },
+            infoFontSize, spacing, Palette::game_info_color);
       }
 
       numX += numAndPadWidth;
@@ -204,26 +215,19 @@ void GameLayer::OnRender() {
    DrawTextEx(
       App::font_black, Storage::formatCurrentScore().c_str(),
       { (float)GetScreenWidth() / 2 - currentScoreSize.x / 2, tagY - currentScoreSize.y * 1.2f },
-      currentScoreFontSize, 1, Palette::text_for_off_bright
-   );
+      currentScoreFontSize, 1, Palette::text_for_off_bright);
 }
 
-void GameLayer::OnResume() {
-   resize();
-   Layer::OnResume();
-}
 #pragma endregion
 
 void GameLayer::handleMatch(GridCell* cell) {
    m_grid.focusedCell->setState(CellState::Matched);
    cell->setState(CellState::Matched);
    
-   /// @bug cell in the middle of the grid becomes blank
-
-   // check if either cell's number is clear
    int num1 = m_grid.focusedCell->value;
    int num2 = cell->value;
-
+   
+   // check if either cell's number is clear
    if(m_grid.isNumClear(num1))
       Storage::numbersCleared[num1 - 1] = true;
    if(num1 != num2 && m_grid.isNumClear(num2))
@@ -233,16 +237,15 @@ void GameLayer::handleMatch(GridCell* cell) {
    int row1 = m_grid.getCellPos(m_grid.focusedCell).first;
    int row2 = m_grid.getCellPos(cell).first;
 
-   if(m_grid.isRowClear(row1))
+   if(m_grid.isRowClear(row1)) {
       m_grid.clearRow(row1);
-   
-   if(row1 != row2) {
+
       if(row2 > row1)
          row2--;
-
-      if(m_grid.isRowClear(row2))
-         m_grid.clearRow(row2);
    }
+   
+   if(m_grid.isRowClear(row2))
+      m_grid.clearRow(row2);
 
    m_grid.focusedCell = nullptr;
 }
@@ -280,8 +283,8 @@ void GameLayer::resize() {
    m_gobackButton.setFontSize(GridCell::numHeight);
    m_settingsButton.setFontSize(GridCell::numHeight);
    
-   m_gobackButton.setOrigin({m_gobackButton.getSize().x * 0.3f, m_gobackButton.getSize().y * 0.3f});
-   m_settingsButton.setOrigin({GetScreenWidth() - m_settingsButton.getSize().x * 1.3f, m_settingsButton.getSize().y * 0.3f});
+   m_gobackButton.setOrigin({ m_gobackButton.getSize().x * 0.3f, m_gobackButton.getSize().y * 0.3f });
+   m_settingsButton.setOrigin({ GetScreenWidth() - m_settingsButton.getSize().x * 1.3f, m_settingsButton.getSize().y * 0.3f });
 
    // gameplay buttons
    float remSpaceY = GetScreenHeight() - (m_grid.box.y + m_grid.box.height); // remaining space below grid

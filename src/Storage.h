@@ -3,6 +3,7 @@
 #include <string>
 #include <array>
 
+/// @todo make into a namespace
 struct Storage {
    Storage() { lastSaveTime = std::filesystem::last_write_time("assets/save.json"); }
 
@@ -26,5 +27,6 @@ struct Storage {
    static void saveWindow(int width, int height);
    static std::pair<int, int> getWindowSize();
 private:
+   /// @todo extract into Engine/Numbers.h
    static std::string format(uint32_t num); /// perfectly formats bestScore with commas
 };

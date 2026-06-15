@@ -95,45 +95,4 @@ namespace Palette
       grid_scroll_thumb = Color{ 140, 150, 170, 255 };
       grid_scroll_track = Color{ 55, 60, 75, 255 };
    }
-   
-   Color bright_bg = PURPLE;
-   Color shadow_for_bright = PURPLE;
-   Color text_for_bright = PURPLE;
-
-   Color off_bright_bg = PURPLE;
-   Color shadow_for_off_bright = PURPLE;
-   Color text_for_off_bright = PURPLE;
-
-   Color game_button_bg = PURPLE;
-   Color game_button_text = PURPLE;
-   Color game_nav_color = PURPLE;
-   Color game_info_color = PURPLE;
-
-   Color panel_rest = PURPLE;
-   Color panel_hover = PURPLE;
-   Color panel_active = PURPLE;
-
-   Color home_button_1 = PURPLE;
-   Color home_button_2 = PURPLE;
-
-   Color home_bg_overlay = PURPLE;
-   Color darken_game_bg = PURPLE;
-
-   Color title_color = PURPLE;
-   Color title_shadow = PURPLE;
-
-   Color options_bg = PURPLE;
-   Color options_title_color = PURPLE;
-   Color options_arrow_color = PURPLE;
-   Color options_text_color = PURPLE;
-
-   Color gridcell_hover = PURPLE;
-   Color gridcell_focus = PURPLE;
-   Color gridnum_matched = PURPLE;
-   Color gridnum_not_matched = PURPLE;
-   Color gridbox_color = PURPLE;
-
-   Color grid_scroll_thumb = PURPLE;
-   Color grid_scroll_track = PURPLE;
-   
-}
+} // namespace Palette

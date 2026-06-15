@@ -16,43 +16,43 @@ namespace Palette {
    void SetDarkMode();
 
    // default is purple bcz it's not used anywhere else
-   extern Color bright_bg;
-   extern Color shadow_for_bright;
-   extern Color text_for_bright;
+   inline Color bright_bg = PURPLE;
+   inline Color shadow_for_bright = PURPLE;
+   inline Color text_for_bright = PURPLE;
 
-   extern Color off_bright_bg;
-   extern Color shadow_for_off_bright;
-   extern Color text_for_off_bright;
+   inline Color off_bright_bg = PURPLE;
+   inline Color shadow_for_off_bright = PURPLE;
+   inline Color text_for_off_bright = PURPLE;
 
-   extern Color game_button_bg;
-   extern Color game_button_text;
-   extern Color game_nav_color;
-   extern Color game_info_color;
+   inline Color game_button_bg = PURPLE;
+   inline Color game_button_text = PURPLE;
+   inline Color game_nav_color = PURPLE;
+   inline Color game_info_color = PURPLE;
 
-   extern Color panel_rest;
-   extern Color panel_hover;
-   extern Color panel_active;
+   inline Color panel_rest = PURPLE;
+   inline Color panel_hover = PURPLE;
+   inline Color panel_active = PURPLE;
 
-   extern Color home_button_1;
-   extern Color home_button_2;
+   inline Color home_button_1 = PURPLE;
+   inline Color home_button_2 = PURPLE;
 
-   extern Color home_bg_overlay;
-   extern Color darken_game_bg;
+   inline Color home_bg_overlay = PURPLE;
+   inline Color darken_game_bg = PURPLE;
 
-   extern Color title_color;
-   extern Color title_shadow;
+   inline Color title_color = PURPLE;
+   inline Color title_shadow = PURPLE;
 
-   extern Color options_bg;
-   extern Color options_title_color;
-   extern Color options_arrow_color;
-   extern Color options_text_color;
+   inline Color options_bg = PURPLE;
+   inline Color options_title_color = PURPLE;
+   inline Color options_arrow_color = PURPLE;
+   inline Color options_text_color = PURPLE;
 
-   extern Color gridcell_hover;
-   extern Color gridcell_focus;
-   extern Color gridnum_matched;
-   extern Color gridnum_not_matched;
-   extern Color gridbox_color;
+   inline Color gridcell_hover = PURPLE;
+   inline Color gridcell_focus = PURPLE;
+   inline Color gridnum_matched = PURPLE;
+   inline Color gridnum_not_matched = PURPLE;
+   inline Color gridbox_color = PURPLE;
 
-   extern Color grid_scroll_thumb;
-   extern Color grid_scroll_track;
+   inline Color grid_scroll_thumb = PURPLE;
+   inline Color grid_scroll_track = PURPLE;
 }  // namespace Palette

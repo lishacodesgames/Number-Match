@@ -2,6 +2,7 @@
 #include "OptionsLayer.h"
 
 #include "GUI/Animation.h"
+#include "PanelLayer.h"
 #include "HomeLayer.h"
 #include "Storage.h"
 #include "Colors.h"
@@ -11,7 +12,8 @@ static constexpr float PANEL_PROPORTION = 0.085f;
 static constexpr float BANNER_PROPORTION = 0.075f;
 
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
-      m_doneButton({ 0, 0 }, { 2, 2 }, "Done", BLANK, Palette::game_nav_color, 20, { 0, 0 }, App::font_semibold),
+      m_doneButton(
+         { 0, 0 }, { 2, 2 }, "Done", BLANK, Palette::game_nav_color, 20, { 0, 0 }, App::font_semibold),
       m_gobackButton({ 0, 0 }, { 2, 2 }, "", BLANK, Palette::game_nav_color)
 {
    m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
@@ -46,11 +48,6 @@ OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
    m_bannerNames[NO_ADS] = "Remove Ads";
 }
 
-OptionsLayer::~OptionsLayer() {
-   for(Texture& icon : m_bannerIcons)
-      UnloadTexture(icon);
-}
-
 void OptionsLayer::OnEvent(Core::Event& e) {
    e.Handled = true;  // don't want any events to pass through to gamelayer
    if(e.GetEventType() == Core::EventType::MouseClicked) {
@@ -60,31 +57,39 @@ void OptionsLayer::OnEvent(Core::Event& e) {
          // we're sure that game exists bc OptionsLayer only exists in its context
          App::GetLayerByName("Game Layer")->OnResume();
          e.Handled = true;
+         return;
       } else if(CheckCollisionPointRec(GetMousePosition(), m_banners.at(SETTINGS))) {
          currentPage = Page::Settings;
          e.Handled = true;
+         return;
       } else if(m_gobackButton.isHovered) {
          currentPage = Page::Options;
+         e.Handled = true;
+         return;
       } else if(m_darkModeToggle.isHovered) {
          if(Storage::isDarkMode)
             Palette::SetLightMode();
          else
             Palette::SetDarkMode();
 
+         /// @todo fix. Shouldn't have to do this every time
          m_darkModeToggle.bgColor = Palette::off_bright_bg;
          m_darkModeToggle.knobColor = Palette::shadow_for_off_bright;
+         e.Handled = true;
+         return;
       }
    } else if(e.GetEventType() == Core::EventType::KeyPressed) {
       char key = static_cast<Core::KeyPressedEvent&>(e).key;
-
-      /// @bug if we quit gamelayer from optionslayer then try to go back to game, game crashes
       if(key == 'q' || key == 'Q') {
          if(currentPage == Page::Options) {
             App::GetLayerByName("Game Layer")->OnSuspend();
+
+            // Home Layer must be pushed first, because Panel Layer must assign its currentLayer pointer to it
             App::QueueLayerSwap(this, new HomeLayer());
-            e.Handled = true;
+            App::QueueLayerPush(new PanelLayer());
          } else
             currentPage = Page::Options;
+         e.Handled = true;
       }
    }
 }
@@ -107,7 +112,12 @@ void OptionsLayer::OnUpdate() {
       m_darkModeToggle.Update();
    }
 
-   if(m_doneButton.isHovered || m_gobackButton.isHovered || getHoveredBannerIndex() != -1)
+   bool mouseIsHovered =
+         m_doneButton.isHovered 
+         || (currentPage == Page::Options && getHoveredBannerIndex() != -1)
+         || (currentPage == Page::Settings && (m_gobackButton.isHovered || m_darkModeToggle.isHovered));
+
+   if(mouseIsHovered)
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -132,9 +142,8 @@ void OptionsLayer::OnRender() {
    DrawTextEx(
       App::font_semibold, "Options",
       {  panel.x + (panel.width - titleSize.x) / 2,
-         panel.y + (panel.height - titleSize.y) / 2},
-      titleFontSize, 1.2f, Palette::options_title_color
-   );
+         panel.y + (panel.height - titleSize.y) / 2 },
+      titleFontSize, 1.2f, Palette::options_title_color);
 
    m_doneButton.Draw();
 
@@ -154,35 +163,30 @@ float absDiff(Vector2 first, Vector2 second) {
 }
 
 void OptionsLayer::resize(float boundsY) {
-   m_targetY = GetScreenHeight() / 6;
-   Vector2 oldSize = Vector2{ m_bounds.width, m_bounds.height };
+   m_targetY = GetScreenHeight() / 6.0f;
+   Vector2 oldSize = { m_bounds.width, m_bounds.height };
 
    // max aspect ratio of 4 : 3
    float aspect = std::min((float)GetScreenWidth() / GetScreenHeight(), 4.0f / 3.0f);
    float height = GetScreenHeight() * 0.7f;
    float width = height * aspect;
-   m_bounds = {
-      (GetScreenWidth() - width) / 2, boundsY,
-      width, height
-   };
+   m_bounds = { (GetScreenWidth() - width) / 2, boundsY, width, height };
 
-   if(absDiff(oldSize, Vector2{ m_bounds.width, m_bounds.height }) >= 0.5f)
+   if(absDiff(oldSize, { m_bounds.width, m_bounds.height }) >= 0.5f)
       LOG_RESIZE("Options panel resized to: %f, %f", m_bounds.width, m_bounds.height);
 
    // panel buttons
    const float panelHeight = m_bounds.height * PANEL_PROPORTION;
 
-   m_doneButton.setFontSize((int)(panelHeight / 2));
+   m_doneButton.setFontSize((panelHeight / 2));
    m_doneButton.setOrigin({
       m_bounds.x + m_bounds.width - m_doneButton.getSize().x * 1.3f,
-      m_bounds.y + (panelHeight - m_doneButton.getSize().y) / 2
-   });
+      m_bounds.y + (panelHeight - m_doneButton.getSize().y) / 2.0f });
 
    m_gobackButton.setFontSize(m_doneButton.getFontSize());
    m_gobackButton.setOrigin({
       m_bounds.x + m_gobackButton.getSize().x * 0.75f,
-      m_bounds.y + (panelHeight - m_gobackButton.getSize().y) / 2
-   });
+      m_bounds.y + (panelHeight - m_gobackButton.getSize().y) / 2.0f });
 
    Vector2 newToggleSize, oldToggleSize = m_darkModeToggle.getSize();
    newToggleSize.x = std::max(m_bounds.width / 2.5f, 200.0f);
@@ -195,8 +199,7 @@ void OptionsLayer::resize(float boundsY) {
 
    m_darkModeToggle.setOrigin({
       m_bounds.x + (m_bounds.width - newToggleSize.x) / 2.0f,
-      m_bounds.y + (m_bounds.height - newToggleSize.y) / 2.0f
-   });
+      m_bounds.y + (m_bounds.height - newToggleSize.y) / 2.0f });
 }
 
 void OptionsLayer::setBannerPositions() {
@@ -253,8 +256,7 @@ void OptionsLayer::renderBlankBanners() const {
          m_rightArrowTexture,
          banner.x + banner.width - m_rightArrowTexture.width * 1.7f,
          banner.y + (banner.height - m_rightArrowTexture.height) / 2.0f,
-         Palette::options_arrow_color
-      );
+         Palette::options_arrow_color);
    }
 }
 
@@ -263,22 +265,22 @@ void OptionsLayer::renderBannerContent() const {
       const Texture& icon = m_bannerIcons.at(i);
       const Rectangle& banner = m_banners.at(i);
       const std::string& name = m_bannerNames.at(i);
-      float padding = (m_bounds.height * BANNER_PROPORTION - icon.height) / 2;
+      float padding = (m_bounds.height * BANNER_PROPORTION - icon.height) / 2.0f;
 
       Vector2 iconPos = { banner.x + padding * 1.5f, banner.y + padding };
       DrawTextureEx(icon, iconPos, 0, 0.98f, WHITE);  // new scaled height = 23.52
       DrawTextEx(
          App::font_semibold, name.c_str(),
          { iconPos.x + icon.width + 15, iconPos.y + 2 },
-         20, 1, Palette::options_text_color
-      );
+         20, 1, Palette::options_text_color);
    }
 }
 
 int OptionsLayer::getHoveredBannerIndex() const {
-   for(size_t i = 0; i < m_banners.size(); i++)
+   for(int i = 0; i < (int)m_banners.size(); i++)
       if(CheckCollisionPointRec(GetMousePosition(), m_banners.at(i)))
-         return (int)i;
+         return i;
+
    return -1;
 }
 

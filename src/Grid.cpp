@@ -113,19 +113,17 @@ void Grid::Draw() const {
 
 void Grid::resize() {
    float old = GridCell::cellSize;
-   GridCell::cellSize = std::max( // scaled based on smaller of the 2 screen dimensions
-      std::min(GetScreenWidth(), GetScreenHeight()) * 0.7f / 9, 40.0f
-   );
+   GridCell::cellSize = // scaled based on smaller of the 2 screen dimensions
+         std::max(std::min(GetScreenWidth(), GetScreenHeight()) * 0.7f / 9, 40.0f);
    GridCell::numHeight = GridCell::cellSize * 0.75f;
 
    if(std::abs(old - GridCell::cellSize) > 0.5f)
       LOG_RESIZE("Grid resized: cellSize = %f", GridCell::cellSize);
 
-   // box is centered horizontally and has a fixed y value
-   float boxX = (GetScreenWidth() - GridCell::cellSize * 9) / 2.0f;
-   float boxY = (GetScreenHeight() - GridCell::cellSize * (9.0f - 1.35f)) / 2.0f; // 1 extra row for the game info on top
-
-   box = { boxX, boxY, GridCell::cellSize * 9, GridCell::cellSize * 9 };
+   box.width = box.height = GridCell::cellSize * 9;
+   box.x = (GetScreenWidth() - box.width) / 2.0f;
+   // some extra padding for the game info on top
+   box.y = (GetScreenHeight() - box.height + GridCell::cellSize * 1.35f) / 2.0f;
 
    for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++) 
@@ -138,8 +136,8 @@ void Grid::plus() {
    std::vector<int> plusValues;
    for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++)
-         if(m_grid[row][col].value != 0 && m_grid[row][col].getState() != CellState::Matched)
-            plusValues.push_back(m_grid[row][col].value);
+         if(m_grid.at(row).at(col) != 0) // operator also checks for state != matched
+            plusValues.push_back(m_grid.at(row).at(col).value);
 
    if(plusValues.empty())
       return; /// @todo stage system
@@ -192,15 +190,15 @@ void Grid::clearRow(int row) {
    }
 }
 
-bool Grid::isRowClear(int row) {
-   for(const GridCell& cell : m_grid.at(row))
-      if(cell.getState() != CellState::Matched && cell != 0)
+bool Grid::isRowClear(int row, int startCol, int endCol) const {
+   for(int col = startCol; col <= endCol; col++)
+      if(m_grid.at(row).at(col) != 0) // and is not matched, checked by operator
          return false;
 
    return true;
 }
 
-bool Grid::isNumClear(int num) {
+bool Grid::isNumClear(int num) const {
    if(Storage::numbersCleared.at(num - 1))
       return true;
 
@@ -225,105 +223,71 @@ void Grid::setCellBounds(GridCell* cell) {
 std::pair<int, int> Grid::getCellPos(GridCell* cell) const {
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
-         if(&m_grid[row][col] == cell)
+         if(&m_grid.at(row).at(col) == cell)
             return { row, col };
       }
    }
 
-   return { -1, -1 };  // default case (should not happen)
+   TraceLog(LOG_ERROR, "Tried to find position of a cell that doesn't exist!\n\tParam address: %p", (void*)cell);
+   return { -1, -1 };
 }
 
 bool Grid::isCellCompatible(std::pair<int, int> pos) const {
    if(!focusedCell)
       return false;
 
-   // no const bcz I call std::swap
-   GridCell& cell1 = *focusedCell;
-   GridCell cell2 = m_grid.at(pos.first).at(pos.second);
+   const int cell1 = focusedCell->value;
+   const int cell2 = m_grid.at(pos.first).at(pos.second).value;
+
    std::pair<int, int> pos1 = getCellPos(focusedCell);
    std::pair<int, int>& pos2 = pos;
+   if(pos1.first > pos2.first)
+      std::swap(pos1, pos2); // for more straightforward calculation
 
    // 1. Value Compatibility
-   bool areValuesCompatible =  // cells sum to 10 or are equal but are not empty.
-         (cell1 + cell2 == 10 || cell1 == cell2) && cell1 != 0;
-   if(!areValuesCompatible)
+   // cells sum to 10 or are equal but are not empty.
+   if( !( (cell1 + cell2 == 10 || cell1 == cell2) && cell1 != 0 ) )
       return false;
 
    // 2. Same row/column IF no unmatched cell in between
-   if(pos1.first == pos2.first) {  // same row
-      int row = pos1.first;
-      int colStart = std::min(pos1.second, pos2.second) + 1;
-      int colEnd = std::max(pos1.second, pos2.second);
-      for(int col = colStart; col < colEnd; col++)
-         if(m_grid.at(row).at(col).getState() != CellState::Matched)
-            return false;  // if there is a non-matched cell in between, the cells are not compatible
-
-      return true;
-   } else if(pos1.second == pos2.second) {  // same column
-      int col = pos1.second;
-      int rowStart = std::min(pos1.first, pos2.first) + 1;
-      int rowEnd = std::max(pos1.first, pos2.first);
-      for(int row = rowStart; row < rowEnd; row++)
-         if(m_grid.at(row).at(col).getState() != CellState::Matched)
-            return false;  // if there is a non-matched cell in between, the cells are not compatible
-
-      return true;
-   }
+   if(pos1.first == pos2.first)     // same row
+      return isRowClear(pos1.first, pos1.second + 1, pos2.second - 1);
+   if(pos1.second == pos2.second)   // same column
+      return isColClear(pos1.second, pos1.first + 1, pos2.first - 1);
 
    // 3. Same diagonal IF no unmatched cell in between
    int rowDiff = std::abs(pos2.first - pos1.first);
    int colDiff = std::abs(pos2.second - pos1.second);
    if(rowDiff == colDiff) {  // same diagonal
-      int rowStep = pos1.first > pos2.first ? -1 : 1;
       int colStep = pos1.second > pos2.second ? -1 : 1;
 
-      // adding step so we don't include the cell's row/col
-      int colStart = pos1.second + colStep;
-      int rowStart = pos1.first + rowStep;
-
-      for(int row = rowStart, col = colStart; row != pos2.first; row += rowStep, col += colStep)
+      for(int row = pos1.first + 1, col = pos1.second + colStep; row != pos2.first; row++, col += colStep)
          if(m_grid.at(row).at(col).getState() != CellState::Matched)
-            return false;  // if there is a non-matched cell in between, the cells are not compatible
+            return false;
 
       return true;
    }
 
    // 4. If all cells to the right of cell are matched, its "vision" wraps around to the first cell unmatched cell of next row
-   if(rowDiff == 1) { // rows must be adjacent, since there cannot be a fully matched row
-      if(pos1.first > pos2.first) {
-         std::swap(pos1, pos2);  // we want pos1 to be the upper cell and pos2 to be the lower cell
-         std::swap(cell1, cell2);
-      }
-
-      int colStart = pos1.second + 1;
-      bool isRow1Clear = true;
-      for(size_t col = colStart; col < m_grid.at(pos1.first).size(); col++) {
-         if(m_grid.at(pos1.first).at(col).getState() != CellState::Matched) {
-            isRow1Clear = false;
-            break;
-         }
-      }
-
-      if(isRow1Clear) {
-         int colEnd = pos2.second;
-         for(int col = 0; col < colEnd; col++) {
-            if(m_grid.at(pos2.first).at(col).getState() != CellState::Matched)
-               return false;
-         }
-
-         return true;
-      }
-   }
+   if(rowDiff == 1 && isRowClear(pos1.first, pos1.second + 1))
+      return isRowClear(pos2.first, 0, pos2.second - 1);
 
    return false;
 }
 
+bool Grid::isColClear(int col, int rowStart, int rowEnd) const {
+   for(int row = rowStart; row <= rowEnd; row++)
+      if(m_grid.at(row).at(col).getState() != CellState::Matched)
+         return false;
+
+   return true;
+}
+
 GridCell* Grid::findHoveredCell() {
-   for(auto& row : m_grid) {  // Not const because we want to return a non-const pointer
-      for(GridCell& cell : row) {
+   for(auto& row : m_grid)  // Not const because we want to return a non-const pointer
+      for(GridCell& cell : row)
          if(CheckCollisionPointRec(GetMousePosition(), cell.bounds))
             return &cell;
-      }
-   }
+
    return nullptr;
 }

@@ -38,8 +38,10 @@ App::App(const std::string& name) {
    
    HomeLayer* home = new HomeLayer();
    m_layerStack.PushLayer(home);
+
    PanelLayer* panel = new PanelLayer();
    m_layerStack.PushOverlay(panel);
+
    panel->currentLayer = home;
    
    TraceLog(LISHA_SAYS, "App Loaded!");
@@ -60,20 +62,20 @@ void App::Run() {
    int width = GetScreenWidth(), height = GetScreenHeight();
 
    while(!WindowShouldClose()) {
-      if(IsWindowResized() && (std::abs(width - GetScreenWidth()) > 10 || std::abs(height - GetScreenHeight()) > 10))
-         LOG_RESIZE("Window Resized: %d x %d", GetScreenWidth(), GetScreenHeight());
-
-      width = GetScreenWidth();
-      height = GetScreenHeight();
+      if(IsWindowResized() && (std::abs(width - GetScreenWidth()) > 10
+         || std::abs(height - GetScreenHeight()) > 10)
+      ) {
+         width = GetScreenWidth();
+         height = GetScreenHeight();
+         LOG_RESIZE("Window Resized: %d x %d", width, height);
+      }
 
       // ---------------------------
       // 1. apply pending layer changes at the start of the current frame
       // to avoid mid-frame changes that could cause bugs
       // ---------------------------
-      for(Core::Layer* layer : m_pendingPops) {
+      for(Core::Layer* layer : m_pendingPops)
          layer->isOverlay? m_layerStack.PopOverlay(layer) : m_layerStack.PopLayer(layer);
-         delete layer; // free memory of popped layer
-      }
       m_pendingPops.clear();
 
       for(Core::Layer* layer : m_pendingPushes)
@@ -129,8 +131,10 @@ void App::QueueLayerSwap(Core::Layer* pop, Core::Layer* push) {
 
 void App::QueueLayerPush(Core::Layer* layer) {
    for(Core::Layer* existing : s_instance->m_layerStack)
-      if(typeid(*existing) == typeid(*layer)) // duplicate layers
-         QueueLayerPop(existing);
+      if(existing->GetName() == layer->GetName()) // duplicate layers
+         TraceLog(LOG_ERROR,
+            "Trying to push a layer that already exists!\n\tLayer name: %s",
+            layer->GetName().c_str());
 
    s_instance->m_pendingPushes.push_back(layer);
 }

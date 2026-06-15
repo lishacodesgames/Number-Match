@@ -12,9 +12,13 @@ float PanelLayer::buttonSpacing = 0.0f;
 int PanelLayer::height = 50;
 
 PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
-      homeButton({ 0, 0 }, { 0, 0 }, "Main", BLANK, Palette::panel_active, 30, { 0.0f, 0 }, App::font_semibold),
-      dailyButton({ 0, 0 }, { 0, 0 }, "Daily Challenges", BLANK, Palette::panel_rest, 30, { 0.0f, 0 }, App::font_semibold),
-      meButton({ 0, 0 }, { 0, 0 }, "Me", BLANK, Palette::panel_rest, 30, { 0.0f, 0 }, App::font_semibold) {
+      homeButton(
+         { 0, 0 }, { 0, 0 }, "Main", BLANK, Palette::panel_active, 30, { 0.0f, 0 }, App::font_semibold),
+      dailyButton(
+         { 0, 0 }, { 0, 0 }, "Daily Challenges", BLANK, Palette::panel_rest, 30, { 0.0f, 0 }, App::font_semibold),
+      meButton(
+         { 0, 0 }, { 0, 0 }, "Me", BLANK, Palette::panel_rest, 30, { 0.0f, 0 }, App::font_semibold)
+{
    homeButton.isFocused = true;
 
    homeButton.setIcon("assets/icons/menus/home_20x20.png");
@@ -69,12 +73,15 @@ void PanelLayer::OnUpdate() {
    static GUI::Button* previousButton = &homeButton;
    GUI::Button* hoveredButton = findHoveredButton();
 
-   /// @bug in Debug mode, mouse visually glitches out between pointing and regular in all three menu layers
-   // need to optimise somehow
    if(hoveredButton) {
       hoveredButton->contentColor = Palette::panel_hover;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-   }  // else case will be handled by below layers, since this one is an overlay
+   }
+   // else case should be handled by below layers, since this one is an overlay
+   else if(currentLayer->GetName() != "Home Layer") {
+      // temp, since rn home layer actually has a working OnUpdate system
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+   }
 
    if(previousButton && hoveredButton != previousButton) {
       // new button is focused, so we must reset previous one

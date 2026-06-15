@@ -15,15 +15,19 @@ struct GridCell {
    Rectangle bounds;
 
    /// @param newState only set if current state is not CellState::Matched
-   void setState(CellState newState) { if(state != CellState::Matched) state = newState; }
-   CellState getState() const { return state; }
+   void setState(CellState newState) { if(m_state != CellState::Matched) m_state = newState; }
+   CellState getState() const { return m_state; }
 private:
-   CellState state = CellState::Rest;
+   CellState m_state = CellState::Rest;
+
+   friend bool operator==(const GridCell& a, int b);
+   friend bool operator!=(const GridCell& a, int b);
+   friend bool operator==(const GridCell& a, const GridCell& b);
 };
 
 struct Grid {
    GridCell* focusedCell;
-   Rectangle box{};
+   Rectangle box;
 
    Grid();
    void Update();
@@ -35,12 +39,12 @@ struct Grid {
    void plus();
 
    void clearRow(int row);
-   bool isRowClear(int row); /// @return true IF all cells in row are either matched or empty (value = 0)
-   bool isNumClear(int num); /// @return true IF no instance of num found in grid
+   bool isRowClear(int row, int startCol = 0, int endCol = 8) const; /// @return true IF all cells in row, btwn col limits, are either matched or empty (value = 0)
+   bool isNumClear(int num) const; /// @return true IF no instance of num found in grid
 
    // --- iteration ---
-   inline auto begin() { return m_grid.begin(); }
-   inline auto end() { return m_grid.end(); }
+   inline auto begin() const { return m_grid.begin(); }
+   inline auto end() const { return m_grid.end(); }
 
    // --- helpers ---
    void setCellBounds(GridCell* cell);                    /// set cell origins to match box
@@ -58,22 +62,27 @@ struct Grid {
     * @return true if cell @pos is compatible with focusedCell
     */
    bool isCellCompatible(std::pair<int, int> pos) const;
+   bool isColClear(int col, int rowStart, int rowEnd) const;
 private:
    ScrollBar m_scrollBar;
    float m_scrollOffset = 0.0f;
 
-   std::vector<std::array<GridCell, 9>> m_grid{};  /// Vector of 9-length arrays
+   std::vector<std::array<GridCell, 9>> m_grid;  /// Vector of 9-length arrays
 };
 
 inline int operator+(const GridCell& a, const GridCell& b) { return a.value + b.value; }
 
 inline bool operator==(const GridCell& a, int b) {
-   return a.value == b && a.getState() != CellState::Matched;
+   return a.value == b && a.m_state != CellState::Matched;
+}
+
+inline bool operator!=(const GridCell& a, int b) {
+   return a.value != b && a.m_state != CellState::Matched;
 }
 
 inline bool operator==(const GridCell& a, const GridCell& b) {
    return
       a.value == b.value &&
-      a.getState() != CellState::Matched &&
-      b.getState() != CellState::Matched;
+      a.m_state != CellState::Matched &&
+      b.m_state != CellState::Matched;
 }

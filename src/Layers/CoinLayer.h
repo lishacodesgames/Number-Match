@@ -16,9 +16,8 @@ public:
 
    static Rectangle box;
 private:
-   Image m_coinImage = {0};
-   Texture m_coinTexture = {0};
-   float m_fontSize;
+   Texture m_coinTexture;
+   float m_fontSize, m_textureScale;
 
    void resize();
 };

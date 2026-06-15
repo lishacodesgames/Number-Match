@@ -20,6 +20,9 @@ namespace Core {
          layer->OnDetach();
          m_layers.erase(it);
          m_layerInsertIndex--;
+         delete layer;
+      } else {
+         TraceLog(LOG_FATAL, "Tried to pop a layer that doesn't exist!");
       }
    }
 
@@ -34,6 +37,9 @@ namespace Core {
       if(it != end()) {
          overlay->OnDetach();
          m_layers.erase(it);
+         delete overlay;
+      } else {
+         TraceLog(LOG_FATAL, "Tried to pop an overlay layer that doesn't exist!");
       }
    }
 

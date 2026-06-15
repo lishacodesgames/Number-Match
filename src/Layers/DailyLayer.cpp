@@ -11,11 +11,11 @@ void DailyLayer::OnEvent(Core::Event& e) {
       TraceLog(LISHA_SAYS, "Mouse was clicked");
 }
 
-void DailyLayer::OnUpdate() {
-   SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-}
+void DailyLayer::OnUpdate() {}
 
 void DailyLayer::OnRender() {
-   Vector2 textPos = { GetScreenWidth() / 2.0f - 150, GetScreenHeight() / 2.0f - 100 };
-   DrawTextEx(App::font_semibold, "Coming soon...", textPos, 35, 2.5f, Palette::text_for_off_bright);
+   DrawTextEx(
+      App::font_semibold, "Coming soon...",
+      { GetScreenWidth() / 2.0f - 150, GetScreenHeight() / 2.0f - 100 },
+      35, 2.5f, Palette::text_for_off_bright);
 }

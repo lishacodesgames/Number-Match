@@ -73,85 +73,78 @@ void HomeLayer::OnRender() {
 
    // title
    const char* gameName = "Number Match";
-   float titleFontSize = std::max(GetScreenHeight() / 10.0f, 45.0f);
+   float titleFontSize =
+      std::max(std::min(GetScreenHeight(), GetScreenWidth()) / 10.0f, 45.0f);
    Vector2 titleSize = MeasureTextEx(App::font_black, gameName, titleFontSize, 3);
-   Vector2 titleOrigin = {
-      (GetScreenWidth() - titleSize.x) / 2.0f,
-      GetScreenHeight() / 4.0f
-   };
+   Vector2 titleOrigin = { (GetScreenWidth() - titleSize.x) / 2.0f, GetScreenHeight() / 4.0f };
 
-   float shadowOffset = titleFontSize / 15.0f;
-
-   DrawTextEx(App::font_black, gameName, titleOrigin + shadowOffset, titleFontSize, 3.0f, Palette::title_shadow);
-   DrawTextEx(App::font_black, gameName, titleOrigin, titleFontSize, 3.0f, Palette::title_color);
+   DrawTextEx(
+      App::font_black, gameName, titleOrigin + titleFontSize / 15.0f,
+      titleFontSize, 3.0f, Palette::title_shadow);
+   DrawTextEx(
+      App::font_black, gameName, titleOrigin,
+      titleFontSize, 3.0f, Palette::title_color);
 
    // score
    const char* scoreTag = "All-Time Best Score";
-   float scoreTagFontSize = titleFontSize / 2.0f;
-   Vector2 scoreTagSize = MeasureTextEx(App::font_semibold, scoreTag, scoreTagFontSize, 1.5f);
+   Vector2 scoreTagSize = MeasureTextEx(App::font_semibold, scoreTag, titleFontSize / 2.0f, 1.5f);
    Vector2 scoreTagOrigin = {
       titleOrigin.x + (titleSize.x - scoreTagSize.x) / 1.6f, 
-      titleOrigin.y + titleFontSize * 1.05f
-   };
+      titleOrigin.y + titleFontSize * 1.05f };
    
-   DrawTextEx(App::font_semibold, scoreTag, scoreTagOrigin, scoreTagFontSize, 1.5f, Palette::game_info_color);
+   DrawTextEx(
+      App::font_semibold, scoreTag, scoreTagOrigin,
+      titleFontSize / 2.0f, 1.5f, Palette::game_info_color);
 
    float bestScoreFontSize = titleFontSize * 0.7f;
    Vector2 bestScoreSize = MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), bestScoreFontSize, 2.0f);
 
    Vector2 scoreSize = {
       bestScoreSize.x + m_trophyTexture.width * 1.5f, // half a trophy's width for padding
-      std::max((float)m_trophyTexture.height, bestScoreSize.y)
-   };
+      std::max((float)m_trophyTexture.height, bestScoreSize.y) };
    Vector2 scoreOrigin = {
       scoreTagOrigin.x + (scoreTagSize.x - scoreSize.x) / 2.0f,
-      scoreTagOrigin.y + scoreTagSize.y
-   };
+      scoreTagOrigin.y + scoreTagSize.y };
 
    Vector2 trophyOrigin = {
-      scoreOrigin.x, 
-      scoreOrigin.y + (scoreSize.y - m_trophyTexture.height) / 2.0f
-   };
+      scoreOrigin.x, scoreOrigin.y + (scoreSize.y - m_trophyTexture.height) / 2.0f };
    Vector2 bestScoreOrigin = {
       scoreOrigin.x + m_trophyTexture.width * 1.5f,
-      scoreOrigin.y - (scoreSize.y - bestScoreSize.y) / 2.0f
-   };
+      scoreOrigin.y - (scoreSize.y - bestScoreSize.y) / 2.0f };
 
    DrawTexture(m_trophyTexture, trophyOrigin.x, trophyOrigin.y, WHITE);
    DrawTextEx(
       App::font_semibold, Storage::formatBestScore().c_str(),
-      bestScoreOrigin, bestScoreFontSize, 2.0f, Palette::text_for_bright
-   );
+      bestScoreOrigin, bestScoreFontSize, 2.0f, Palette::text_for_bright);
 
    // game buttons
    m_newButton.Draw();
    m_continueButton.Draw();
 }
 
-void resizeThis(GUI::Button* button) {
+void resizeThis(GUI::Button& button) {
    float buttonWidth = std::max(GetScreenWidth() / 2.0f, 400.0f);
    float buttonHeight = std::max(GetScreenHeight() / 20.0f, 40.0f);
 
-   button->setBounds({ buttonWidth, buttonHeight }, true);
+   button.setBounds({ buttonWidth, buttonHeight }, true);
 }
 
 void HomeLayer::resize() {
    // Buttons
-   resizeThis(&m_newButton);
+   resizeThis(m_newButton);
    if(m_newButton.getFontSize() != m_continueButton.getFontSize())
       LOG_RESIZE("Play buttons' font resized to: %d", m_newButton.getFontSize());
-   resizeThis(&m_continueButton);
+   resizeThis(m_continueButton);
 
    Vector2 buttonOrigin = {
       (GetScreenWidth() - m_newButton.getSize().x) / 2.0f,
-      (GetScreenHeight() - PanelLayer::height - m_newButton.getSize().y * 3.0f)
-   };
-
+      GetScreenHeight() - PanelLayer::height - m_newButton.getSize().y * 3.0f };
+   m_continueButton.setOrigin(buttonOrigin);
+   buttonOrigin.y += m_newButton.getSize().y * 1.2f;
    m_newButton.setOrigin(buttonOrigin);
-   m_continueButton.setOrigin({ buttonOrigin.x, buttonOrigin.y - m_continueButton.getSize().y - 10 });
 
    // Background
-   float aspectRatio = m_backgroundImage.width / (float)m_backgroundImage.height;
+   float aspectRatio = (float)m_backgroundImage.width / m_backgroundImage.height;
 
    if(GetScreenWidth() > m_backgroundImage.width)
       ImageResize(&m_backgroundImage, GetScreenWidth(), (int)(GetScreenWidth() / aspectRatio));

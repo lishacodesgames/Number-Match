@@ -7,7 +7,12 @@
 class GameLayer : public Core::Layer {
 public:
    GameLayer();
-   ~GameLayer() = default;
+   ~GameLayer() override {
+      UnloadImage(m_trophyImage);
+      UnloadImage(m_tickImage);
+      UnloadTexture(m_trophyTexture);
+      UnloadTexture(m_tickTexture);
+   }
 
    void OnAttach() override {
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -18,17 +23,19 @@ public:
    void OnEvent(Core::Event& e) override;
    void OnRender() override;
 
-   void OnResume() override;
+   void OnResume() override {
+      resize();
+      Layer::OnResume();
+   }
+
 private:
    // --- gameplay ---
    Grid m_grid;
    void handleMatch(GridCell* cell);  /// handles matching with focused cell
 
    // --- game info ---
-   Image m_trophyImage = {0};
-   Image m_tickImage = {0};
-   Texture m_trophyTexture = {0};
-   Texture m_tickTexture = {0};
+   Image m_trophyImage, m_tickImage;
+   Texture m_trophyTexture, m_tickTexture;
 
    // --- buttons ---
    GUI::Button m_gobackButton;

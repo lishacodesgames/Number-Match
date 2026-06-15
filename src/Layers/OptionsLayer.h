@@ -11,7 +11,12 @@
 class OptionsLayer : public Core::Layer {
 public:
    OptionsLayer();
-   ~OptionsLayer() override;
+   ~OptionsLayer() override {
+      for(Texture& icon : m_bannerIcons)
+         UnloadTexture(icon);
+
+      UnloadTexture(m_rightArrowTexture);
+   }
 
    void OnAttach() override {
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -23,10 +28,11 @@ public:
    void OnRender() override;
 
 private:
-   Texture m_rightArrowTexture = { 0 };
+   /// @todo make resizable
+   Texture m_rightArrowTexture;
 
-   float m_targetY = 0.0f;
-   Rectangle m_bounds = {};
+   float m_targetY;
+   Rectangle m_bounds;
 
    GUI::Button m_doneButton;
 

@@ -6,7 +6,12 @@
 class HomeLayer : public Core::Layer {
 public:
    HomeLayer();
-   ~HomeLayer() override { UnloadTexture(m_backgroundTexture); }
+   ~HomeLayer() override {
+      UnloadImage(m_trophyImage);
+      UnloadImage(m_backgroundImage);
+      UnloadTexture(m_trophyTexture);
+      UnloadTexture(m_backgroundTexture);
+   }
 
    void OnEvent(Core::Event& e) override;
    void OnUpdate() override;

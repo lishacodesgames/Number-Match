@@ -21,6 +21,7 @@ void Storage::load() {
       save();
       return;
    }
+
    json j;
    try {
       s >> j;
