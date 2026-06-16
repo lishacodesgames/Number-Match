@@ -28,6 +28,10 @@ bool Grid::OnClick() {
       if(activeCell != m_focusedCell) {  // new cell was clicked
          if(isCellCompatible(activeCell)) {
             handleMatch(activeCell);
+            if(m_grid.at(0).at(0) == 0) { // grid is empty
+               Storage::stage++;
+               init();
+            }
          } else {
             if(m_focusedCell)
                m_focusedCell->setState(CellState::Rest);
@@ -41,6 +45,7 @@ bool Grid::OnClick() {
          activeCell->setState(CellState::Hovered);
          m_focusedCell = nullptr;
       }
+
       return true;
    } else if(m_focusedCell) {
       // clicking a matched cell or outside of the grid or a matched cell should deselect the cells
