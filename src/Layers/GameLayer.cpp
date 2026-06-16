@@ -53,6 +53,7 @@ void GameLayer::OnEvent(Core::Event& e) {
          App::QueueLayerPush(new HomeLayer());
          App::QueueLayerPush(new PanelLayer());
          e.Handled = true;
+         return;
       }
    } else if(e.GetEventType() == Core::EventType::MouseClicked) {
       // check if a button has been clicked
@@ -74,33 +75,8 @@ void GameLayer::OnEvent(Core::Event& e) {
          return;
       }
 
-      // check if a grid cell has been clicked
-      GridCell* activeCell = m_grid.findHoveredCell();
-      if(activeCell) {
-         if(activeCell != m_grid.focusedCell) {  // new cell was clicked
-            if(m_grid.isCellCompatible(m_grid.getCellPos(activeCell)))
-               handleMatch(activeCell);
-            else {
-               if(m_grid.focusedCell)
-                  m_grid.focusedCell->setState(CellState::Rest);
-
-               if(*activeCell != 0) { // empty cells cannot be focused
-                  m_grid.focusedCell = activeCell;
-                  activeCell->setState(CellState::Focused);
-               }
-            }
-         } else {  // clicking the already focused cell should deselect it
-            activeCell->setState(CellState::Hovered);
-            m_grid.focusedCell = nullptr;
-         }
-         e.Handled = true;
-         return;
-      } else if(m_grid.focusedCell) {
-         // clicking a matched cell or outside of the grid or a matched cell should deselect the cells
-         m_grid.focusedCell->setState(CellState::Rest);
-         m_grid.focusedCell = nullptr;
-         // we don't set e.Handled = true, in case the click has to be handled by another layer
-      }
+      // check and handle if a grid cell has been clicked
+      e.Handled = m_grid.OnClick();
    }
 }
 
@@ -219,36 +195,6 @@ void GameLayer::OnRender() {
 }
 
 #pragma endregion
-
-void GameLayer::handleMatch(GridCell* cell) {
-   m_grid.focusedCell->setState(CellState::Matched);
-   cell->setState(CellState::Matched);
-   
-   int num1 = m_grid.focusedCell->value;
-   int num2 = cell->value;
-   
-   // check if either cell's number is clear
-   if(m_grid.isNumClear(num1))
-      Storage::numbersCleared[num1 - 1] = true;
-   if(num1 != num2 && m_grid.isNumClear(num2))
-      Storage::numbersCleared[num2 - 1] = true;
-
-   // check if either cell's row is clear
-   int row1 = m_grid.getCellPos(m_grid.focusedCell).first;
-   int row2 = m_grid.getCellPos(cell).first;
-
-   if(m_grid.isRowClear(row1)) {
-      m_grid.clearRow(row1);
-
-      if(row2 > row1)
-         row2--;
-   }
-   
-   if(m_grid.isRowClear(row2))
-      m_grid.clearRow(row2);
-
-   m_grid.focusedCell = nullptr;
-}
 
 #pragma region Helpers
 

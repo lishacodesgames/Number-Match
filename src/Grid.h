@@ -25,32 +25,36 @@ private:
    friend bool operator==(const GridCell& a, const GridCell& b);
 };
 
-struct Grid {
-   GridCell* focusedCell;
+class Grid {
+public:
    Rectangle box;
-
    Grid();
+
+   // --- methods ---
+   bool OnClick(); /// @return e.Handled to GameLayer
    void Update();
    void Draw() const;
 
    // --- gameplay ---
-   
    void resize();
    void plus();
-
-   void clearRow(int row);
-   bool isRowClear(int row, int startCol = 0, int endCol = 8) const; /// @return true IF all cells in row, btwn col limits, are either matched or empty (value = 0)
-   bool isNumClear(int num) const; /// @return true IF no instance of num found in grid
+   void handleMatch(GridCell* cell);
 
    // --- iteration ---
    inline auto begin() const { return m_grid.begin(); }
    inline auto end() const { return m_grid.end(); }
+private:
+   std::vector<std::array<GridCell, 9>> m_grid;  /// Vector of 9-length arrays
+   GridCell* m_focusedCell;
 
-   // --- helpers ---
-   void setCellBounds(GridCell* cell);                    /// set cell origins to match box
-   std::pair<int, int> getCellPos(GridCell* cell) const;  /// @return {row, col} of cell in m_grid
+   float m_scrollOffset = 0.0f;
+   ScrollBar m_scrollBar;
+private:
+   // --- setup ---
+   void init(); /// initialises the VALUES of cells and numbersCleared
+   void setCellBounds(GridCell* cell); /// set cell origins to match box
    
-   GridCell* findHoveredCell();
+   // --- helpers ---
    /** @brief
     * Value compatibility: if sum to 10 OR same
 
@@ -59,26 +63,26 @@ struct Grid {
     * - Same diagonal IF no unmatched cell in between \
     * - If all cells to the right of cell are matched, its "vision" wraps around to the first unmatched cell of next row
     *
-    * @return true if cell @pos is compatible with focusedCell
+    * @return true if cell is compatible with m_focusedCell
     */
-   bool isCellCompatible(std::pair<int, int> pos) const;
-   bool isColClear(int col, int rowStart, int rowEnd) const;
-private:
-   ScrollBar m_scrollBar;
-   float m_scrollOffset = 0.0f;
+   bool isCellCompatible(GridCell* cell) const;
 
-   std::vector<std::array<GridCell, 9>> m_grid;  /// Vector of 9-length arrays
+   /// @return true IF all cells in row, btwn col limits, are either matched or empty (value = 0)
+   bool isRowClear(int row, int startCol = 0, int endCol = 8) const;
+   bool isColClear(int col, int rowStart, int rowEnd) const;
+   bool isNumClear(int num) const; /// @return true IF no instance of num found in grid
+   void clearRow(int row);
+
+   // --- finders ---
+   std::pair<int, int> getCellPos(GridCell* cell) const;  /// @return {row, col} of cell in m_grid
+public:
+   GridCell* findHoveredCell();
 };
 
 inline int operator+(const GridCell& a, const GridCell& b) { return a.value + b.value; }
 
-inline bool operator==(const GridCell& a, int b) {
-   return a.value == b && a.m_state != CellState::Matched;
-}
-
-inline bool operator!=(const GridCell& a, int b) {
-   return a.value != b && a.m_state != CellState::Matched;
-}
+inline bool operator==(const GridCell& a, int b) { return a.value == b && a.m_state != CellState::Matched; }
+inline bool operator!=(const GridCell& a, int b) { return a.value != b && a.m_state != CellState::Matched; }
 
 inline bool operator==(const GridCell& a, const GridCell& b) {
    return

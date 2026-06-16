@@ -9,34 +9,51 @@
 float GridCell::cellSize = 45.0f;
 float GridCell::numHeight = 0;
 
-Grid::Grid() : focusedCell(nullptr),
+Grid::Grid() : m_focusedCell(nullptr),
       m_scrollBar({ 0, 0, 0, 0 }, 10.0f, Palette::grid_scroll_thumb, Palette::grid_scroll_track)
 {
    m_grid.assign(9, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }),  // 9 rows of all blank cells
    srand(time(0));
 
-   Storage::numbersCleared.fill(true);
-   int value;
-   for(size_t row = 0; row < m_grid.size(); row++) {
-      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
-         if(row < 3 || (row == 3 && col < 5)) // first 3 rows & half of 4th row
-            value = 1 + rand() % 9;
-         else
-            value = 0;
-         Storage::numbersCleared[value - 1] = false;
-
-         m_grid[row][col].value = value;
-         m_grid[row][col].setState(CellState::Rest);
-      }
-   }
-
+   init();
    resize();
    m_scrollBar.setTrackBounds({ box.x + box.width + 25, box.y, 2, box.height });
 }
 
+#pragma region Methods
+
+bool Grid::OnClick() {
+   GridCell* activeCell = findHoveredCell();
+   if(activeCell) {
+      if(activeCell != m_focusedCell) {  // new cell was clicked
+         if(isCellCompatible(activeCell)) {
+            handleMatch(activeCell);
+         } else {
+            if(m_focusedCell)
+               m_focusedCell->setState(CellState::Rest);
+
+            if(*activeCell != 0) { // empty cells cannot be focused
+               m_focusedCell = activeCell;
+               activeCell->setState(CellState::Focused);
+            }
+         }
+      } else {  // clicking the already focused cell should deselect it
+         activeCell->setState(CellState::Hovered);
+         m_focusedCell = nullptr;
+      }
+      return true;
+   } else if(m_focusedCell) {
+      // clicking a matched cell or outside of the grid or a matched cell should deselect the cells
+      m_focusedCell->setState(CellState::Rest);
+      m_focusedCell = nullptr;
+   }
+
+   return false; // in case the click has to be handled by another layer
+}
+
 bool canOverride(GridCell* cell) {
    return cell && cell->getState() != CellState::Focused && cell->getState() != CellState::Matched;
-} // we can't override focused or matched cells)
+} // we can't override focused or matched cells)   
 
 void Grid::Update() {
    // Update hovered cell's state
@@ -111,6 +128,10 @@ void Grid::Draw() const {
       m_scrollBar.Draw();
 }
 
+#pragma endregion
+
+#pragma region Gameplay
+
 void Grid::resize() {
    float old = GridCell::cellSize;
    GridCell::cellSize = // scaled based on smaller of the 2 screen dimensions
@@ -180,35 +201,59 @@ void Grid::plus() {
    }
 }
 
-void Grid::clearRow(int row) {
-   m_grid.erase(m_grid.begin() + row);
+void Grid::handleMatch(GridCell* cell) {
+   m_focusedCell->setState(CellState::Matched);
+   cell->setState(CellState::Matched);
+   
+   int num1 = m_focusedCell->value;
+   int num2 = cell->value;
+   
+   // check if either cell's number is clear
+   if(isNumClear(num1))
+      Storage::numbersCleared[num1 - 1] = true;
+   if(num1 != num2 && isNumClear(num2))
+      Storage::numbersCleared[num2 - 1] = true;
 
-   if(m_grid.size() < 9) { // maintain at least 9 rows
-      m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-      for(GridCell& cell : m_grid.back())
-         setCellBounds(&cell);
+   // check if either cell's row is clear
+   int row1 = getCellPos(m_focusedCell).first;
+   int row2 = getCellPos(cell).first;
+
+   if(isRowClear(row1)) {
+      clearRow(row1);
+
+      if(row2 > row1)
+         row2--;
    }
+   
+   if(isRowClear(row2))
+      clearRow(row2);
+
+   m_focusedCell = nullptr;
 }
 
-bool Grid::isRowClear(int row, int startCol, int endCol) const {
-   for(int col = startCol; col <= endCol; col++)
-      if(m_grid.at(row).at(col) != 0) // and is not matched, checked by operator
-         return false;
+#pragma endregion
 
-   return true;
+#pragma region Setup
+
+int calculateNumber() {
+   return 1 + rand() % 9; /// @todo algorithm
 }
 
-bool Grid::isNumClear(int num) const {
-   if(Storage::numbersCleared.at(num - 1))
-      return true;
+void Grid::init() {
+   Storage::numbersCleared.fill(true);
+   int value;
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         if(row < 3 || (row == 3 && col < 5)) // first 3 rows & half of 4th row
+            value = calculateNumber();
+         else
+            value = 0;
+         Storage::numbersCleared[value - 1] = false;
 
-   for(const auto& row : m_grid)
-      for(const GridCell& cell : row)
-         if(cell == num) // operator also checks if both are unmatched
-            return false;
-
-   TraceLog(LISHA_SAYS, "%d CLEARED!", num);
-   return true;
+         m_grid[row][col].value = value;
+         m_grid[row][col].setState(CellState::Rest);
+      }
+   }
 }
 
 void Grid::setCellBounds(GridCell* cell) {
@@ -220,27 +265,19 @@ void Grid::setCellBounds(GridCell* cell) {
    };
 }
 
-std::pair<int, int> Grid::getCellPos(GridCell* cell) const {
-   for(size_t row = 0; row < m_grid.size(); row++) {
-      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
-         if(&m_grid.at(row).at(col) == cell)
-            return { row, col };
-      }
-   }
+#pragma endregion
 
-   TraceLog(LOG_ERROR, "Tried to find position of a cell that doesn't exist!\n\tParam address: %p", (void*)cell);
-   return { -1, -1 };
-}
+#pragma region Helpers
 
-bool Grid::isCellCompatible(std::pair<int, int> pos) const {
-   if(!focusedCell)
+bool Grid::isCellCompatible(GridCell* cell) const {
+   if(!m_focusedCell)
       return false;
 
-   const int cell1 = focusedCell->value;
-   const int cell2 = m_grid.at(pos.first).at(pos.second).value;
+   const int cell1 = m_focusedCell->value;
+   const int cell2 = cell->value;
 
-   std::pair<int, int> pos1 = getCellPos(focusedCell);
-   std::pair<int, int>& pos2 = pos;
+   std::pair<int, int> pos1 = getCellPos(m_focusedCell);
+   std::pair<int, int> pos2 = getCellPos(cell);
    if(pos1.first > pos2.first)
       std::swap(pos1, pos2); // for more straightforward calculation
 
@@ -250,8 +287,12 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
       return false;
 
    // 2. Same row/column IF no unmatched cell in between
-   if(pos1.first == pos2.first)     // same row
+   if(pos1.first == pos2.first) {    // same row
+      if(pos1.second > pos2.second)
+         std::swap(pos1.second, pos2.second); // in case pos1 col > pos2 col 
       return isRowClear(pos1.first, pos1.second + 1, pos2.second - 1);
+   }
+
    if(pos1.second == pos2.second)   // same column
       return isColClear(pos1.second, pos1.first + 1, pos2.first - 1);
 
@@ -275,12 +316,59 @@ bool Grid::isCellCompatible(std::pair<int, int> pos) const {
    return false;
 }
 
+bool Grid::isRowClear(int row, int startCol, int endCol) const {
+   for(int col = startCol; col <= endCol; col++)
+      if(m_grid.at(row).at(col) != 0) // and is not matched, checked by operator
+         return false;
+
+   return true;
+}
+
 bool Grid::isColClear(int col, int rowStart, int rowEnd) const {
    for(int row = rowStart; row <= rowEnd; row++)
       if(m_grid.at(row).at(col).getState() != CellState::Matched)
          return false;
 
    return true;
+}
+
+bool Grid::isNumClear(int num) const {
+   if(Storage::numbersCleared.at(num - 1))
+      return true;
+
+   for(const auto& row : m_grid)
+      for(const GridCell& cell : row)
+         if(cell == num) // operator also checks if both are unmatched
+            return false;
+
+   TraceLog(LISHA_SAYS, "%d CLEARED!", num);
+   return true;
+}
+
+void Grid::clearRow(int row) {
+   m_grid.erase(m_grid.begin() + row);
+
+   if(m_grid.size() < 9) { // maintain at least 9 rows
+      m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+      for(GridCell& cell : m_grid.back())
+         setCellBounds(&cell);
+   }
+}
+
+#pragma endregion
+
+#pragma region Finders
+
+std::pair<int, int> Grid::getCellPos(GridCell* cell) const {
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         if(&m_grid.at(row).at(col) == cell)
+            return { row, col };
+      }
+   }
+
+   TraceLog(LOG_ERROR, "Tried to find position of a cell that doesn't exist!\n\tParam address: %p", (void*)cell);
+   return { -1, -1 };
 }
 
 GridCell* Grid::findHoveredCell() {
@@ -291,3 +379,5 @@ GridCell* Grid::findHoveredCell() {
 
    return nullptr;
 }
+
+#pragma endregion
