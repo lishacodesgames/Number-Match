@@ -5,6 +5,7 @@
 #include "GUI/ScrollBar.h"
 
 enum class CellState { Rest, Hovered, Focused, Matched };
+enum class MatchType { NoMatch = 0, Adjacent = 1, Far = 4, ClearedRow = 10 };
 
 struct GridCell {
    GridCell(int value = 0) : value(value), bounds({ 0, 0, 0, 0 }) {}
@@ -38,7 +39,12 @@ public:
    // --- gameplay ---
    void resize();
    void plus();
-   void handleMatch(GridCell* cell);
+
+   /**
+    * @param cell the cell matching weith m_focusedCell 
+    * @param match the type of match between cell and m_focusedCell
+    */
+   void handleMatch(GridCell* cell, MatchType match);
 
    // --- iteration ---
    inline auto begin() const { return m_grid.begin(); }
@@ -63,9 +69,9 @@ private:
     * - Same diagonal IF no unmatched cell in between \
     * - If all cells to the right of cell are matched, its "vision" wraps around to the first unmatched cell of next row
     *
-    * @return true if cell is compatible with m_focusedCell
+    * @return score of match
     */
-   bool isCellCompatible(GridCell* cell) const;
+   MatchType getMatchType(GridCell* cell) const;
 
    /// @return true IF all cells in row, btwn col limits, are either matched or empty (value = 0)
    bool isRowClear(int row, int startCol = 0, int endCol = 8) const;

@@ -26,8 +26,9 @@ bool Grid::OnClick() {
    GridCell* activeCell = findHoveredCell();
    if(activeCell) {
       if(activeCell != m_focusedCell) {  // new cell was clicked
-         if(isCellCompatible(activeCell)) {
-            handleMatch(activeCell);
+         MatchType match = getMatchType(activeCell);
+         if(static_cast<bool>(match)) {
+            handleMatch(activeCell, match);
             if(m_grid.at(0).at(0) == 0) { // grid is empty
                Storage::stage++;
                init();
@@ -90,7 +91,7 @@ void Grid::Draw() const {
    Color bgColor, numColor;
 
    BeginScissorMode(box.x, box.y, box.width, box.height); // so grid cells don't render outside of the box
-   for(size_t row = 0; row < m_grid.size(); row++) {
+   for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          const GridCell cell = m_grid.at(row).at(col);
          const std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
@@ -125,7 +126,6 @@ void Grid::Draw() const {
             GridCell::numHeight, 1, numColor
          );
       }
-   }
    EndScissorMode();
 
    DrawRectangleLinesEx(box, 3, Palette::gridbox_color);
@@ -206,9 +206,15 @@ void Grid::plus() {
    }
 }
 
-void Grid::handleMatch(GridCell* cell) {
+void Grid::handleMatch(GridCell* cell, MatchType match) {
+   if(!static_cast<bool>(match)) {
+      TraceLog(LOG_ERROR, "Tried to handle a NoMatch!");
+      return;
+   }
+
    m_focusedCell->setState(CellState::Matched);
    cell->setState(CellState::Matched);
+   Storage::currentScore += static_cast<int>(match);
    
    int num1 = m_focusedCell->value;
    int num2 = cell->value;
@@ -225,13 +231,16 @@ void Grid::handleMatch(GridCell* cell) {
 
    if(isRowClear(row1)) {
       clearRow(row1);
+      Storage::currentScore += static_cast<int>(MatchType::ClearedRow);
 
       if(row2 > row1)
          row2--;
    }
    
-   if(isRowClear(row2))
+   if(isRowClear(row2)) {
       clearRow(row2);
+      Storage::currentScore += static_cast<int>(MatchType::ClearedRow);
+   }
 
    m_focusedCell = nullptr;
 }
@@ -274,9 +283,9 @@ void Grid::setCellBounds(GridCell* cell) {
 
 #pragma region Helpers
 
-bool Grid::isCellCompatible(GridCell* cell) const {
+MatchType Grid::getMatchType(GridCell* cell) const {
    if(!m_focusedCell)
-      return false;
+      return MatchType::NoMatch;
 
    const int cell1 = m_focusedCell->value;
    const int cell2 = cell->value;
@@ -289,17 +298,30 @@ bool Grid::isCellCompatible(GridCell* cell) const {
    // 1. Value Compatibility
    // cells sum to 10 or are equal but are not empty.
    if( !( (cell1 + cell2 == 10 || cell1 == cell2) && cell1 != 0 ) )
-      return false;
+      return MatchType::NoMatch;
 
    // 2. Same row/column IF no unmatched cell in between
    if(pos1.first == pos2.first) {    // same row
       if(pos1.second > pos2.second)
          std::swap(pos1.second, pos2.second); // in case pos1 col > pos2 col 
-      return isRowClear(pos1.first, pos1.second + 1, pos2.second - 1);
+
+      if(isRowClear(pos1.first, pos1.second + 1, pos2.second - 1))
+         if(pos2.second - pos1.second == 1)
+            return MatchType::Adjacent;
+         else
+            return MatchType::Far;
+      else
+         return MatchType::NoMatch;
    }
 
    if(pos1.second == pos2.second)   // same column
-      return isColClear(pos1.second, pos1.first + 1, pos2.first - 1);
+      if(isColClear(pos1.second, pos1.first + 1, pos2.first - 1))
+         if(pos2.first - pos1.first == 1)
+            return MatchType::Adjacent;
+         else
+            return MatchType::Far;
+      else
+         return MatchType::NoMatch;
 
    // 3. Same diagonal IF no unmatched cell in between
    int rowDiff = std::abs(pos2.first - pos1.first);
@@ -309,16 +331,21 @@ bool Grid::isCellCompatible(GridCell* cell) const {
 
       for(int row = pos1.first + 1, col = pos1.second + colStep; row != pos2.first; row++, col += colStep)
          if(m_grid.at(row).at(col).getState() != CellState::Matched)
-            return false;
+            return MatchType::NoMatch;
 
-      return true;
+      if(rowDiff == 1)
+         return MatchType::Adjacent;
+      else
+         return MatchType::Far;
    }
 
    // 4. If all cells to the right of cell are matched, its "vision" wraps around to the first cell unmatched cell of next row
-   if(rowDiff == 1 && isRowClear(pos1.first, pos1.second + 1))
-      return isRowClear(pos2.first, 0, pos2.second - 1);
+   if(rowDiff == 1 &&
+      isRowClear(pos1.first, pos1.second + 1) &&
+      isRowClear(pos2.first, 0, pos2.second - 1))
+         return MatchType::Far;
 
-   return false;
+   return MatchType::NoMatch;
 }
 
 bool Grid::isRowClear(int row, int startCol, int endCol) const {

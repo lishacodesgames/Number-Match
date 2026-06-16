@@ -9,10 +9,17 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 # Turn on all warnings, and disable harmless, annoying ones
 if (MSVC)
    target_compile_options(${PROJECT_NAME} PRIVATE /W4)
-   target_compile_options(${PROJECT_NAME} PRIVATE /wd4458 /wd4244 /wd4267)
+   target_compile_options(${PROJECT_NAME} PRIVATE
+      /wd4458 /wd4244 /wd4267 /wd4706
+   )
 else()
    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
-   target_compile_options(${PROJECT_NAME} PRIVATE -Wno-missing-field-initializers -Wno-unused-result -Wno-shadow)
+   target_compile_options(${PROJECT_NAME} PRIVATE
+      -Wno-missing-field-initializers
+      -Wno-unused-result
+      -Wno-dangling-else
+      -Wno-shadow
+   )
 endif()
 
 # copy assets/ into bin/ to remove dependencies and weird paths in code
