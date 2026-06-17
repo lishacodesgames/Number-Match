@@ -1,4 +1,4 @@
-file(GLOB_RECURSE NM_SOURCES *.cpp *.h)
+file(GLOB_RECURSE NM_SOURCES *.cpp)
 add_executable(${PROJECT_NAME} ${NM_SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Engine)
 

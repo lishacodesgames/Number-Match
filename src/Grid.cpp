@@ -29,10 +29,6 @@ bool Grid::OnClick() {
          MatchType match = getMatchType(activeCell);
          if(static_cast<bool>(match)) {
             handleMatch(activeCell, match);
-            if(m_grid.at(0).at(0) == 0) { // grid is empty
-               Storage::stage++;
-               init();
-            }
          } else {
             if(m_focusedCell)
                m_focusedCell->setState(CellState::Rest);
@@ -214,16 +210,21 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
 
    m_focusedCell->setState(CellState::Matched);
    cell->setState(CellState::Matched);
-   Storage::currentScore += static_cast<int>(match);
+   Storage::currentScore += static_cast<int>(match) * Storage::stage;
    
    int num1 = m_focusedCell->value;
    int num2 = cell->value;
    
    // check if either cell's number is clear
-   if(isNumClear(num1))
+   if(isNumClear(num1)) {
       Storage::numbersCleared[num1 - 1] = true;
-   if(num1 != num2 && isNumClear(num2))
+      Storage::currentScore += static_cast<int>(MatchType::ClearedNum) * Storage::stage;
+   }
+
+   if(num1 != num2 && isNumClear(num2)) {
       Storage::numbersCleared[num2 - 1] = true;
+      Storage::currentScore += static_cast<int>(MatchType::ClearedNum) * Storage::stage;
+   }
 
    // check if either cell's row is clear
    int row1 = getCellPos(m_focusedCell).first;
@@ -231,7 +232,7 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
 
    if(isRowClear(row1)) {
       clearRow(row1);
-      Storage::currentScore += static_cast<int>(MatchType::ClearedRow);
+      Storage::currentScore += static_cast<int>(MatchType::ClearedRow) * Storage::stage;
 
       if(row2 > row1)
          row2--;
@@ -239,7 +240,13 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
    
    if(isRowClear(row2)) {
       clearRow(row2);
-      Storage::currentScore += static_cast<int>(MatchType::ClearedRow);
+      Storage::currentScore += static_cast<int>(MatchType::ClearedRow) * Storage::stage;
+   }
+
+   if(m_grid.at(0).at(0) == 0) { // grid is empty
+      Storage::currentScore += static_cast<int>(MatchType::ClearedStage) * Storage::stage;
+      Storage::stage++;
+      init();
    }
 
    m_focusedCell = nullptr;

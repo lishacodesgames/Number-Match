@@ -5,7 +5,11 @@
 #include "GUI/ScrollBar.h"
 
 enum class CellState { Rest, Hovered, Focused, Matched };
-enum class MatchType { NoMatch = 0, Adjacent = 1, Far = 4, ClearedRow = 10 };
+enum class MatchType {
+   NoMatch = 0,
+   Adjacent = 1, Far = 4,
+   ClearedNum = 5, ClearedRow = 10, ClearedStage = 150
+};
 
 struct GridCell {
    GridCell(int value = 0) : value(value), bounds({ 0, 0, 0, 0 }) {}
@@ -15,7 +19,7 @@ struct GridCell {
    int value;  /// 0 for empty, 1-9 otherwise
    Rectangle bounds;
 
-   /// @param newState only set if current state is not CellState::Matched
+   /// only set if current state is not CellState::Matched
    void setState(CellState newState) { if(m_state != CellState::Matched) m_state = newState; }
    CellState getState() const { return m_state; }
 private:
