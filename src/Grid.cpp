@@ -179,23 +179,30 @@ void Grid::plus() {
 bool Grid::hint() {
    // same row
    for(size_t row = 0; row < m_grid.size(); row++) {
+      if(m_grid.at(row).at(0) == 0)
+         break;
+
       for(size_t col = 0; col < m_grid.at(row).size() - 1; col++) {
          auto cell1 = m_grid.at(row).begin() + col;
+         if(*cell1 == 0)
+            break;
          if(cell1->getState() == CellState::Matched)
             continue;
 
-         auto areCellsCompatible = [this, cell1](GridCell& cell2) -> bool {
-            MatchType match = this->getMatchType(&cell2, &(*cell1), Hint::SameRow);
-            return match != MatchType::HintAbort && match != MatchType::NoMatch;
-         };
-         auto it = std::find_if(cell1 + 1, m_grid.at(row).end(), areCellsCompatible);
+         auto it = std::find_if(cell1 + 1, m_grid.at(row).end(),
+                     [this, cell1](GridCell& cell2) -> bool {
+                        return
+                           cell2.getState() != CellState::Matched &&
+                           this->getMatchType(&cell2, &(*cell1), Hint::SameRow) != MatchType::NoMatch;
+                     }
+                  );
 
          if(it != m_grid.at(row).end()) {
             m_hint.isHighlighted = true;
 
-            m_hint.first = getCellPos(&(*cell1));
+            m_hint.first = { row, col };
             cell1->bgColor = Palette::grid_hint;
-            m_hint.second = getCellPos(&(*it));
+            m_hint.second = { row, std::distance(m_grid.at(row).begin(), it) };
             it->bgColor = Palette::grid_hint;
             return true;
          }
@@ -203,12 +210,36 @@ bool Grid::hint() {
    }
 
    // same column
-   for(size_t row = 0; row < m_grid.size(); row++) {
-      for(size_t col1 = 0; col1 < m_grid.at(row).size() - 1; col1++) {
-         GridCell& cell1 = m_grid[row][col1];
+   for(size_t row1 = 0; row1 < m_grid.size(); row1++) {
+      if(m_grid.at(row1).at(0) == 0)
+         break;
 
-         for(size_t col2 = col1 + 1; col2 < m_grid.at(row).size(); col2++) {
-            GridCell& cell2 = m_grid[row][col2];
+      for(size_t col = 0; col < m_grid.at(row1).size(); col++) {
+         GridCell& cell1 = m_grid[row1][col];
+         if(cell1 == 0)
+            break;
+         if(cell1.getState() == CellState::Matched)
+            continue;
+            
+         for(size_t row2 = row1 + 1; row2 < m_grid.size() - 1; row2++) {
+            GridCell& cell2 = m_grid[row2][col];
+            if(cell2 == 0)
+               break;
+            if(cell2.getState() == CellState::Matched)
+               continue;
+
+            if(getMatchType(&cell2, &cell1, Hint::SameColumn) != MatchType::NoMatch) {
+               m_hint.isHighlighted = true;
+
+               m_hint.first = { row1, col };
+               cell1.bgColor = Palette::grid_hint;
+               m_hint.second = { row2, col };
+               cell2.bgColor = Palette::grid_hint;
+               return true;
+            }
+            
+            // found a matched cell that wasn't compatible, move onto next column
+            break;
          }
       }
    }
@@ -320,6 +351,9 @@ MatchType Grid::getMatchType(GridCell* cell2, GridCell* cell1, Hint hint) const 
          cell1 = m_focusedCell;
    }
 
+   if(cell1->getState() == CellState::Matched || cell2->getState() == CellState::Matched)
+      return MatchType::NoMatch;
+
    std::pair<int, int> pos1 = getCellPos(cell1);
    std::pair<int, int> pos2 = getCellPos(cell2);
 
@@ -332,59 +366,60 @@ MatchType Grid::getMatchType(GridCell* cell2, GridCell* cell1, Hint hint) const 
       std::swap(pos1, pos2); // for more straightforward calculation
 
    // 2. Same row/column IF no unmatched cell in between
-   if(pos1.first == pos2.first) {    // same row
-      if(pos1.second > pos2.second)
-         std::swap(pos1.second, pos2.second); // in case pos1 col > pos2 col 
+   if(hint == Hint::SameRow) {
+      if(pos1.first == pos2.first) {    // same row
+         if(pos1.second > pos2.second)
+            std::swap(pos1.second, pos2.second); // in case pos1 col > pos2 col 
 
-      if(isRowClear(pos1.first, pos1.second + 1, pos2.second - 1))
-         if(pos2.second - pos1.second == 1)
-            return MatchType::Adjacent;
+         if(isRowClear(pos1.first, pos1.second + 1, pos2.second - 1))
+            if(pos2.second - pos1.second == 1)
+               return MatchType::Adjacent;
+            else
+               return MatchType::Far;
          else
-            return MatchType::Far;
-      else
-         return MatchType::NoMatch;
+            return MatchType::NoMatch;
+      }
    }
-   if(hint == Hint::SameRow)
-      return MatchType::HintAbort;
 
-   if(pos1.second == pos2.second) { // same column
-      if(isColClear(pos1.second, pos1.first + 1, pos2.first - 1))
-         if(pos2.first - pos1.first == 1)
-            return MatchType::Adjacent;
+   if(hint == Hint::SameColumn) {
+      if(pos1.second == pos2.second) { // same column
+         if(isColClear(pos1.second, pos1.first + 1, pos2.first - 1))
+            if(pos2.first - pos1.first == 1)
+               return MatchType::Adjacent;
+            else
+               return MatchType::Far;
          else
-            return MatchType::Far;
-      else
-         return MatchType::NoMatch;
+            return MatchType::NoMatch;
+      }
    }
-   if(hint == Hint::SameColumn)
-      return MatchType::HintAbort;
 
    // 3. Same diagonal IF no unmatched cell in between
    int rowDiff = std::abs(pos2.first - pos1.first);
-   int colDiff = std::abs(pos2.second - pos1.second);
-   if(rowDiff == colDiff) {  // same diagonal
-      int colStep = pos1.second > pos2.second ? -1 : 1;
+   if(hint == Hint::SameDiagonal) {
+      int colDiff = std::abs(pos2.second - pos1.second);
+      if(rowDiff == colDiff) {  // same diagonal
+         int colStep = pos1.second > pos2.second ? -1 : 1;
 
-      for(int row = pos1.first + 1, col = pos1.second + colStep; row != pos2.first; row++, col += colStep)
-         if(m_grid.at(row).at(col).getState() != CellState::Matched)
-            return MatchType::NoMatch;
+         for(int row = pos1.first + 1, col = pos1.second + colStep;
+               row != pos2.first; row++, col += colStep) {
+            if(m_grid.at(row).at(col).getState() != CellState::Matched)
+               return MatchType::NoMatch;
+         }
 
-      if(rowDiff == 1)
-         return MatchType::Adjacent;
-      else
-         return MatchType::Far;
+         if(rowDiff == 1)
+            return MatchType::Adjacent;
+         else
+            return MatchType::Far;
+      }
    }
-   if(hint == Hint::SameDiagonal)
-      return MatchType::HintAbort;
 
    // 4. If all cells to the right of cell are matched,
    // its "vision" wraps around to the first cell unmatched cell of next row
-   if(rowDiff == 1 &&
-      isRowClear(pos1.first, pos1.second + 1) &&
-      isRowClear(pos2.first, 0, pos2.second - 1)
-   ) return MatchType::Far;
    if(hint == Hint::VisionWrap)
-      return MatchType::HintAbort;
+      if(rowDiff == 1 &&
+         isRowClear(pos1.first, pos1.second + 1) &&
+         isRowClear(pos2.first, 0, pos2.second - 1)
+      ) return MatchType::Far;
 
    return MatchType::NoMatch;
 }

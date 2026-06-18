@@ -8,7 +8,7 @@
 enum class Hint { Idk, SameRow, SameColumn, SameDiagonal, VisionWrap };
 enum class CellState { Rest, Hovered, Focused, Matched };
 enum class MatchType {
-   HintAbort = -1, NoMatch = 0,
+   NoMatch = 0,
    Adjacent = 1, Far = 4,
    ClearedNum = 5, ClearedRow = 10, ClearedStage = 150
 };
@@ -68,7 +68,7 @@ public:
 
    void resize();
    void plus();
-   bool hint();
+   bool hint(); /// @return if match exists in grid
 private:
    HintHighlight m_hint;
 
@@ -111,6 +111,13 @@ private:
 public:
    GridCell* findHoveredCell();
 };
+
+inline bool operator==(Hint a, Hint b) {
+   return
+      static_cast<int>(a) == static_cast<int>(b) ||
+      static_cast<int>(a) == static_cast<int>(Hint::Idk) ||
+      static_cast<int>(b) == static_cast<int>(Hint::Idk);
+}
 
 inline int operator+(const GridCell& a, const GridCell& b) { return a.value + b.value; }
 
