@@ -16,8 +16,14 @@ enum class MatchType {
 struct HintHighlight
 {
    bool isHighlighted = false;
-   std::pair<int, int> first{-1, -1};
-   std::pair<int, int> second{-1, -1};
+   std::pair<int, int> first{ -1, -1 };
+   std::pair<int, int> second{ -1, -1 };
+
+   void reset() {
+      isHighlighted = false;
+      first = { -1, -1 };
+      second =  { -1, -1 };
+   }
 };
 
 struct GridCell {
@@ -62,7 +68,7 @@ public:
 
    void resize();
    void plus();
-   void hint();
+   bool hint();
 private:
    HintHighlight m_hint;
 

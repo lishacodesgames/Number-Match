@@ -23,6 +23,9 @@ Grid::Grid() : m_focusedCell(nullptr),
 #pragma region Methods
 
 bool Grid::OnClick() {
+   if(m_hint.isHighlighted)
+      m_hint.reset();
+
    GridCell* activeCell = findHoveredCell();
    if(activeCell) {
       if(activeCell != m_focusedCell) {  // new cell was clicked
@@ -173,13 +176,16 @@ void Grid::plus() {
    }
 }
 
-void Grid::hint() {
+bool Grid::hint() {
    // same row
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size() - 1; col++) {
          auto cell1 = m_grid.at(row).begin() + col;
+         if(cell1->getState() == CellState::Matched)
+            continue;
+
          auto areCellsCompatible = [this, cell1](GridCell& cell2) -> bool {
-            MatchType match = this->getMatchType(&(*cell1), &cell2, Hint::SameRow);
+            MatchType match = this->getMatchType(&cell2, &(*cell1), Hint::SameRow);
             return match != MatchType::HintAbort && match != MatchType::NoMatch;
          };
          auto it = std::find_if(cell1 + 1, m_grid.at(row).end(), areCellsCompatible);
@@ -191,9 +197,31 @@ void Grid::hint() {
             cell1->bgColor = Palette::grid_hint;
             m_hint.second = getCellPos(&(*it));
             it->bgColor = Palette::grid_hint;
+            return true;
          }
       }
    }
+
+   // same column
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col1 = 0; col1 < m_grid.at(row).size() - 1; col1++) {
+         GridCell& cell1 = m_grid[row][col1];
+
+         for(size_t col2 = col1 + 1; col2 < m_grid.at(row).size(); col2++) {
+            GridCell& cell2 = m_grid[row][col2];
+         }
+      }
+   }
+
+   // same diagonal
+   // ..
+
+   // vision wrap
+   // ..
+
+   // no matches found
+   m_hint.isHighlighted = true;
+   return false;
 }
 
 void Grid::handleMatch(GridCell* cell, MatchType match) {
@@ -285,11 +313,12 @@ void Grid::setCellBounds(GridCell* cell) {
 #pragma region Helpers
 
 MatchType Grid::getMatchType(GridCell* cell2, GridCell* cell1, Hint hint) const {
-   if(!cell1)
+   if(!cell1) {
       if(!m_focusedCell)
          return MatchType::NoMatch;
       else
          cell1 = m_focusedCell;
+   }
 
    std::pair<int, int> pos1 = getCellPos(cell1);
    std::pair<int, int> pos2 = getCellPos(cell2);
@@ -420,7 +449,7 @@ std::vector<GridCell*> Grid::getValidCells() {
    std::vector<GridCell*> validCells{};
    for(auto& row : m_grid)  // Not const because we want to return a non-const pointer
       for(GridCell& cell : row)
-         if(cell.getState() != CellState::Matched)
+         if(cell != 0)
             validCells.push_back(&cell);
 
    return validCells;

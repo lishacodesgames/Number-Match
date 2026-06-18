@@ -67,9 +67,12 @@ void GameLayer::OnEvent(Core::Event& e) {
             OnSuspend(true);  // suspend but render
             App::QueueLayerPush(new OptionsLayer());
          } else if(activeButton == &m_plusButton) {
+            if(m_plusButton.bgColor == Palette::grid_hint)
+               m_plusButton.bgColor = Palette::game_button_bg;
             m_grid.plus();
          } else if(activeButton == &m_hintButton)
-            m_grid.hint();
+            if(!m_grid.hint())
+               m_plusButton.bgColor = Palette::grid_hint;
 
          e.Handled = true;
          return;
