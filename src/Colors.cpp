@@ -45,6 +45,7 @@ namespace Palette
       gridnum_matched = LIGHTGRAY;
       gridnum_not_matched = Color{ 122, 5, 26, 255 };
       gridbox_color = ColorAlpha(DARKGRAY, 0.8f);
+      grid_hint = RED;
       
       grid_scroll_thumb = GRAY;
       grid_scroll_track = LIGHTGRAY;
@@ -88,9 +89,9 @@ namespace Palette
       gridcell_hover = Color{ 76, 109, 138, 127 };
       gridcell_focus = Color{ 118, 149, 173, 127 };
       gridnum_matched = Color{ 65, 75, 90, 255 };
-      // gridnum_not_matched = Color{ 255, 87, 87, 255 };
       gridnum_not_matched = Color{ 255, 168, 128, 255 };
       gridbox_color = Color{ 120, 140, 180, 90 };
+      grid_hint = RED;
       
       grid_scroll_thumb = Color{ 140, 150, 170, 255 };
       grid_scroll_track = Color{ 55, 60, 75, 255 };

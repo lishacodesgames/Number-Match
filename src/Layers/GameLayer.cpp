@@ -66,10 +66,10 @@ void GameLayer::OnEvent(Core::Event& e) {
          } else if(activeButton == &m_settingsButton) {
             OnSuspend(true);  // suspend but render
             App::QueueLayerPush(new OptionsLayer());
-         } else if(activeButton == &m_plusButton)
+         } else if(activeButton == &m_plusButton) {
             m_grid.plus();
-         else if(activeButton == &m_hintButton)
-            TraceLog(LISHA_SAYS, "HINT");  // temp
+         } else if(activeButton == &m_hintButton)
+            m_grid.hint();
 
          e.Handled = true;
          return;
@@ -161,7 +161,9 @@ void GameLayer::OnRender() {
    float numbersTagX =
       m_grid.box.x + m_grid.box.width / 2.0f
          - MeasureTextEx(App::font_retro, "Numbers Cleared", tagFontSize, spacing).x / 2.0f;
-   DrawTextEx(App::font_retro, "Numbers Cleared", { numbersTagX, tagY }, tagFontSize, spacing, Palette::game_info_color);
+   DrawTextEx(
+      App::font_retro, "Numbers Cleared", { numbersTagX, tagY },
+      tagFontSize, spacing, Palette::game_info_color);
 
    float numAndPadWidth = m_tickTexture.width * 1.15f; // 50% width for padding per num
    float allNumsWidth = numAndPadWidth * 9 - m_tickTexture.width * 0.5f; // 8 pads for 9 nums
@@ -176,7 +178,7 @@ void GameLayer::OnRender() {
          Vector2 numSize = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, spacing);
          DrawTextEx(
             App::font_semibold, num.c_str(),
-            { numX + (m_tickTexture.width - numSize.x) / 2.0f,
+            {  numX + (m_tickTexture.width - numSize.x) / 2.0f,
                infoY + (m_tickTexture.height - numSize.y) / 2.0f },
             infoFontSize, spacing, Palette::game_info_color);
       }

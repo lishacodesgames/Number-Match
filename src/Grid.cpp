@@ -84,42 +84,20 @@ void Grid::Update() {
 }
 
 void Grid::Draw() const {
-   Color bgColor, numColor;
-
    BeginScissorMode(box.x, box.y, box.width, box.height); // so grid cells don't render outside of the box
    for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
-         const GridCell cell = m_grid.at(row).at(col);
+         const GridCell& cell = m_grid.at(row).at(col);
          const std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
          const Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), GridCell::numHeight, 1);
 
-         // state cases
-         switch(cell.getState()) {
-            case CellState::Rest:
-               numColor = Palette::gridnum_not_matched;
-               bgColor = Palette::off_bright_bg;
-               break;
-            case CellState::Hovered:
-               numColor = Palette::gridnum_not_matched;
-               bgColor = Palette::gridcell_hover;
-               break;
-            case CellState::Focused:
-               numColor = Palette::gridnum_not_matched;
-               bgColor = Palette::gridcell_focus;
-               break;
-            case CellState::Matched:
-               numColor = Palette::gridnum_matched;
-               bgColor = Palette::off_bright_bg;
-               break;
-         }
-
-         DrawRectangleRec(cell.bounds, bgColor);
+         DrawRectangleRec(cell.bounds, cell.bgColor);
          DrawRectangleLinesEx(cell.bounds, 1, Palette::shadow_for_off_bright);
          DrawTextEx(
             App::font_semibold, value.c_str(),
             {  cell.bounds.x + (cell.bounds.width - numSize.x) / 2, 
                cell.bounds.y + (cell.bounds.height - numSize.y) / 2 },
-            GridCell::numHeight, 1, numColor
+            GridCell::numHeight, 1, cell.numColor
          );
       }
    EndScissorMode();
@@ -155,26 +133,19 @@ void Grid::resize() {
 }
 
 void Grid::plus() {
-   std::vector<int> plusValues;
-   for(size_t row = 0; row < m_grid.size(); row++)
-      for(size_t col = 0; col < m_grid.at(row).size(); col++)
-         if(m_grid.at(row).at(col) != 0) // operator also checks for state != matched
-            plusValues.push_back(m_grid.at(row).at(col).value);
-
-   if(plusValues.empty())
-      return; /// @todo stage system
-
    std::pair<int, int> firstEmptyCell = { -1, -1 };
-   for(size_t row = 1; row < m_grid.size(); row++) { // first row can never be empty so we start from 2nd
+   for(size_t row = 1; row < m_grid.size(); row++) {
       auto it = std::find(m_grid.at(row).begin(), m_grid.at(row).end(), 0);
       if(it != m_grid.at(row).end()) {
          firstEmptyCell = { row, static_cast<int>(std::distance(m_grid.at(row).begin(), it)) };
          break;
       }
 
-      if(row == m_grid.size() - 1) { // if no empty cell till last iteration, we make a new row of empty cell
+      // if no empty cell till last iteration, we make a new row of empty cell
+      if(row == m_grid.size() - 1) {
          m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-         firstEmptyCell = { m_grid.size() - 1, 0 };
+         firstEmptyCell = { row, 0 };
+         break;
       }
    }
 
@@ -186,11 +157,11 @@ void Grid::plus() {
    // Duplicate all valid cells starting from firstEmptyCell
    int row = firstEmptyCell.first;
    int col = firstEmptyCell.second;
-   for(int value : plusValues) {
-      m_grid[row][col].value = value;
+   for(GridCell* cell : getValidCells()) {
+      m_grid[row][col].value = cell->value;
 
       // increment grid index
-      if(++col == (int)m_grid.at(0).size()) {
+      if(++col == 9) {
          col = 0;
          row++;
          if(row == (int)m_grid.size()) {
@@ -199,6 +170,29 @@ void Grid::plus() {
                setCellBounds(&cell);
          }
       } // if condition already increments col
+   }
+}
+
+void Grid::hint() {
+   // same row
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size() - 1; col++) {
+         auto cell1 = m_grid.at(row).begin() + col;
+         auto areCellsCompatible = [this, cell1](GridCell& cell2) -> bool {
+            MatchType match = this->getMatchType(&(*cell1), &cell2, Hint::SameRow);
+            return match != MatchType::HintAbort && match != MatchType::NoMatch;
+         };
+         auto it = std::find_if(cell1 + 1, m_grid.at(row).end(), areCellsCompatible);
+
+         if(it != m_grid.at(row).end()) {
+            m_hint.isHighlighted = true;
+
+            m_hint.first = getCellPos(&(*cell1));
+            cell1->bgColor = Palette::grid_hint;
+            m_hint.second = getCellPos(&(*it));
+            it->bgColor = Palette::grid_hint;
+         }
+      }
    }
 }
 
@@ -290,22 +284,23 @@ void Grid::setCellBounds(GridCell* cell) {
 
 #pragma region Helpers
 
-MatchType Grid::getMatchType(GridCell* cell) const {
-   if(!m_focusedCell)
-      return MatchType::NoMatch;
+MatchType Grid::getMatchType(GridCell* cell2, GridCell* cell1, Hint hint) const {
+   if(!cell1)
+      if(!m_focusedCell)
+         return MatchType::NoMatch;
+      else
+         cell1 = m_focusedCell;
 
-   const int cell1 = m_focusedCell->value;
-   const int cell2 = cell->value;
-
-   std::pair<int, int> pos1 = getCellPos(m_focusedCell);
-   std::pair<int, int> pos2 = getCellPos(cell);
-   if(pos1.first > pos2.first)
-      std::swap(pos1, pos2); // for more straightforward calculation
+   std::pair<int, int> pos1 = getCellPos(cell1);
+   std::pair<int, int> pos2 = getCellPos(cell2);
 
    // 1. Value Compatibility
    // cells sum to 10 or are equal but are not empty.
-   if( !( (cell1 + cell2 == 10 || cell1 == cell2) && cell1 != 0 ) )
+   if( !( (*cell1 + *cell2 == 10 || *cell1 == *cell2) && *cell1 != 0 && *cell2 != 0 ) )
       return MatchType::NoMatch;
+      
+   if(pos1.first > pos2.first)
+      std::swap(pos1, pos2); // for more straightforward calculation
 
    // 2. Same row/column IF no unmatched cell in between
    if(pos1.first == pos2.first) {    // same row
@@ -320,8 +315,10 @@ MatchType Grid::getMatchType(GridCell* cell) const {
       else
          return MatchType::NoMatch;
    }
+   if(hint == Hint::SameRow)
+      return MatchType::HintAbort;
 
-   if(pos1.second == pos2.second)   // same column
+   if(pos1.second == pos2.second) { // same column
       if(isColClear(pos1.second, pos1.first + 1, pos2.first - 1))
          if(pos2.first - pos1.first == 1)
             return MatchType::Adjacent;
@@ -329,6 +326,9 @@ MatchType Grid::getMatchType(GridCell* cell) const {
             return MatchType::Far;
       else
          return MatchType::NoMatch;
+   }
+   if(hint == Hint::SameColumn)
+      return MatchType::HintAbort;
 
    // 3. Same diagonal IF no unmatched cell in between
    int rowDiff = std::abs(pos2.first - pos1.first);
@@ -345,12 +345,17 @@ MatchType Grid::getMatchType(GridCell* cell) const {
       else
          return MatchType::Far;
    }
+   if(hint == Hint::SameDiagonal)
+      return MatchType::HintAbort;
 
-   // 4. If all cells to the right of cell are matched, its "vision" wraps around to the first cell unmatched cell of next row
+   // 4. If all cells to the right of cell are matched,
+   // its "vision" wraps around to the first cell unmatched cell of next row
    if(rowDiff == 1 &&
       isRowClear(pos1.first, pos1.second + 1) &&
-      isRowClear(pos2.first, 0, pos2.second - 1))
-         return MatchType::Far;
+      isRowClear(pos2.first, 0, pos2.second - 1)
+   ) return MatchType::Far;
+   if(hint == Hint::VisionWrap)
+      return MatchType::HintAbort;
 
    return MatchType::NoMatch;
 }
@@ -406,8 +411,19 @@ std::pair<int, int> Grid::getCellPos(GridCell* cell) const {
       }
    }
 
-   TraceLog(LOG_ERROR, "Tried to find position of a cell that doesn't exist!\n\tParam address: %p", (void*)cell);
+   TraceLog(LOG_ERROR,
+      "Tried to find position of a cell that doesn't exist!\n\tParam address: %p", (void*)cell);
    return { -1, -1 };
+}
+
+std::vector<GridCell*> Grid::getValidCells() {
+   std::vector<GridCell*> validCells{};
+   for(auto& row : m_grid)  // Not const because we want to return a non-const pointer
+      for(GridCell& cell : row)
+         if(cell.getState() != CellState::Matched)
+            validCells.push_back(&cell);
+
+   return validCells;
 }
 
 GridCell* Grid::findHoveredCell() {
@@ -420,3 +436,28 @@ GridCell* Grid::findHoveredCell() {
 }
 
 #pragma endregion
+
+void GridCell::setState(CellState newState) {
+   if(m_state == CellState::Matched)
+      return;
+
+   m_state = newState;
+   switch(m_state) {
+      case CellState::Rest:
+         numColor = Palette::gridnum_not_matched;
+         bgColor = Palette::off_bright_bg;
+         break;
+      case CellState::Hovered:
+         numColor = Palette::gridnum_not_matched;
+         bgColor = Palette::gridcell_hover;
+         break;
+      case CellState::Focused:
+         numColor = Palette::gridnum_not_matched;
+         bgColor = Palette::gridcell_focus;
+         break;
+      case CellState::Matched:
+         numColor = Palette::gridnum_matched;
+         bgColor = Palette::off_bright_bg;
+         break;
+   }
+}

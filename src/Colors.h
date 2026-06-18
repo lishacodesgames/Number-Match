@@ -52,6 +52,7 @@ namespace Palette {
    inline Color gridnum_matched = PURPLE;
    inline Color gridnum_not_matched = PURPLE;
    inline Color gridbox_color = PURPLE;
+   inline Color grid_hint = PURPLE;
 
    inline Color grid_scroll_thumb = PURPLE;
    inline Color grid_scroll_track = PURPLE;

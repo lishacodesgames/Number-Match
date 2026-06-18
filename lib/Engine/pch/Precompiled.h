@@ -12,9 +12,11 @@
 
 // ---- STL ----
 #include <unordered_map>
+#include <utility>
 #include <string>
 #include <vector>
 #include <array>
+#include <tuple>
 
 // ---- LOGGING ----
 #include <filesystem>
@@ -26,7 +28,6 @@
 // ---- TYPES AND...STUFF ----
 #include <stdarg.h>
 #include <typeinfo>
-#include <utility>
 #include <cstdint>
 
 // ---- THREADS, TIME, RANDOM ----
