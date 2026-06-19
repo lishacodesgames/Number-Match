@@ -86,13 +86,19 @@ void Grid::Update() {
    m_scrollBar.Update(m_scrollOffset, m_grid.size() * GridCell::cellSize, box.height);
 }
 
-void Grid::Draw() const {
+void Grid::Draw() {
+   // if theme is changed, we must update the colors
+   /// @todo I don't like this. Pls fix
+   static bool previous = Storage::isDarkMode;
    BeginScissorMode(box.x, box.y, box.width, box.height); // so grid cells don't render outside of the box
    for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
-         const GridCell& cell = m_grid.at(row).at(col);
+         GridCell& cell = m_grid[row][col];
          const std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
          const Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), GridCell::numHeight, 1);
+
+         if(previous != Storage::isDarkMode)
+            cell.setState(cell.getState());
 
          DrawRectangleRec(cell.bounds, cell.bgColor);
          DrawRectangleLinesEx(cell.bounds, 1, Palette::shadow_for_off_bright);
@@ -104,6 +110,7 @@ void Grid::Draw() const {
          );
       }
    EndScissorMode();
+   previous = Storage::isDarkMode;
 
    DrawRectangleLinesEx(box, 3, Palette::gridbox_color);
    if(m_grid.size() > 9)
@@ -182,7 +189,7 @@ bool Grid::hint() {
       if(m_grid.at(row).at(0) == 0)
          break;
 
-      for(size_t col = 0; col < m_grid.at(row).size() - 1; col++) {
+      for(size_t col = 0; col < 9 - 1; col++) {
          auto cell1 = m_grid.at(row).begin() + col;
          if(*cell1 == 0)
             break;
@@ -203,9 +210,11 @@ bool Grid::hint() {
             m_hint.first = { row, col };
             cell1->isHighlighted = true;
             cell1->setState(CellState::Rest);
+
             m_hint.second = { row, std::distance(m_grid.at(row).begin(), it) };
             it->isHighlighted = true;
             it->setState(CellState::Rest);
+
             return true;
          }
       }
@@ -216,7 +225,7 @@ bool Grid::hint() {
       if(m_grid.at(row1).at(0) == 0)
          break;
 
-      for(size_t col = 0; col < m_grid.at(row1).size(); col++) {
+      for(size_t col = 0; col < 9; col++) {
          GridCell& cell1 = m_grid[row1][col];
          if(cell1 == 0)
             break;
@@ -236,9 +245,11 @@ bool Grid::hint() {
                m_hint.first = { row1, col };
                cell1.isHighlighted = true;
                cell1.setState(CellState::Rest);
+
                m_hint.second = { row2, col };
                cell2.isHighlighted = true;
                cell2.setState(CellState::Rest);
+
                return true;
             }
             
@@ -253,7 +264,7 @@ bool Grid::hint() {
       if(m_grid.at(row1).at(0) == 0)
          break;
 
-      for(size_t col1 = 0; col1 < m_grid.at(row1).size(); col1++) {
+      for(size_t col1 = 0; col1 < 9; col1++) {
          GridCell& cell1 = m_grid[row1][col1];
          if(cell1 == 0)
             break;
@@ -276,9 +287,11 @@ bool Grid::hint() {
                   m_hint.first = { row1, col1 };
                   cell1.isHighlighted = true;
                   cell1.setState(CellState::Rest);
+
                   m_hint.second = { row2, col2 };
                   cell2.isHighlighted = true;
                   cell2.setState(CellState::Rest);
+
                   return true;
                }
                
@@ -290,7 +303,44 @@ bool Grid::hint() {
    }
 
    // vision wrap
-   // ..
+   for(size_t row1 = 0; row1 < m_grid.size(); row1++) {
+      if(m_grid.at(row1).at(0) == 0)
+         break;
+
+      for(size_t col1 = 0; col1 < 9; col1++) {
+         GridCell& cell1 = m_grid[row1][col1];
+         if(cell1 == 0)
+            break;
+         if(cell1.getState() == CellState::Matched)
+            continue;
+            
+         size_t row2 = row1 + 1;
+         for(size_t col2 = 0; col2 < 9; col2++) {
+            GridCell& cell2 = m_grid[row2][col2];
+            if(cell2 == 0)
+               break;
+            if(cell2.getState() == CellState::Matched)
+               continue;
+
+            if(getMatchType(&cell2, &cell1, Hint::VisionWrap) != MatchType::NoMatch) {
+               m_hint.isHighlighted = true;
+
+               m_hint.first = { row1, col1 };
+               cell1.isHighlighted = true;
+               cell1.setState(CellState::Rest);
+
+               m_hint.second = { row2, col2 };
+               cell2.isHighlighted = true;
+               cell2.setState(CellState::Rest);
+
+               return true;
+            }
+            
+            // found an unmatched cell that wasn't compatible, move onto next diagonal / cell
+            break;
+         }
+      }
+   }
 
    // no matches found
    m_hint.isHighlighted = true;

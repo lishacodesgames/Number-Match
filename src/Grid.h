@@ -52,7 +52,7 @@ public:
    // --- methods ---
    bool OnClick(); /// @return e.Handled to GameLayer
    void Update();
-   void Draw() const;
+   void Draw();
 
    // --- gameplay ---
    /**
