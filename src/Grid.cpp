@@ -24,7 +24,7 @@ Grid::Grid() : m_focusedCell(nullptr),
 
 bool Grid::OnClick() {
    if(m_hint.isHighlighted)
-      m_hint.reset();
+      hintReset();
 
    GridCell* activeCell = findHoveredCell();
    if(activeCell) {
@@ -201,9 +201,11 @@ bool Grid::hint() {
             m_hint.isHighlighted = true;
 
             m_hint.first = { row, col };
-            cell1->bgColor = Palette::grid_hint;
+            cell1->isHighlighted = true;
+            cell1->setState(CellState::Rest);
             m_hint.second = { row, std::distance(m_grid.at(row).begin(), it) };
-            it->bgColor = Palette::grid_hint;
+            it->isHighlighted = true;
+            it->setState(CellState::Rest);
             return true;
          }
       }
@@ -232,20 +234,60 @@ bool Grid::hint() {
                m_hint.isHighlighted = true;
 
                m_hint.first = { row1, col };
-               cell1.bgColor = Palette::grid_hint;
+               cell1.isHighlighted = true;
+               cell1.setState(CellState::Rest);
                m_hint.second = { row2, col };
-               cell2.bgColor = Palette::grid_hint;
+               cell2.isHighlighted = true;
+               cell2.setState(CellState::Rest);
                return true;
             }
             
-            // found a matched cell that wasn't compatible, move onto next column
+            // found an unmatched cell that wasn't compatible, move onto next column
             break;
          }
       }
    }
 
    // same diagonal
-   // ..
+   for(size_t row1 = 0; row1 < m_grid.size(); row1++) {
+      if(m_grid.at(row1).at(0) == 0)
+         break;
+
+      for(size_t col1 = 0; col1 < m_grid.at(row1).size(); col1++) {
+         GridCell& cell1 = m_grid[row1][col1];
+         if(cell1 == 0)
+            break;
+         if(cell1.getState() == CellState::Matched)
+            continue;
+            
+         for(int colStep = -1; colStep <= 1; colStep += 2) { // -1 for -ve diagonal, and vice versa
+            for(size_t row2 = row1 + 1, col2 = col1 + colStep;
+                  col2 < 9 && col2 >= 0; row2++, col2 += colStep) {
+
+               GridCell& cell2 = m_grid[row2][col2];
+               if(cell2 == 0)
+                  break;
+               if(cell2.getState() == CellState::Matched)
+                  continue;
+
+               if(getMatchType(&cell2, &cell1, Hint::SameDiagonal) != MatchType::NoMatch) {
+                  m_hint.isHighlighted = true;
+
+                  m_hint.first = { row1, col1 };
+                  cell1.isHighlighted = true;
+                  cell1.setState(CellState::Rest);
+                  m_hint.second = { row2, col2 };
+                  cell2.isHighlighted = true;
+                  cell2.setState(CellState::Rest);
+                  return true;
+               }
+               
+               // found an unmatched cell that wasn't compatible, move onto next diagonal / cell
+               break;
+            }
+         }
+      }
+   }
 
    // vision wrap
    // ..
@@ -253,6 +295,22 @@ bool Grid::hint() {
    // no matches found
    m_hint.isHighlighted = true;
    return false;
+}
+
+void Grid::hintReset() {
+   m_hint.isHighlighted = false;
+
+   if(m_hint.first.first != -1) {
+      m_grid[m_hint.first.first][m_hint.first.second].isHighlighted = false;
+      m_grid[m_hint.first.first][m_hint.first.second].bgColor = Palette::off_bright_bg;
+   }
+   m_hint.first = { -1, -1 };
+
+   if(m_hint.second.first != -1) {
+      m_grid[m_hint.second.first][m_hint.second.second].isHighlighted = false;
+      m_grid[m_hint.second.first][m_hint.second.second].bgColor = Palette::off_bright_bg;
+   }
+   m_hint.second = { -1, -1 };
 }
 
 void Grid::handleMatch(GridCell* cell, MatchType match) {
@@ -394,7 +452,7 @@ MatchType Grid::getMatchType(GridCell* cell2, GridCell* cell1, Hint hint) const 
    }
 
    // 3. Same diagonal IF no unmatched cell in between
-   int rowDiff = std::abs(pos2.first - pos1.first);
+   int rowDiff = pos2.first - pos1.first;
    if(hint == Hint::SameDiagonal) {
       int colDiff = std::abs(pos2.second - pos1.second);
       if(rowDiff == colDiff) {  // same diagonal
@@ -509,7 +567,7 @@ void GridCell::setState(CellState newState) {
    switch(m_state) {
       case CellState::Rest:
          numColor = Palette::gridnum_not_matched;
-         bgColor = Palette::off_bright_bg;
+         bgColor = isHighlighted ? Palette::grid_hint : Palette::off_bright_bg;
          break;
       case CellState::Hovered:
          numColor = Palette::gridnum_not_matched;

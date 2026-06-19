@@ -18,12 +18,6 @@ struct HintHighlight
    bool isHighlighted = false;
    std::pair<int, int> first{ -1, -1 };
    std::pair<int, int> second{ -1, -1 };
-
-   void reset() {
-      isHighlighted = false;
-      first = { -1, -1 };
-      second =  { -1, -1 };
-   }
 };
 
 struct GridCell {
@@ -32,6 +26,7 @@ struct GridCell {
    static float cellSize, numHeight;
    Color bgColor = Palette::off_bright_bg, numColor = Palette::gridnum_not_matched;
 
+   bool isHighlighted = false;
    int value;  /// 0 for empty, 1-9 otherwise
    Rectangle bounds;
 
@@ -71,6 +66,7 @@ public:
    bool hint(); /// @return if match exists in grid
 private:
    HintHighlight m_hint;
+   void hintReset();
 
 private:
    std::vector<std::array<GridCell, 9>> m_grid;  /// Vector of 9-length arrays
