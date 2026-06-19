@@ -8,10 +8,9 @@
 
 Rectangle CoinLayer::box = { 0, 0, 0, 0 };
 
-CoinLayer::CoinLayer() : Core::Layer("Coin Layer", true) {
-   m_coinTexture = LoadTexture("assets/icons/game/coin_20x20.png");
-   resize();
-}
+CoinLayer::CoinLayer() : Core::Layer("Coin Layer", true),
+      m_coinTexture(LoadTexture("assets/icons/game/coin_20x20.png"))
+{ resize(); }
 
 void CoinLayer::OnUpdate() {
    if(IsWindowResized())

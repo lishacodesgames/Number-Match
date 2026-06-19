@@ -14,17 +14,16 @@
 std::array<Vector2, 9> numSizes{};
 
 GameLayer::GameLayer() : Core::Layer("Game Layer"),
+      m_trophyTexture(LoadTexture("assets/icons/game/trophy_16x16.png")),
+      m_tickTexture(LoadTexture("assets/icons/game/tick_16x16.png")),
       m_gobackButton({ 15, 15 }, { 6, 1 }, { 1, 1 }, "", BLANK, Palette::game_nav_color, 20, { 0, 0 }),
       m_settingsButton({ 0, 0 }, { 1, 1 }, "", BLANK, Palette::game_nav_color, 20, { 0, 0 }),
-      m_plusButton({ 0, 0 }, { 12, 10 }, "", Palette::game_button_bg, Palette::game_button_text, 25, { 1.0f, 8 }),
-      m_hintButton({ 0, 0 }, { 12, 10 }, "", Palette::game_button_bg, Palette::game_button_text, 25, { 1.0f, 8 }) 
+      m_plusButton(
+         { 0, 0 }, { 12, 10 }, "", Palette::game_button_bg, Palette::game_button_text, 25, { 1.0f, 8 }),
+      m_hintButton(
+         { 0, 0 }, { 12, 10 }, "", Palette::game_button_bg, Palette::game_button_text, 25, { 1.0f, 8 }) 
 {
    TraceLog(LISHA_SAYS, "Loading a new game...");
-
-   m_trophyImage = LoadImage("assets/icons/game/trophy_16x16.png");
-   m_trophyTexture = LoadTextureFromImage(m_trophyImage);
-   m_tickImage = LoadImage("assets/icons/game/tick_16x16.png");
-   m_tickTexture = LoadTextureFromImage(m_tickImage);
 
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
    m_settingsButton.setIcon("assets/icons/game/settings_30x30.png");
@@ -151,13 +150,13 @@ void GameLayer::OnRender() {
    float scoreInfoX =
       m_grid.box.x + m_grid.box.width
          - MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), infoFontSize, spacing).x
-         - m_trophyTexture.width - 2;
+         - m_trophyScale * m_trophyTexture.width * 1.0005f;
 
    DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, spacing, Palette::game_info_color);
-   DrawTexture(m_trophyTexture, scoreInfoX, infoY, Palette::game_info_color);
+   DrawTextureEx(m_trophyTexture, { scoreInfoX, infoY }, 0.0f, m_trophyScale, Palette::game_info_color);
    DrawTextEx(
       App::font_semibold, Storage::formatBestScore().c_str(),
-      { scoreInfoX + m_trophyTexture.width + 2, infoY },
+      { scoreInfoX + m_trophyScale * m_trophyTexture.width * 1.0005f, infoY },
       infoFontSize, spacing, Palette::game_info_color);
 
    // Numbers Cleared
@@ -168,21 +167,21 @@ void GameLayer::OnRender() {
       App::font_retro, "Numbers Cleared", { numbersTagX, tagY },
       tagFontSize, spacing, Palette::game_info_color);
 
-   float numAndPadWidth = m_tickTexture.width * 1.15f; // 50% width for padding per num
-   float allNumsWidth = numAndPadWidth * 9 - m_tickTexture.width * 0.5f; // 8 pads for 9 nums
+   float numAndPadWidth = m_tickScale * m_tickTexture.width * 1.15f; // 50% width for padding per num
+   float allNumsWidth = numAndPadWidth * 9 - m_tickScale * m_tickTexture.width * 0.5f; // 8 pads for 9 nums
    float numX = m_grid.box.x + (m_grid.box.width - allNumsWidth) / 2;
 
    for(int i = 0; i < 9; i++) {
       std::string num = std::to_string(i + 1);
 
       if(Storage::numbersCleared.at(i))
-         DrawTexture(m_tickTexture, numX, infoY, Palette::game_info_color);
+         DrawTextureEx(m_tickTexture, { numX, infoY }, 0.0f, m_tickScale, Palette::game_info_color);
       else {
          Vector2 numSize = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, spacing);
          DrawTextEx(
             App::font_semibold, num.c_str(),
-            {  numX + (m_tickTexture.width - numSize.x) / 2.0f,
-               infoY + (m_tickTexture.height - numSize.y) / 2.0f },
+            {  numX + (m_tickScale * m_tickTexture.width - numSize.x) / 2.0f,
+               infoY + (m_tickScale * m_tickTexture.height - numSize.y) / 2.0f },
             infoFontSize, spacing, Palette::game_info_color);
       }
 
@@ -208,27 +207,13 @@ void GameLayer::resize() {
    m_grid.resize();
 
    float infoFontSize = GridCell::numHeight * 0.55f * 0.9f;
-   float trophyScale = infoFontSize / m_trophyTexture.height;
-   if(trophyScale > 1.25f || trophyScale < 0.75f) {
-      Image bestScoreTrophy = ImageCopy(m_trophyImage);
-      ImageResize(&bestScoreTrophy, m_trophyTexture.width * trophyScale, m_trophyTexture.height * trophyScale);
-
-      UnloadTexture(m_trophyTexture);
-      m_trophyTexture = LoadTextureFromImage(bestScoreTrophy);
-      UnloadImage(bestScoreTrophy);
+   m_trophyScale = std::max(infoFontSize / m_trophyTexture.height, 1.0f);
+   if(m_trophyScale > 1.25f || m_trophyScale < 0.75f)
       LOG_RESIZE("Best Score Trophy resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
-   }
 
-   float tickScale = infoFontSize / m_tickTexture.height;
-   if(tickScale > 1.25f || tickScale < 0.75f) {
-      Image tick = ImageCopy(m_tickImage);
-      ImageResize(&tick, m_tickTexture.width * tickScale, m_tickTexture.height * tickScale);
-
-      UnloadTexture(m_tickTexture);
-      m_tickTexture = LoadTextureFromImage(tick);
-      UnloadImage(tick);
+   m_tickScale = std::max(infoFontSize / m_tickTexture.height, 1.0f);
+   if(m_tickScale > 1.25f || m_tickScale < 0.75f)
       LOG_RESIZE("Tick resized to: %d, %d", m_tickTexture.width, m_tickTexture.height);
-   }
 
    // navigation buttons
    m_gobackButton.setFontSize(GridCell::numHeight);

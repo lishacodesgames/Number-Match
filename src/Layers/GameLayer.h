@@ -8,8 +8,6 @@ class GameLayer : public Core::Layer {
 public:
    GameLayer();
    ~GameLayer() override {
-      UnloadImage(m_trophyImage);
-      UnloadImage(m_tickImage);
       UnloadTexture(m_trophyTexture);
       UnloadTexture(m_tickTexture);
    }
@@ -34,8 +32,8 @@ private:
    void handleMatch(GridCell* cell);  /// handles matching with focused cell
 
    // --- game info ---
-   Image m_trophyImage, m_tickImage;
-   Texture m_trophyTexture, m_tickTexture;
+   const Texture m_trophyTexture, m_tickTexture;
+   float m_trophyScale, m_tickScale;
 
    // --- buttons ---
    GUI::Button m_gobackButton;

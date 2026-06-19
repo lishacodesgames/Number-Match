@@ -12,40 +12,37 @@ static constexpr float PANEL_PROPORTION = 0.085f;
 static constexpr float BANNER_PROPORTION = 0.075f;
 
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
+      m_rightArrowTexture(LoadTexture("assets/icons/options/rightarrow_10x13.png")),
       m_doneButton(
          { 0, 0 }, { 2, 2 }, "Done", BLANK, Palette::game_nav_color, 20, { 0, 0 }, App::font_semibold),
+      m_bannerIcons({
+         LoadTexture("assets/icons/options/settings_24x24.png"),
+         LoadTexture("assets/icons/options/howto_24x24.png"),
+         LoadTexture("assets/icons/options/help_24x24.png"),
+         LoadTexture("assets/icons/options/about_24x24.png"),
+         LoadTexture("assets/icons/options/privacy_24x24.png"),
+         LoadTexture("assets/icons/options/prefs_24x24.png"),
+         LoadTexture("assets/icons/options/math_24x24.png"),
+         LoadTexture("assets/icons/options/noads_24x24.png") }),
+      m_bannerNames({
+         "Settings",
+         "How To Play",
+         "Help",
+         "About Game",
+         "Privacy Rights",
+         "Privacy Preferences",
+         "Math Puzzles",
+         "Remove Ads" }),
       m_gobackButton({ 0, 0 }, { 2, 2 }, "", BLANK, Palette::game_nav_color)
 {
-   m_rightArrowTexture = LoadTexture("assets/icons/options/rightarrow_10x13.png");
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
 
    m_darkModeToggle.bgColor = Palette::off_bright_bg;
    m_darkModeToggle.knobColor = Palette::shadow_for_off_bright;
-   if(Storage::isDarkMode)
-      m_darkModeToggle.setState(true);
+   m_darkModeToggle.setState(Storage::isDarkMode);
 
    resize(GetScreenHeight());
    setBannerPositions();
-
-   // banner icons
-   m_bannerIcons[SETTINGS] = LoadTexture("assets/icons/options/settings_24x24.png");
-   m_bannerIcons[HOW_TO] = LoadTexture("assets/icons/options/howto_24x24.png");
-   m_bannerIcons[HELP] = LoadTexture("assets/icons/options/help_24x24.png");
-   m_bannerIcons[ABOUT] = LoadTexture("assets/icons/options/about_24x24.png");
-   m_bannerIcons[PRIVACY] = LoadTexture("assets/icons/options/privacy_24x24.png");
-   m_bannerIcons[PREFS] = LoadTexture("assets/icons/options/prefs_24x24.png");
-   m_bannerIcons[MATH] = LoadTexture("assets/icons/options/math_24x24.png");
-   m_bannerIcons[NO_ADS] = LoadTexture("assets/icons/options/noads_24x24.png");
-
-   // banner names, no map bcz i wanna use indices in iteration
-   m_bannerNames[SETTINGS] = "Settings";
-   m_bannerNames[HOW_TO] = "How To Play";
-   m_bannerNames[HELP] = "Help";
-   m_bannerNames[ABOUT] = "About Game";
-   m_bannerNames[PRIVACY] = "Privacy Rights";
-   m_bannerNames[PREFS] = "Privacy Preferences";
-   m_bannerNames[MATH] = "Math Puzzle";
-   m_bannerNames[NO_ADS] = "Remove Ads";
 }
 
 void OptionsLayer::OnEvent(Core::Event& e) {

@@ -7,8 +7,6 @@ class HomeLayer : public Core::Layer {
 public:
    HomeLayer();
    ~HomeLayer() override {
-      UnloadImage(m_trophyImage);
-      UnloadImage(m_backgroundImage);
       UnloadTexture(m_trophyTexture);
       UnloadTexture(m_backgroundTexture);
    }
@@ -18,11 +16,8 @@ public:
    void OnRender() override;
 
 private:
-   Image m_backgroundImage = { 0 };
-   Texture m_backgroundTexture = { 0 };
-
-   Image m_trophyImage = { 0 };
-   Texture m_trophyTexture = { 0 };
+   const Texture m_backgroundTexture, m_trophyTexture;
+   float m_bgScale, m_trophyScale;
 
    GUI::Button m_newButton;
    GUI::Button m_continueButton;

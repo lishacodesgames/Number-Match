@@ -11,21 +11,15 @@
 #include "App.h"
 
 HomeLayer::HomeLayer() : Layer("Home Layer"),
+      m_backgroundTexture(LoadTexture("assets/backgrounds/home_background_800x1417.png")),
+      m_trophyTexture(LoadTexture("assets/icons/menus/trophy_30x30.png")),
       m_newButton(
-         { 0, 0, 533, 40 },
-         "New Game", Palette::home_button_1, Palette::home_button_2, 30, { 0.8f, 8 }, App::font_semibold
-      ),
+         { 0, 0, 533, 40 }, "New Game", Palette::home_button_1,
+         Palette::home_button_2, 30, { 0.8f, 8 }, App::font_semibold),
       m_continueButton(
-         { 0, 0, 533, 40 },
-         "Continue Game", Palette::home_button_2, Palette::home_button_1, 30, { 0.8f, 8 }, App::font_semibold
-      )
+         { 0, 0, 533, 40 }, "Continue Game", Palette::home_button_2,
+         Palette::home_button_1, 30, { 0.8f, 8 }, App::font_semibold)
 {
-   m_backgroundImage = LoadImage("assets/backgrounds/home_background_800x1417.png");
-   m_trophyImage = LoadImage("assets/icons/menus/trophy_30x30.png");
-
-   m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
-   m_trophyTexture = LoadTextureFromImage(m_trophyImage);
-   
    resize();
 
    if(!App::GetLayerByName("Coin Layer"))
@@ -35,10 +29,8 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
 void HomeLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::MouseClicked) {
       GUI::Button* activeButton = findHoveredButton();
-      if(!activeButton) {
-         e.Handled = false;
+      if(!activeButton)
          return;
-      }
 
       App::QueueLayerPop(App::GetLayerByName("Panel Layer"));
       App::QueueLayerPop(this);
@@ -69,7 +61,7 @@ void HomeLayer::OnUpdate() {
 }
 
 void HomeLayer::OnRender() {
-   DrawTexture(m_backgroundTexture, 0, 0, Palette::home_bg_overlay);  // background
+   DrawTextureEx(m_backgroundTexture, { 0, 0 }, 0.0f, m_bgScale, Palette::home_bg_overlay);
 
    // title
    const char* gameName = "Number Match";
@@ -100,19 +92,19 @@ void HomeLayer::OnRender() {
    Vector2 bestScoreSize = MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), bestScoreFontSize, 2.0f);
 
    Vector2 scoreSize = {
-      bestScoreSize.x + m_trophyTexture.width * 1.5f, // half a trophy's width for padding
-      std::max((float)m_trophyTexture.height, bestScoreSize.y) };
+      bestScoreSize.x + m_trophyScale * m_trophyTexture.width * 1.5f, // half a trophy's width for padding
+      std::max(m_trophyScale * m_trophyTexture.height, bestScoreSize.y) };
    Vector2 scoreOrigin = {
       scoreTagOrigin.x + (scoreTagSize.x - scoreSize.x) / 2.0f,
       scoreTagOrigin.y + scoreTagSize.y };
 
    Vector2 trophyOrigin = {
-      scoreOrigin.x, scoreOrigin.y + (scoreSize.y - m_trophyTexture.height) / 2.0f };
+      scoreOrigin.x, scoreOrigin.y + (scoreSize.y - m_trophyScale * m_trophyTexture.height) / 2.0f };
    Vector2 bestScoreOrigin = {
-      scoreOrigin.x + m_trophyTexture.width * 1.5f,
+      scoreOrigin.x + m_trophyScale * m_trophyTexture.width * 1.5f,
       scoreOrigin.y - (scoreSize.y - bestScoreSize.y) / 2.0f };
 
-   DrawTexture(m_trophyTexture, trophyOrigin.x, trophyOrigin.y, WHITE);
+   DrawTextureEx(m_trophyTexture, trophyOrigin, 0.0f, m_trophyScale, WHITE);
    DrawTextEx(
       App::font_semibold, Storage::formatBestScore().c_str(),
       bestScoreOrigin, bestScoreFontSize, 2.0f, Palette::text_for_bright);
@@ -144,25 +136,20 @@ void HomeLayer::resize() {
    m_newButton.setOrigin(buttonOrigin);
 
    // Background
-   float aspectRatio = (float)m_backgroundImage.width / m_backgroundImage.height;
+   Vector2 old = { m_bgScale * m_backgroundTexture.width, m_bgScale * m_backgroundTexture.height };
+   if(GetScreenWidth() > m_bgScale * m_backgroundTexture.width)
+      m_bgScale = (float)GetScreenWidth() / m_backgroundTexture.width;
+   else if(GetScreenHeight() > m_bgScale * m_backgroundTexture.height)
+      m_bgScale = (float)GetScreenHeight() / m_backgroundTexture.height;
 
-   if(GetScreenWidth() > m_backgroundImage.width)
-      ImageResize(&m_backgroundImage, GetScreenWidth(), (int)(GetScreenWidth() / aspectRatio));
-   else if(GetScreenHeight() > m_backgroundImage.height)
-      ImageResize(&m_backgroundImage, (int)(GetScreenHeight() * aspectRatio), GetScreenHeight());
-
-   if(m_backgroundTexture.height != m_backgroundImage.height || m_backgroundTexture.width != m_backgroundImage.width) {
-      UnloadTexture(m_backgroundTexture);
-      m_backgroundTexture = LoadTextureFromImage(m_backgroundImage);
-      LOG_RESIZE("Home background resized to: %d, %d", m_backgroundTexture.width, m_backgroundTexture.height);
-   }
+   if(old.x != m_bgScale * m_backgroundTexture.width || old.y != m_bgScale * m_backgroundTexture.height)
+      LOG_RESIZE(
+         "Home background resized to: %d, %d",
+         m_backgroundTexture.width, m_backgroundTexture.height);
 
    // Best Score's Trophy Icon
-   float scale = std::clamp(GetScreenHeight() / 800.0f, 1.0f, 2.5f);
-   ImageResize(&m_trophyImage, 30 * scale, 30 * scale); // original trophy size is 30x30
-   if(m_trophyTexture.height != m_trophyImage.height) {
-      UnloadTexture(m_trophyTexture);
-      m_trophyTexture = LoadTextureFromImage(m_trophyImage);
+   float oldHeight = m_trophyScale * m_trophyTexture.height; 
+   m_trophyScale = std::clamp(GetScreenHeight() / 800.0f, 1.0f, 2.5f);
+   if(m_trophyScale * m_trophyTexture.height != oldHeight)
       LOG_RESIZE("Best score icon resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
-   }
 }

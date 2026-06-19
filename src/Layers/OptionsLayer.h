@@ -12,7 +12,7 @@ class OptionsLayer : public Core::Layer {
 public:
    OptionsLayer();
    ~OptionsLayer() override {
-      for(Texture& icon : m_bannerIcons)
+      for(const Texture& icon : m_bannerIcons)
          UnloadTexture(icon);
 
       UnloadTexture(m_rightArrowTexture);
@@ -28,8 +28,7 @@ public:
    void OnRender() override;
 
 private:
-   /// @todo make resizable
-   Texture m_rightArrowTexture;
+   const Texture m_rightArrowTexture;
 
    float m_targetY;
    Rectangle m_bounds;
@@ -37,8 +36,8 @@ private:
    GUI::Button m_doneButton;
 
    std::array<Rectangle, 8> m_banners;
-   std::array<Texture, 8> m_bannerIcons;
-   std::array<std::string, 8> m_bannerNames;
+   const std::array<Texture, 8> m_bannerIcons;
+   const std::array<std::string, 8> m_bannerNames;
 
    /// simply for more readability when looping over parts of the banners' arrays
    enum BannerTypes { SETTINGS, HOW_TO, HELP, ABOUT, PRIVACY, PREFS, MATH, NO_ADS }; 

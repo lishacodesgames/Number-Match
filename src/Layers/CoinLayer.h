@@ -16,7 +16,7 @@ public:
 
    static Rectangle box;
 private:
-   Texture m_coinTexture;
+   const Texture m_coinTexture;
    float m_fontSize, m_textureScale;
 
    void resize();
