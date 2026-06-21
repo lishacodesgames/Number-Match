@@ -20,7 +20,7 @@ App::App(const std::string& name) {
    TraceLog(LISHA_SAYS, "Loading App...");
 
    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-   std::pair<int, int> window = Storage::getWindowSize();
+   std::pair<int, int> window = Storage::getSavedWindowSize();
 
    InitWindow(window.first, window.second, name.c_str());
    SetWindowMinSize(500, 575);
@@ -49,7 +49,6 @@ App::App(const std::string& name) {
 
 App::~App() {
    Storage::save();
-   Storage::saveWindow(GetScreenWidth(), GetScreenHeight());
 
    m_layerStack.Delete(); /// Must be done before CloseWindow()
    CloseWindow();

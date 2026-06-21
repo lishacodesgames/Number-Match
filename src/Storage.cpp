@@ -9,8 +9,8 @@ uint32_t Storage::bestScore = 0;
 uint32_t Storage::coins = 0;
 uint32_t Storage::currentScore = 0;
 bool Storage::isDarkMode = true;
-std::array<bool, 9> Storage::numbersCleared = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-uint32_t Storage::stage = 1;
+std::array<bool, 9> Storage::numbersCleared = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+uint16_t Storage::stage = 1;
 
 fs::file_time_type Storage::lastSaveTime = fs::file_time_type::min();
 
@@ -31,54 +31,65 @@ void Storage::load() {
    }
    s.close();
 
-   bestScore = j["bestScore"].get<uint32_t>();
-   coins = j["coins"].get<uint32_t>();
-   currentScore = j["currentScore"].get<uint32_t>();
-   isDarkMode = j["isDarkMode"].get<bool>();
-   numbersCleared = j["numbersCleared"].get<std::array<bool, 9>>();
-   stage = j["stage"].get<uint32_t>();
+   stage = j["game"]["stage"].get<uint16_t>();
+   coins = j["game"]["coins"].get<uint32_t>();
+   bestScore = j["game"]["bestScore"].get<uint32_t>();
+   currentScore = j["game"]["currentScore"].get<uint32_t>();
+   numbersCleared = j["game"]["numbersCleared"].get<std::array<bool, 9>>();
+
+   isDarkMode = j["UI"]["isDarkMode"].get<bool>();
 }
 
 void Storage::save() {
-   json j;
+   std::string gamesave = std::format(
+R"json({{
+   "game": {{
+      "stage": {},
+      "coins": {},
+      "bestScore": {},
+      "currentScore": {},
+      "numbersCleared": [
+         {}, {}, {},
+         {}, {}, {},
+         {}, {}, {}
+      ]
+   }},
 
-   j["bestScore"] = bestScore;
-   j["coins"] = coins;
-   j["currentScore"] = currentScore;
-   j["isDarkMode"] = isDarkMode;
-   j["numbersCleared"] = numbersCleared;
-   j["stage"] = stage;
+   "window": {{
+      "width": {},
+      "height": {}
+   }},
+
+   "UI": {{
+      "isDarkMode": {}
+   }}
+}})json",
+      stage, coins, bestScore, currentScore,
+      numbersCleared.at(0), numbersCleared.at(1), numbersCleared.at(2), 
+      numbersCleared.at(3), numbersCleared.at(4), numbersCleared.at(5), 
+      numbersCleared.at(6), numbersCleared.at(7), numbersCleared.at(8), 
+      
+      GetScreenWidth(), GetScreenHeight(),
+
+      isDarkMode
+   );
 
    std::ofstream s("assets/save.json");
-   if(!s.is_open()) return;
+   if(!s.is_open()) {
+      TraceLog(LOG_ERROR, "Error opening save.json for save!");
+      return;
+   }
 
-   std::string gamesave = j.dump(3);
    s << gamesave;
    s.close();
-
    TraceLog(LISHA_SAYS, "Game info saved at:\n%s", gamesave.c_str());
 }
 
-void Storage::saveWindow(int width, int height) {
-   json j;
-   
-   j["width"] = width;
-   j["height"] = height;
-
-   std::ofstream s("assets/window.json");
-   if(!s.is_open()) return;
-   s << j.dump(3);
-   s.close();
-
-   TraceLog(LISHA_SAYS, "Window size saved at: %d x %d", width, height);
-}
-
-std::pair<int, int> Storage::getWindowSize() {
-   std::ifstream s("assets/window.json");
+std::pair<int, int> Storage::getSavedWindowSize() {
+   std::ifstream s("assets/save.json");
 
    if(!s.is_open()) {
       TraceLog(LISHA_SAYS, "Window save file not found! Using default values...");
-      saveWindow(800, 650);
       return { 800, 650 };
    }
 
@@ -91,8 +102,8 @@ std::pair<int, int> Storage::getWindowSize() {
    }
    s.close();
 
-   int width = j["width"].get<int>();
-   int height = j["height"].get<int>();
+   int width = j["window"]["width"].get<int>();
+   int height = j["window"]["height"].get<int>();
 
    TraceLog(LISHA_SAYS, "Window loaded at: %d x %d", width, height);
    return { width, height };

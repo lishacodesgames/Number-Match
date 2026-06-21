@@ -12,7 +12,7 @@ struct Storage {
    static uint32_t currentScore;
    static bool isDarkMode;
    static std::array<bool, 9> numbersCleared; /// if 'n' is cleared, [n-1] is true
-   static uint32_t stage;
+   static uint16_t stage;
 
    static std::string formatCoins() { return format(coins); }
    static std::string formatBestScore() { return format(bestScore); }
@@ -23,9 +23,8 @@ struct Storage {
 
    static void save(); /// update file with storage variables
 
-   // only for App to call
-   static void saveWindow(int width, int height);
-   static std::pair<int, int> getWindowSize();
+   // only for App constructor to call
+   static std::pair<int, int> getSavedWindowSize();
 private:
    /// @todo extract into Engine/Numbers.h
    static std::string format(uint32_t num); /// perfectly formats bestScore with commas
