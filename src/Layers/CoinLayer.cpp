@@ -28,9 +28,10 @@ void CoinLayer::OnRender() {
          box.y + (box.height - texDim) / 2 },
       0.0f, m_textureScale, WHITE);
 
-   Vector2 coinAmountSize = MeasureTextEx(App::font_semibold, Storage::formatCoins().c_str(), m_fontSize, 1.5f);
+   Vector2 coinAmountSize =
+      MeasureTextEx(App::font_semibold, Storage::format(Storage::game.coins).c_str(), m_fontSize, 1.5f);
    DrawTextEx(
-      App::font_semibold, Storage::formatCoins().c_str(),
+      App::font_semibold, Storage::format(Storage::game.coins).c_str(),
       {  box.x + texDim * 1.5f,
          box.y + (box.height - coinAmountSize.y) / 2 },
       m_fontSize, 1.5f, Palette::text_for_bright);
@@ -48,7 +49,7 @@ void CoinLayer::resize() {
    if(std::abs(m_textureScale - old) > 0.5f)
       LOG_RESIZE("Coin icon resized to: %f x %f", texDim, texDim);
 
-   Vector2 coinAmtSize = MeasureTextEx(App::font_semibold, Storage::formatCoins().c_str(), m_fontSize, 1.5f);
+   Vector2 coinAmtSize = MeasureTextEx(App::font_semibold, Storage::format(Storage::game.coins).c_str(), m_fontSize, 1.5f);
    float boxWidth = coinAmtSize.x + texDim * 1.9f;
    float boxHeight = std::max(coinAmtSize.y, texDim) + 10;
    box = { (GetScreenWidth() - boxWidth) / 2.0f, boxHeight / 5.0f, boxWidth, boxHeight };

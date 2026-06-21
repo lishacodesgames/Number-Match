@@ -3,29 +3,30 @@
 #include <string>
 #include <array>
 
-/// @todo make into a namespace
-struct Storage {
-   Storage() { lastSaveTime = std::filesystem::last_write_time("assets/save.json"); }
+namespace Storage {
+   struct Game {
+      uint16_t stage = 1;
+      uint32_t coins = 0;
+      uint32_t bestScore = 0;
+      uint32_t currentScore = 0;
+      std::array<bool, 9> numbersCleared = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /// if 'n' is cleared, [n-1] is true
+   };
 
-   static uint32_t bestScore;
-   static uint32_t coins;
-   static uint32_t currentScore;
-   static bool isDarkMode;
-   static std::array<bool, 9> numbersCleared; /// if 'n' is cleared, [n-1] is true
-   static uint16_t stage;
+   struct UI {
+      // more to come like scroll direction preferences, etc
+      bool isDarkMode = true;
+   };
 
-   static std::string formatCoins() { return format(coins); }
-   static std::string formatBestScore() { return format(bestScore); }
-   static std::string formatCurrentScore() { return format(currentScore); }
+   inline Game game;
+   inline UI ui;
+   inline std::filesystem::path savefile = "assets/save.json";
+   inline std::filesystem::file_time_type lastSaveTime = std::filesystem::last_write_time(savefile);
 
-   static std::filesystem::file_time_type lastSaveTime;
-   static void load(); /// update storage variables from file
+   void load();  /// update storage variables from file
+   void save();  /// update file with storage variables
 
-   static void save(); /// update file with storage variables
+   std::pair<int, int> getSavedWindowSize(); /// only for App constructor to call
 
-   // only for App constructor to call
-   static std::pair<int, int> getSavedWindowSize();
-private:
-   /// @todo extract into Engine/Numbers.h
-   static std::string format(uint32_t num); /// perfectly formats bestScore with commas
-};
+   /// @todo extract into Engine/Utils/Strings.h
+   std::string format(uint32_t num);  /// perfectly formats bestScore with commas
+}  // namespace Storage

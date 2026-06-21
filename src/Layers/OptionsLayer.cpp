@@ -39,7 +39,7 @@ OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
 
    m_darkModeToggle.bgColor = Palette::off_bright_bg;
    m_darkModeToggle.knobColor = Palette::shadow_for_off_bright;
-   m_darkModeToggle.setState(Storage::isDarkMode);
+   m_darkModeToggle.setState(Storage::ui.isDarkMode);
 
    resize(GetScreenHeight());
    setBannerPositions();
@@ -64,7 +64,7 @@ void OptionsLayer::OnEvent(Core::Event& e) {
          e.Handled = true;
          return;
       } else if(m_darkModeToggle.isHovered) {
-         if(Storage::isDarkMode)
+         if(Storage::ui.isDarkMode)
             Palette::SetLightMode();
          else
             Palette::SetDarkMode();

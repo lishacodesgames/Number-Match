@@ -89,7 +89,7 @@ void Grid::Update() {
 void Grid::Draw() {
    // if theme is changed, we must update the colors
    /// @todo I don't like this. Pls fix
-   static bool previous = Storage::isDarkMode;
+   static bool previous = Storage::ui.isDarkMode;
    BeginScissorMode(box.x, box.y, box.width, box.height); // so grid cells don't render outside of the box
    for(size_t row = 0; row < m_grid.size(); row++)
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
@@ -97,7 +97,7 @@ void Grid::Draw() {
          const std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
          const Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), GridCell::numHeight, 1);
 
-         if(previous != Storage::isDarkMode)
+         if(previous != Storage::ui.isDarkMode)
             cell.setState(cell.getState());
 
          DrawRectangleRec(cell.bounds, cell.bgColor);
@@ -110,7 +110,7 @@ void Grid::Draw() {
          );
       }
    EndScissorMode();
-   previous = Storage::isDarkMode;
+   previous = Storage::ui.isDarkMode;
 
    DrawRectangleLinesEx(box, 3, Palette::gridbox_color);
    if(m_grid.size() > 9)
@@ -371,20 +371,20 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
 
    m_focusedCell->setState(CellState::Matched);
    cell->setState(CellState::Matched);
-   Storage::currentScore += static_cast<int>(match) * Storage::stage;
+   Storage::game.currentScore += static_cast<int>(match) * Storage::game.stage;
    
    int num1 = m_focusedCell->value;
    int num2 = cell->value;
    
    // check if either cell's number is clear
    if(isNumClear(num1)) {
-      Storage::numbersCleared[num1 - 1] = true;
-      Storage::currentScore += static_cast<int>(MatchType::ClearedNum) * Storage::stage;
+      Storage::game.numbersCleared[num1 - 1] = true;
+      Storage::game.currentScore += static_cast<int>(MatchType::ClearedNum) * Storage::game.stage;
    }
 
    if(num1 != num2 && isNumClear(num2)) {
-      Storage::numbersCleared[num2 - 1] = true;
-      Storage::currentScore += static_cast<int>(MatchType::ClearedNum) * Storage::stage;
+      Storage::game.numbersCleared[num2 - 1] = true;
+      Storage::game.currentScore += static_cast<int>(MatchType::ClearedNum) * Storage::game.stage;
    }
 
    // check if either cell's row is clear
@@ -393,7 +393,7 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
 
    if(isRowClear(row1)) {
       clearRow(row1);
-      Storage::currentScore += static_cast<int>(MatchType::ClearedRow) * Storage::stage;
+      Storage::game.currentScore += static_cast<int>(MatchType::ClearedRow) * Storage::game.stage;
 
       if(row2 > row1)
          row2--;
@@ -401,12 +401,12 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
    
    if(isRowClear(row2)) {
       clearRow(row2);
-      Storage::currentScore += static_cast<int>(MatchType::ClearedRow) * Storage::stage;
+      Storage::game.currentScore += static_cast<int>(MatchType::ClearedRow) * Storage::game.stage;
    }
 
    if(m_grid.at(0).at(0) == 0) { // grid is empty
-      Storage::currentScore += static_cast<int>(MatchType::ClearedStage) * Storage::stage;
-      Storage::stage++;
+      Storage::game.currentScore += static_cast<int>(MatchType::ClearedStage) * Storage::game.stage;
+      Storage::game.stage++;
       init();
    }
 
@@ -422,7 +422,7 @@ int calculateNumber() {
 }
 
 void Grid::init() {
-   Storage::numbersCleared.fill(true);
+   Storage::game.numbersCleared.fill(true);
    int value;
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
@@ -430,7 +430,7 @@ void Grid::init() {
             value = calculateNumber();
          else
             value = 0;
-         Storage::numbersCleared[value - 1] = false;
+         Storage::game.numbersCleared[value - 1] = false;
 
          m_grid[row][col].value = value;
          m_grid[row][col].setState(CellState::Rest);
@@ -549,7 +549,7 @@ bool Grid::isColClear(int col, int rowStart, int rowEnd) const {
 }
 
 bool Grid::isNumClear(int num) const {
-   if(Storage::numbersCleared.at(num - 1))
+   if(Storage::game.numbersCleared.at(num - 1))
       return true;
 
    for(const auto& row : m_grid)

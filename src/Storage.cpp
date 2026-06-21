@@ -5,121 +5,115 @@
 using json = nlohmann::json;     // type alias
 namespace fs = std::filesystem;  // namespace alias
 
-uint32_t Storage::bestScore = 0;
-uint32_t Storage::coins = 0;
-uint32_t Storage::currentScore = 0;
-bool Storage::isDarkMode = true;
-std::array<bool, 9> Storage::numbersCleared = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-uint16_t Storage::stage = 1;
+namespace Storage
+{
+   void load() {
+      std::ifstream s(savefile);
+      if(!s.is_open()) {
+         TraceLog(LISHA_SAYS, "Game save file not found! Using default values...");
+         save();
+         return;
+      }
 
-fs::file_time_type Storage::lastSaveTime = fs::file_time_type::min();
+      json j;
+      try {
+         s >> j;
+      } catch(const std::exception& e) {
+         TraceLog(LOG_ERROR, "Error parsing save file: %s", e.what());
+         return;
+      }
+      s.close();
 
-void Storage::load() {
-   std::ifstream s("assets/save.json");
-   if(!s.is_open()) {
-      TraceLog(LISHA_SAYS, "Game save file not found! Using default values...");
-      save();
-      return;
+      game.stage = j["game"]["stage"].get<uint16_t>();
+      game.coins = j["game"]["coins"].get<uint32_t>();
+      game.bestScore = j["game"]["bestScore"].get<uint32_t>();
+      game.currentScore = j["game"]["currentScore"].get<uint32_t>();
+      game.numbersCleared = j["game"]["numbersCleared"].get<std::array<bool, 9>>();
+
+      ui.isDarkMode = j["UI"]["isDarkMode"].get<bool>();
    }
 
-   json j;
-   try {
-      s >> j;
-   } catch(const std::exception& e) {
-      TraceLog(LOG_ERROR, "Error parsing save file: %s", e.what());
-      return;
-   }
-   s.close();
+   void save() {
+      std::string gamesave = std::format(
+   R"json({{
+      "game": {{
+         "stage": {},
+         "coins": {},
+         "bestScore": {},
+         "currentScore": {},
+         "numbersCleared": [
+            {}, {}, {},
+            {}, {}, {},
+            {}, {}, {}
+         ]
+      }},
 
-   stage = j["game"]["stage"].get<uint16_t>();
-   coins = j["game"]["coins"].get<uint32_t>();
-   bestScore = j["game"]["bestScore"].get<uint32_t>();
-   currentScore = j["game"]["currentScore"].get<uint32_t>();
-   numbersCleared = j["game"]["numbersCleared"].get<std::array<bool, 9>>();
+      "window": {{
+         "width": {},
+         "height": {}
+      }},
 
-   isDarkMode = j["UI"]["isDarkMode"].get<bool>();
-}
+      "UI": {{
+         "isDarkMode": {}
+      }}
+   }})json",
+         game.stage, game.coins, game.bestScore, game.currentScore,
+         game.numbersCleared.at(0), game.numbersCleared.at(1), game.numbersCleared.at(2), 
+         game.numbersCleared.at(3), game.numbersCleared.at(4), game.numbersCleared.at(5), 
+         game.numbersCleared.at(6), game.numbersCleared.at(7), game.numbersCleared.at(8), 
+         
+         GetScreenWidth(), GetScreenHeight(),
 
-void Storage::save() {
-   std::string gamesave = std::format(
-R"json({{
-   "game": {{
-      "stage": {},
-      "coins": {},
-      "bestScore": {},
-      "currentScore": {},
-      "numbersCleared": [
-         {}, {}, {},
-         {}, {}, {},
-         {}, {}, {}
-      ]
-   }},
+         ui.isDarkMode
+      );
 
-   "window": {{
-      "width": {},
-      "height": {}
-   }},
+      std::ofstream s(savefile);
+      if(!s.is_open()) {
+         TraceLog(LOG_ERROR, "Error opening save.json for save!");
+         return;
+      }
 
-   "UI": {{
-      "isDarkMode": {}
-   }}
-}})json",
-      stage, coins, bestScore, currentScore,
-      numbersCleared.at(0), numbersCleared.at(1), numbersCleared.at(2), 
-      numbersCleared.at(3), numbersCleared.at(4), numbersCleared.at(5), 
-      numbersCleared.at(6), numbersCleared.at(7), numbersCleared.at(8), 
-      
-      GetScreenWidth(), GetScreenHeight(),
-
-      isDarkMode
-   );
-
-   std::ofstream s("assets/save.json");
-   if(!s.is_open()) {
-      TraceLog(LOG_ERROR, "Error opening save.json for save!");
-      return;
+      s << gamesave;
+      s.close();
+      TraceLog(LISHA_SAYS, "Game info saved at:\n%s", gamesave.c_str());
    }
 
-   s << gamesave;
-   s.close();
-   TraceLog(LISHA_SAYS, "Game info saved at:\n%s", gamesave.c_str());
-}
+   std::pair<int, int> getSavedWindowSize() {
+      std::ifstream s(savefile);
 
-std::pair<int, int> Storage::getSavedWindowSize() {
-   std::ifstream s("assets/save.json");
+      if(!s.is_open()) {
+         TraceLog(LISHA_SAYS, "Window save file not found! Using default values...");
+         return { 800, 650 };
+      }
 
-   if(!s.is_open()) {
-      TraceLog(LISHA_SAYS, "Window save file not found! Using default values...");
-      return { 800, 650 };
+      json j;
+      try {
+         s >> j;
+      } catch(const std::exception& e) {
+         TraceLog(LOG_ERROR, "Error parsing window save file: %s", e.what());
+         return { 800, 650 };
+      }
+      s.close();
+
+      int width = j["window"]["width"].get<int>();
+      int height = j["window"]["height"].get<int>();
+
+      TraceLog(LISHA_SAYS, "Window loaded at: %d x %d", width, height);
+      return { width, height };
    }
 
-   json j;
-   try {
-      s >> j;
-   } catch(const std::exception& e) {
-      TraceLog(LOG_ERROR, "Error parsing window save file: %s", e.what());
-      return { 800, 650 };
-   }
-   s.close();
+   std::string format(uint32_t num) {
+      if(num >= 1000) {
+         std::ostringstream oss;
+         if(num >= 1000000) {
+            oss << (num / 1000000) % 1000 << ",";                                    // millions
+            oss << std::setfill('0') << std::setw(3) << (num / 1000) % 1000 << ",";  // thousands
+         } else
+            oss << num / 1000 << ",";  // thousands without leading zeros
 
-   int width = j["window"]["width"].get<int>();
-   int height = j["window"]["height"].get<int>();
-
-   TraceLog(LISHA_SAYS, "Window loaded at: %d x %d", width, height);
-   return { width, height };
-}
-
-std::string Storage::format(uint32_t num) {
-   if(num >= 1000) {
-      std::ostringstream oss;
-      if(num >= 1000000) {
-         oss << (num / 1000000) % 1000 << ",";                                    // millions
-         oss << std::setfill('0') << std::setw(3) << (num / 1000) % 1000 << ",";  // thousands
+         oss << std::setfill('0') << std::setw(3) << num % 1000;  // hundreds
+         return oss.str();
       } else
-         oss << num / 1000 << ",";  // thousands without leading zeros
-
-      oss << std::setfill('0') << std::setw(3) << num % 1000;  // hundreds
-      return oss.str();
-   } else
-      return std::to_string(num);  // if less than 1000, just return the number as is
-}
+         return std::to_string(num);  // if less than 1000, just return the number as is
+   }
+} // namespace Storage

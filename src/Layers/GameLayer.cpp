@@ -33,8 +33,8 @@ GameLayer::GameLayer() : Core::Layer("Game Layer"),
    resize();
 
    /// @todo add new vs continue distinction
-   Storage::stage = 1;
-   Storage::currentScore = 0;
+   Storage::game.stage = 1;
+   Storage::game.currentScore = 0;
    // numbersCleared initalisation is handled by Grid constructor
 
    TraceLog(LISHA_SAYS, "New game loaded!");
@@ -111,13 +111,13 @@ void GameLayer::OnRender() {
 
    // if theme is changed, we must update the colors
    /// @todo I don't like this. Pls fix
-   static bool previous = Storage::isDarkMode;
-   if(previous != Storage::isDarkMode) {
+   static bool previous = Storage::ui.isDarkMode;
+   if(previous != Storage::ui.isDarkMode) {
       m_plusButton.bgColor = Palette::game_button_bg;
       m_plusButton.contentColor = Palette::game_button_text;
       m_hintButton.bgColor = Palette::game_button_bg;
       m_hintButton.contentColor = Palette::game_button_text;
-      previous = Storage::isDarkMode;
+      previous = Storage::ui.isDarkMode;
    }
 
    m_plusButton.Draw();
@@ -140,7 +140,7 @@ void GameLayer::OnRender() {
       App::font_retro, "Stage", { m_grid.box.x, tagY },
       tagFontSize, spacing, Palette::game_info_color);
    DrawTextEx(
-      App::font_semibold, std::to_string(Storage::stage).c_str(), { m_grid.box.x + 5, infoY },
+      App::font_semibold, Storage::format(Storage::game.stage).c_str(), { m_grid.box.x + 5, infoY },
       infoFontSize + 3, spacing, Palette::game_info_color);
 
    // Best Score
@@ -149,13 +149,13 @@ void GameLayer::OnRender() {
          - MeasureTextEx(App::font_retro, "Best Score", tagFontSize, spacing).x;
    float scoreInfoX =
       m_grid.box.x + m_grid.box.width
-         - MeasureTextEx(App::font_semibold, Storage::formatBestScore().c_str(), infoFontSize, spacing).x
+         - MeasureTextEx(App::font_semibold, Storage::format(Storage::game.bestScore).c_str(), infoFontSize, spacing).x
          - m_trophyScale * m_trophyTexture.width * 1.0005f;
 
    DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, spacing, Palette::game_info_color);
    DrawTextureEx(m_trophyTexture, { scoreInfoX, infoY }, 0.0f, m_trophyScale, Palette::game_info_color);
    DrawTextEx(
-      App::font_semibold, Storage::formatBestScore().c_str(),
+      App::font_semibold, Storage::format(Storage::game.bestScore).c_str(),
       { scoreInfoX + m_trophyScale * m_trophyTexture.width * 1.0005f, infoY },
       infoFontSize, spacing, Palette::game_info_color);
 
@@ -174,7 +174,7 @@ void GameLayer::OnRender() {
    for(int i = 0; i < 9; i++) {
       std::string num = std::to_string(i + 1);
 
-      if(Storage::numbersCleared.at(i))
+      if(Storage::game.numbersCleared.at(i))
          DrawTextureEx(m_tickTexture, { numX, infoY }, 0.0f, m_tickScale, Palette::game_info_color);
       else {
          Vector2 numSize = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, spacing);
@@ -191,9 +191,9 @@ void GameLayer::OnRender() {
    // Current Score
    float remSpaceY = tagY - (CoinLayer::box.y + CoinLayer::box.height);
    float currentScoreFontSize = std::min(GridCell::numHeight, remSpaceY * 0.8f);
-   Vector2 currentScoreSize = MeasureTextEx(App::font_black, Storage::formatCurrentScore().c_str(), currentScoreFontSize, 1);
+   Vector2 currentScoreSize = MeasureTextEx(App::font_black, Storage::format(Storage::game.currentScore).c_str(), currentScoreFontSize, 1);
    DrawTextEx(
-      App::font_black, Storage::formatCurrentScore().c_str(),
+      App::font_black, Storage::format(Storage::game.currentScore).c_str(),
       { (float)GetScreenWidth() / 2 - currentScoreSize.x / 2, tagY - currentScoreSize.y * 1.2f },
       currentScoreFontSize, 1, Palette::text_for_off_bright);
 }
