@@ -1,0 +1,69 @@
+{
+   "game": {
+      "stage": 1,
+      "coins": 0,
+      "bestScore": 0,
+      "currentScore": 0,
+      "numbersCleared": [
+         false, false, false,
+         false, false, false,
+         false, false, false
+      ],
+      "grid": [
+         [
+            [ 5, "Rest" ], [ 6, "Rest" ], [ 4, "Rest" ],
+            [ 3, "Rest" ], [ 7, "Rest" ], [ 9, "Rest" ],
+            [ 4, "Rest" ], [ 6, "Rest" ], [ 3, "Rest" ]
+         ],
+         [
+            [ 9, "Rest" ], [ 3, "Rest" ], [ 9, "Rest" ],
+            [ 4, "Rest" ], [ 2, "Rest" ], [ 3, "Rest" ],
+            [ 4, "Rest" ], [ 8, "Rest" ], [ 5, "Rest" ]
+         ],
+         [
+            [ 1, "Rest" ], [ 9, "Rest" ], [ 4, "Rest" ],
+            [ 4, "Rest" ], [ 1, "Rest" ], [ 6, "Rest" ],
+            [ 7, "Rest" ], [ 9, "Rest" ], [ 4, "Rest" ]
+         ],
+         [
+            [ 3, "Rest" ], [ 7, "Rest" ], [ 1, "Rest" ],
+            [ 1, "Rest" ], [ 9, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ]
+         ],
+         [
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ]
+         ],
+         [
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ]
+         ],
+         [
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ]
+         ],
+         [
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ]
+         ],
+         [
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ],
+            [ 0, "Rest" ], [ 0, "Rest" ], [ 0, "Rest" ]
+         ]
+      ]
+   },
+
+   "window": {
+      "width": 1000,
+      "height": 700
+   },
+
+   "UI": {
+      "isDarkMode": true
+   }
+}

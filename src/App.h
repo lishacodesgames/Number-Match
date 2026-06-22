@@ -14,7 +14,7 @@ public:
    void Run();
    
    static void QueueLayerSwap(Core::Layer* pop, Core::Layer* push);
-   static void QueueLayerPush(Core::Layer* layer);
+   static void QueueLayerPush(Core::Layer* layer); // Pops existing layer if pushed layer is a duplicate
    static void QueueLayerPop(Core::Layer* layer);
    
    static Core::Layer* GetLayerByName(const std::string& name);

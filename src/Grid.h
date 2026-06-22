@@ -46,9 +46,9 @@ public:
 class Grid {
 public:
    Rectangle box;
-   Grid();
 
-public:
+   Grid(bool reset);
+
    // --- methods ---
    bool OnClick(); /// @return e.Handled to GameLayer
    void Update();
@@ -70,7 +70,7 @@ private:
 
 private:
    std::vector<std::array<GridCell, 9>> m_grid;  /// Vector of 9-length arrays
-   GridCell* m_focusedCell;
+   GridCell* m_focusedCell = nullptr;
 
    float m_scrollOffset = 0.0f;
    ScrollBar m_scrollBar;
@@ -106,6 +106,7 @@ private:
    std::vector<GridCell*> getValidCells(); /// @return all unmatched cells
 public:
    GridCell* findHoveredCell();
+   std::string getFormattedSave();
 };
 
 inline bool operator==(Hint a, Hint b) {

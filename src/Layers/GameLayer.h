@@ -6,11 +6,8 @@
 
 class GameLayer : public Core::Layer {
 public:
-   GameLayer();
-   ~GameLayer() override {
-      UnloadTexture(m_trophyTexture);
-      UnloadTexture(m_tickTexture);
-   }
+   GameLayer(bool reset); /// @param reset reset Storage game values or not (load them from Storage)
+   ~GameLayer() override;
 
    void OnAttach() override {
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);

@@ -16,8 +16,9 @@ App* App::s_instance = nullptr;
 
 App::App(const std::string& name) {
    s_instance = this;
-
    TraceLog(LISHA_SAYS, "Loading App...");
+
+   Storage::load();
 
    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
    std::pair<int, int> window = Storage::getSavedWindowSize();
@@ -30,7 +31,6 @@ App::App(const std::string& name) {
    font_semibold = LoadFontEx("assets/fonts/RedHatDisplay-SemiBold.ttf", 40, NULL, 0);
    font_black = LoadFontEx("assets/fonts/RedHatDisplay-Black.ttf", 70, NULL, 0);
 
-   Storage::load();
    if(Storage::ui.isDarkMode)
       Palette::SetDarkMode();
    else
@@ -48,8 +48,6 @@ App::App(const std::string& name) {
 }
 
 App::~App() {
-   Storage::save();
-
    m_layerStack.Delete(); /// Must be done before CloseWindow()
    CloseWindow();
    s_instance = nullptr;
@@ -130,10 +128,10 @@ void App::QueueLayerSwap(Core::Layer* pop, Core::Layer* push) {
 
 void App::QueueLayerPush(Core::Layer* layer) {
    for(Core::Layer* existing : s_instance->m_layerStack)
-      if(existing->GetName() == layer->GetName()) // duplicate layers
-         TraceLog(LOG_ERROR,
-            "Trying to push a layer that already exists!\n\tLayer name: %s",
-            layer->GetName().c_str());
+      if(existing->GetName() == layer->GetName()) { // duplicate layers
+         QueueLayerPop(layer);
+         break;
+      }
 
    s_instance->m_pendingPushes.push_back(layer);
 }

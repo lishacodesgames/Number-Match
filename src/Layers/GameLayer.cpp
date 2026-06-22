@@ -9,11 +9,7 @@
 #include "Colors.h"
 #include "App.h"
 
-/// @todo make scoring system into an enum class (diagonal matches > non-adjacent matches > adjacent matches)
-
-std::array<Vector2, 9> numSizes{};
-
-GameLayer::GameLayer() : Core::Layer("Game Layer"),
+GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"), m_grid(reset),
       m_trophyTexture(LoadTexture("assets/icons/game/trophy_16x16.png")),
       m_tickTexture(LoadTexture("assets/icons/game/tick_16x16.png")),
       m_gobackButton({ 15, 15 }, { 6, 1 }, { 1, 1 }, "", BLANK, Palette::game_nav_color, 20, { 0, 0 }),
@@ -32,12 +28,18 @@ GameLayer::GameLayer() : Core::Layer("Game Layer"),
 
    resize();
 
-   /// @todo add new vs continue distinction
-   Storage::game.stage = 1;
-   Storage::game.currentScore = 0;
-   // numbersCleared initalisation is handled by Grid constructor
+   if(reset) {
+      Storage::game.stage = 1;
+      Storage::game.currentScore = 0;
+   } // numbersCleared initalisation is handled by Grid constructor
 
    TraceLog(LISHA_SAYS, "New game loaded!");
+}
+
+GameLayer::~GameLayer() {
+   UnloadTexture(m_trophyTexture);
+   UnloadTexture(m_tickTexture);
+   Storage::save(m_grid.getFormattedSave());
 }
 
 #pragma region Methods

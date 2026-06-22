@@ -9,13 +9,28 @@
 float GridCell::cellSize = 45.0f;
 float GridCell::numHeight = 0;
 
-Grid::Grid() : m_focusedCell(nullptr),
-      m_scrollBar({ 0, 0, 0, 0 }, 10.0f, Palette::grid_scroll_thumb, Palette::grid_scroll_track)
+#define NINE_ZEROES { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+
+Grid::Grid(bool reset)
+   :  m_scrollBar({ 0, 0, 0, 0 }, 10.0f, Palette::grid_scroll_thumb, Palette::grid_scroll_track)
 {
-   m_grid.assign(9, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }),  // 9 rows of all blank cells
    srand(time(0));
 
-   init();
+   if(reset) {
+      init();
+   } else {
+      const auto& savedGrid = Storage::getSavedGrid();
+      m_grid.assign(savedGrid.size(), NINE_ZEROES);
+      for(size_t row = 0; row < savedGrid.size(); row++) {
+         for(size_t col = 0; col < savedGrid.at(row).size(); col++) {
+            GridCell& cell = m_grid[row][col];
+            const auto& [value, state] = savedGrid.at(row).at(col);
+
+            cell.value = value; 
+            cell.setState(state == "Matched" ? CellState::Matched : CellState::Rest);
+         }
+      }
+   }
    resize();
    m_scrollBar.setTrackBounds({ box.x + box.width + 25, box.y, 2, box.height });
 }
@@ -154,7 +169,7 @@ void Grid::plus() {
       // if no empty cell till last iteration, we make a new row of empty cell
       if(row == m_grid.size() - 1) {
          m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-         firstEmptyCell = { row, 0 };
+         firstEmptyCell = { row + 1, 0 };
          break;
       }
    }
@@ -175,7 +190,7 @@ void Grid::plus() {
          col = 0;
          row++;
          if(row == (int)m_grid.size()) {
-            m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            m_grid.push_back(NINE_ZEROES);
             for(GridCell& cell : m_grid[row])
                setCellBounds(&cell);
          }
@@ -273,7 +288,7 @@ bool Grid::hint() {
             
          for(int colStep = -1; colStep <= 1; colStep += 2) { // -1 for -ve diagonal, and vice versa
             for(size_t row2 = row1 + 1, col2 = col1 + colStep;
-                  col2 < 9 && col2 >= 0; row2++, col2 += colStep) {
+                  col2 < 9 && col2 >= 0 && row2 < m_grid.size(); row2++, col2 += colStep) {
 
                GridCell& cell2 = m_grid[row2][col2];
                if(cell2 == 0)
@@ -303,9 +318,11 @@ bool Grid::hint() {
    }
 
    // vision wrap
-   for(size_t row1 = 0; row1 < m_grid.size(); row1++) {
+   for(size_t row1 = 0; row1 < m_grid.size() - 1; row1++) {
       if(m_grid.at(row1).at(0) == 0)
          break;
+
+      size_t row2 = row1 + 1;
 
       for(size_t col1 = 0; col1 < 9; col1++) {
          GridCell& cell1 = m_grid[row1][col1];
@@ -314,7 +331,6 @@ bool Grid::hint() {
          if(cell1.getState() == CellState::Matched)
             continue;
             
-         size_t row2 = row1 + 1;
          for(size_t col2 = 0; col2 < 9; col2++) {
             GridCell& cell2 = m_grid[row2][col2];
             if(cell2 == 0)
@@ -422,15 +438,18 @@ int calculateNumber() {
 }
 
 void Grid::init() {
+   m_grid.assign(9, NINE_ZEROES),  // 9 rows of all blank cells
    Storage::game.numbersCleared.fill(true);
    int value;
+
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
-         if(row < 3 || (row == 3 && col < 5)) // first 3 rows & half of 4th row
+         if(row < 3 || (row == 3 && col < 5)) { // first 3 rows & half of 4th row
             value = calculateNumber();
-         else
+            Storage::game.numbersCleared[value - 1] = false;
+         } else {
             value = 0;
-         Storage::game.numbersCleared[value - 1] = false;
+         }
 
          m_grid[row][col].value = value;
          m_grid[row][col].setState(CellState::Rest);
@@ -605,6 +624,38 @@ GridCell* Grid::findHoveredCell() {
             return &cell;
 
    return nullptr;
+}
+
+std::string Grid::getFormattedSave() {
+   std::stringstream save;
+   save << "[\n";
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      save << "         [";
+
+      for(size_t col = 0; col < 9; col++) {
+         if(col % 3 == 0)
+            save << "\n            ";
+         else
+            save << " ";
+
+         save << std::format(
+            "[ {}, \"{}\" ]",
+            m_grid.at(row).at(col).value,
+            m_grid.at(row).at(col).getState() == CellState::Matched ? "Matched" : "Rest"
+         );
+
+         if(col != 8)
+            save << ",";
+      }
+
+      save << "\n         ]";
+      if(row != m_grid.size() - 1)
+         save << ",";
+      save << "\n";
+   }
+   save << "      ]";
+
+   return save.str();
 }
 
 #pragma endregion

@@ -5,23 +5,26 @@
 using json = nlohmann::json;     // type alias
 namespace fs = std::filesystem;  // namespace alias
 
+fs::file_time_type lastSaveTime = fs::file_time_type::min();
+
 namespace Storage
 {
    void load() {
       std::ifstream s(savefile);
+      
       if(!s.is_open()) {
          TraceLog(LISHA_SAYS, "Game save file not found! Using default values...");
-         save();
-         return;
+         fs::copy_file("assets/start.json", savefile, fs::copy_options::none);
+         s.open(savefile);
+         if(!s.is_open()) {
+            TraceLog(LOG_ERROR, "Could not open save file");
+            return;
+         }
       }
+      lastSaveTime = fs::last_write_time(savefile);
 
       json j;
-      try {
-         s >> j;
-      } catch(const std::exception& e) {
-         TraceLog(LOG_ERROR, "Error parsing save file: %s", e.what());
-         return;
-      }
+      s >> j;
       s.close();
 
       game.stage = j["game"]["stage"].get<uint16_t>();
@@ -33,34 +36,36 @@ namespace Storage
       ui.isDarkMode = j["UI"]["isDarkMode"].get<bool>();
    }
 
-   void save() {
+   void save(std::string formattedGrid) {
       std::string gamesave = std::format(
-   R"json({{
-      "game": {{
-         "stage": {},
-         "coins": {},
-         "bestScore": {},
-         "currentScore": {},
-         "numbersCleared": [
-            {}, {}, {},
-            {}, {}, {},
-            {}, {}, {}
-         ]
-      }},
+R"json({{
+   "game": {{
+      "stage": {},
+      "coins": {},
+      "bestScore": {},
+      "currentScore": {},
+      "numbersCleared": [
+         {}, {}, {},
+         {}, {}, {},
+         {}, {}, {}
+      ],
+      "grid": {}
+   }},
 
-      "window": {{
-         "width": {},
-         "height": {}
-      }},
+   "window": {{
+      "width": {},
+      "height": {}
+   }},
 
-      "UI": {{
-         "isDarkMode": {}
-      }}
-   }})json",
+   "UI": {{
+      "isDarkMode": {}
+   }}
+}})json",
          game.stage, game.coins, game.bestScore, game.currentScore,
          game.numbersCleared.at(0), game.numbersCleared.at(1), game.numbersCleared.at(2), 
          game.numbersCleared.at(3), game.numbersCleared.at(4), game.numbersCleared.at(5), 
-         game.numbersCleared.at(6), game.numbersCleared.at(7), game.numbersCleared.at(8), 
+         game.numbersCleared.at(6), game.numbersCleared.at(7), game.numbersCleared.at(8),
+         formattedGrid,
          
          GetScreenWidth(), GetScreenHeight(),
 
@@ -80,16 +85,19 @@ namespace Storage
 
    std::pair<int, int> getSavedWindowSize() {
       std::ifstream s(savefile);
-
       if(!s.is_open()) {
-         TraceLog(LISHA_SAYS, "Window save file not found! Using default values...");
-         return { 800, 650 };
+         TraceLog(LOG_FATAL, "Failed to load saved window size!");
+         throw fs::filesystem_error(
+            "Target file is completely missing", 
+            savefile, 
+            std::make_error_code(std::errc::no_message)
+         );
       }
 
       json j;
       try {
          s >> j;
-      } catch(const std::exception& e) {
+      } catch(const json::exception& e) {
          TraceLog(LOG_ERROR, "Error parsing window save file: %s", e.what());
          return { 800, 650 };
       }
@@ -100,6 +108,25 @@ namespace Storage
 
       TraceLog(LISHA_SAYS, "Window loaded at: %d x %d", width, height);
       return { width, height };
+   }
+
+   std::vector<std::array<std::pair<int, std::string>, 9>> getSavedGrid() {
+      std::ifstream s(savefile);
+
+      if(!s.is_open()) {
+         TraceLog(LOG_FATAL, "Failed to load saved grid!");
+         throw fs::filesystem_error(
+            "Target file is completely missing", 
+            savefile, 
+            std::make_error_code(std::errc::no_message)
+         );
+      }
+
+      json j;
+      s >> j;
+      s.close();
+
+      return j["game"]["grid"].get<std::vector<std::array<std::pair<int, std::string>, 9>>>();
    }
 
    std::string format(uint32_t num) {

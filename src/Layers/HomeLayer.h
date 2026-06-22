@@ -25,6 +25,7 @@ private:
 private:
    void resize();
 
+   /// @return new or continue button members
    GUI::Button* findHoveredButton() {
       if(m_newButton.isHovered)
          return &m_newButton;

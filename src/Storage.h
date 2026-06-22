@@ -20,12 +20,12 @@ namespace Storage {
    inline Game game;
    inline UI ui;
    inline std::filesystem::path savefile = "assets/save.json";
-   inline std::filesystem::file_time_type lastSaveTime = std::filesystem::last_write_time(savefile);
 
    void load();  /// update storage variables from file
-   void save();  /// update file with storage variables
+   void save(std::string formattedGrid);  /// update file with storage variables
 
    std::pair<int, int> getSavedWindowSize(); /// only for App constructor to call
+   std::vector<std::array<std::pair<int, std::string>, 9>> getSavedGrid(); /// only for Grid constructor to call
 
    /// @todo extract into Engine/Utils/Strings.h
    std::string format(uint32_t num);  /// perfectly formats bestScore with commas
