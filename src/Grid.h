@@ -7,7 +7,7 @@
 #include "Colors.h"
 #include "Storage.h"
 
-enum class Hint { Idk, SameRow, SameColumn, SameDiagonal, VisionWrap };
+enum class HintType { Idk, SameRow, SameColumn, SameDiagonal, VisionWrap };
 enum class CellState { Rest, Hovered, Focused, Matched };
 enum class MatchType {
    NoMatch = 0,
@@ -15,12 +15,6 @@ enum class MatchType {
    ClearedNum = 5, ClearedRow = 10, ClearedStage = 150
 };
 
-struct HintHighlight
-{
-   bool isHighlighted = false;
-   std::pair<int, int> first{ -1, -1 };
-   std::pair<int, int> second{ -1, -1 };
-};
 
 struct GridCell {
    GridCell(int value = 0) : value(value), bounds({ 0, 0, 0, 0 }) {}
@@ -67,12 +61,21 @@ public:
    void plus();
    bool hint(); /// @return if match exists in grid
 private:
-   using CellPosition = std::pair<int, int>;
+   struct CellPosition { int row = -1, col = -1; };
+   friend bool operator==(const Grid::CellPosition& a, const Grid::CellPosition& b);
 
-   HintHighlight m_hint;
-   void hintReset();
+   /// @bug hover system not working
+   struct Hint {
+      bool isHighlighted = false;
+      CellPosition first{ -1, -1 };
+      CellPosition second{ -1, -1 };
+
+      void reset(std::vector<std::array<GridCell, 9>>& grid);
+   };
 
 private:
+   Hint m_hint;
+
    std::vector<std::array<GridCell, 9>> m_grid;  /// Vector of 9-length arrays
    std::optional<CellPosition> m_focusedCell;
    std::optional<CellPosition> m_hoveredCell;
@@ -98,7 +101,7 @@ private:
     *
     * @return score of match
     */
-   MatchType getMatchType(GridCell* cell2, GridCell* cell1 = nullptr, Hint hint = Hint::Idk) const;
+   MatchType getMatchType(GridCell* cell2, GridCell* cell1 = nullptr, HintType hint = HintType::Idk) const;
 
    /// @return true IF all cells in row, btwn col limits, are either matched or empty (value = 0)
    bool isRowClear(int row, int startCol = 0, int endCol = 8) const;
@@ -116,12 +119,16 @@ public:
    Storage::SavedGrid getSaveData() const;
 };
 
-/// @return true IF both are same or either is Hint::Idk
-inline bool operator==(Hint a, Hint b) {
+inline bool operator==(const Grid::CellPosition& a, const Grid::CellPosition& b) {
+   return a.row != b.row && a.col != b.col;
+}
+
+/// @return true IF both are same or either is HintType::Idk
+inline bool operator==(HintType a, HintType b) {
    return
       static_cast<int>(a) == static_cast<int>(b) ||
-      static_cast<int>(a) == static_cast<int>(Hint::Idk) ||
-      static_cast<int>(b) == static_cast<int>(Hint::Idk);
+      static_cast<int>(a) == static_cast<int>(HintType::Idk) ||
+      static_cast<int>(b) == static_cast<int>(HintType::Idk);
 }
 
 inline int operator+(const GridCell& a, const GridCell& b) { return a.value + b.value; }
