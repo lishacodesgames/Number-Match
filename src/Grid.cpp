@@ -700,8 +700,8 @@ void Grid::Hint::reset(std::vector<std::array<GridCell, 9>>& grid) {
    first = { -1, -1 };
 
    if(second.row != -1 && second.col != -1) {
-      grid[second.row][first.col].isHighlighted = false;
-      grid[second.row][first.col].bgColor= Palette::off_bright_bg; 
+      grid[second.row][second.col].isHighlighted = false;
+      grid[second.row][second.col].bgColor= Palette::off_bright_bg; 
    }
    second = { -1, -1 };
 }

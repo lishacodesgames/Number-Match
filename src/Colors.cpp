@@ -39,13 +39,13 @@ namespace Palette
       options_title_color = DARKERGRAY;
       options_arrow_color = MEDIUMDARKGRAY;
       options_text_color = DARKGRAY;
-      
+
       gridcell_hover = ColorAlpha(BLIZZARDBLUE, 0.5f);
       gridcell_focus = ColorAlpha(SKYBLUE, 0.5f);
       gridnum_matched = LIGHTGRAY;
       gridnum_not_matched = Color{ 122, 5, 26, 255 };
       gridbox_color = ColorAlpha(DARKGRAY, 0.8f);
-      grid_hint = RED;
+      grid_hint = GOLD;
       
       grid_scroll_thumb = GRAY;
       grid_scroll_track = LIGHTGRAY;

@@ -64,7 +64,6 @@ private:
    struct CellPosition { int row = -1, col = -1; };
    friend bool operator==(const Grid::CellPosition& a, const Grid::CellPosition& b);
 
-   /// @bug hover system not working
    struct Hint {
       bool isHighlighted = false;
       CellPosition first{ -1, -1 };
@@ -120,7 +119,7 @@ public:
 };
 
 inline bool operator==(const Grid::CellPosition& a, const Grid::CellPosition& b) {
-   return a.row != b.row && a.col != b.col;
+   return a.row == b.row && a.col == b.col;
 }
 
 /// @return true IF both are same or either is HintType::Idk
