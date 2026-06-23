@@ -2,8 +2,10 @@
 #include <utility>
 #include <vector>
 #include <array>
+#include <optional>
 #include "GUI/ScrollBar.h"
 #include "Colors.h"
+#include "Storage.h"
 
 enum class Hint { Idk, SameRow, SameColumn, SameDiagonal, VisionWrap };
 enum class CellState { Rest, Hovered, Focused, Matched };
@@ -65,12 +67,15 @@ public:
    void plus();
    bool hint(); /// @return if match exists in grid
 private:
+   using CellPosition = std::pair<int, int>;
+
    HintHighlight m_hint;
    void hintReset();
 
 private:
    std::vector<std::array<GridCell, 9>> m_grid;  /// Vector of 9-length arrays
-   GridCell* m_focusedCell = nullptr;
+   std::optional<CellPosition> m_focusedCell;
+   std::optional<CellPosition> m_hoveredCell;
 
    float m_scrollOffset = 0.0f;
    ScrollBar m_scrollBar;
@@ -100,15 +105,18 @@ private:
    bool isColClear(int col, int rowStart, int rowEnd) const;
    bool isNumClear(int num) const; /// @return true IF no instance of num found in grid
    void clearRow(int row);
+   GridCell* getCellAt(CellPosition position);
+   const GridCell* getCellAt(CellPosition position) const;
 
    // --- finders ---
-   std::pair<int, int> getCellPos(GridCell* cell) const;  /// @return {row, col} of cell in m_grid
-   std::vector<GridCell*> getValidCells(); /// @return all unmatched cells
+   CellPosition getCellPos(GridCell* cell) const;  /// @return {row, col} of cell in m_grid
+   std::vector<int> getValidValues() const; /// @return values of all unmatched cells
 public:
    GridCell* findHoveredCell();
-   std::string getFormattedSave();
+   Storage::SavedGrid getSaveData() const;
 };
 
+/// @return true IF both are same or either is Hint::Idk
 inline bool operator==(Hint a, Hint b) {
    return
       static_cast<int>(a) == static_cast<int>(b) ||

@@ -1,9 +1,16 @@
+#pragma once
 #include <filesystem>
 #include <cstdint>
 #include <string>
 #include <array>
+#include <utility>
+#include <vector>
 
 namespace Storage {
+   using SavedCell = std::pair<int, std::string>;
+   using SavedRow = std::array<SavedCell, 9>;
+   using SavedGrid = std::vector<SavedRow>;
+
    struct Game {
       uint16_t stage = 1;
       uint32_t coins = 0;
@@ -19,14 +26,14 @@ namespace Storage {
 
    inline Game game;
    inline UI ui;
-   inline std::filesystem::path savefile = "assets/save.json";
+   inline const std::filesystem::path savefile = "assets/save.json";
 
    void load();  /// update storage variables from file
-   void save(std::string formattedGrid);  /// update file with storage variables
+   void save(const SavedGrid& grid);  /// update file with storage variables
 
    std::pair<int, int> getSavedWindowSize(); /// only for App constructor to call
-   std::vector<std::array<std::pair<int, std::string>, 9>> getSavedGrid(); /// only for Grid constructor to call
+   SavedGrid getSavedGrid(); /// only for Grid constructor to call
 
    /// @todo extract into Engine/Utils/Strings.h
-   std::string format(uint32_t num);  /// perfectly formats bestScore with commas
-}  // namespace Storage
+   std::string format(uint32_t num);  /// perfectly formats big numbers with commas
+}

@@ -19,7 +19,7 @@ Grid::Grid(bool reset)
    if(reset) {
       init();
    } else {
-      const auto& savedGrid = Storage::getSavedGrid();
+      const auto savedGrid = Storage::getSavedGrid();
       m_grid.assign(savedGrid.size(), NINE_ZEROES);
       for(size_t row = 0; row < savedGrid.size(); row++) {
          for(size_t col = 0; col < savedGrid.at(row).size(); col++) {
@@ -42,30 +42,34 @@ bool Grid::OnClick() {
       hintReset();
 
    GridCell* activeCell = findHoveredCell();
+   GridCell* focusedCell = m_focusedCell ? getCellAt(*m_focusedCell) : nullptr;
    if(activeCell) {
-      if(activeCell != m_focusedCell) {  // new cell was clicked
+      const CellPosition activePosition = getCellPos(activeCell);
+      if(!m_focusedCell || activePosition != *m_focusedCell) {  // new cell was clicked
          MatchType match = getMatchType(activeCell);
          if(static_cast<bool>(match)) {
             handleMatch(activeCell, match);
          } else {
-            if(m_focusedCell)
-               m_focusedCell->setState(CellState::Rest);
+            if(focusedCell)
+               focusedCell->setState(CellState::Rest);
 
             if(*activeCell != 0) { // empty cells cannot be focused
-               m_focusedCell = activeCell;
+               m_focusedCell = activePosition;
                activeCell->setState(CellState::Focused);
+            } else {
+               m_focusedCell.reset();
             }
          }
       } else {  // clicking the already focused cell should deselect it
          activeCell->setState(CellState::Hovered);
-         m_focusedCell = nullptr;
+         m_focusedCell.reset();
       }
 
       return true;
    } else if(m_focusedCell) {
       // clicking a matched cell or outside of the grid or a matched cell should deselect the cells
-      m_focusedCell->setState(CellState::Rest);
-      m_focusedCell = nullptr;
+      focusedCell->setState(CellState::Rest);
+      m_focusedCell.reset();
    }
 
    return false; // in case the click has to be handled by another layer
@@ -77,16 +81,21 @@ bool canOverride(GridCell* cell) {
 
 void Grid::Update() {
    // Update hovered cell's state
-   static GridCell* previousCell = nullptr;  // to reset color back to restColor
    GridCell* hoveredCell = findHoveredCell();
+   std::optional<CellPosition> hoveredPosition;
+   if(hoveredCell)
+      hoveredPosition = getCellPos(hoveredCell);
 
-   if(hoveredCell != previousCell) {  // a new cell is hovered
+   if(hoveredPosition != m_hoveredCell) {  // a new cell is hovered
       if(canOverride(hoveredCell))
          hoveredCell->setState(CellState::Hovered);
-      if(canOverride(previousCell))
-         previousCell->setState(CellState::Rest);
+      if(m_hoveredCell) {
+         GridCell* previousCell = getCellAt(*m_hoveredCell);
+         if(canOverride(previousCell))
+            previousCell->setState(CellState::Rest);
+      }
    }
-   previousCell = hoveredCell;
+   m_hoveredCell = hoveredPosition;
 
    // Grid scroll logic
    /// @todo let user choose direction of mouse scroll (+ <-> -) in settings
@@ -158,44 +167,43 @@ void Grid::resize() {
 }
 
 void Grid::plus() {
-   std::pair<int, int> firstEmptyCell = { -1, -1 };
-   for(size_t row = 1; row < m_grid.size(); row++) {
-      auto it = std::find(m_grid.at(row).begin(), m_grid.at(row).end(), 0);
-      if(it != m_grid.at(row).end()) {
-         firstEmptyCell = { row, static_cast<int>(std::distance(m_grid.at(row).begin(), it)) };
-         break;
-      }
-
-      // if no empty cell till last iteration, we make a new row of empty cell
-      if(row == m_grid.size() - 1) {
-         m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-         firstEmptyCell = { row + 1, 0 };
-         break;
-      }
-   }
-
-   if(firstEmptyCell.first == -1) {
-      TraceLog(LOG_ERROR, "Error in Grid::plus(): no empty cell found and failed to create new row");
+   const std::vector<int> values = getValidValues();
+   if(values.empty()) {
+      TraceLog(LOG_ERROR, "There are no cells in the grid!");
       return;
    }
 
-   // Duplicate all valid cells starting from firstEmptyCell
-   int row = firstEmptyCell.first;
-   int col = firstEmptyCell.second;
-   for(GridCell* cell : getValidCells()) {
-      m_grid[row][col].value = cell->value;
-
-      // increment grid index
-      if(++col == 9) {
-         col = 0;
-         row++;
-         if(row == (int)m_grid.size()) {
-            m_grid.push_back(NINE_ZEROES);
-            for(GridCell& cell : m_grid[row])
-               setCellBounds(&cell);
-         }
-      } // if condition already increments col
+   if(m_focusedCell) {
+      if(GridCell* focusedCell = getCellAt(*m_focusedCell); focusedCell)
+         focusedCell->setState(CellState::Rest);
+      m_focusedCell.reset();
    }
+   m_hoveredCell.reset();
+   hintReset();
+
+   size_t firstEmptyIndex = m_grid.size() * 9;
+   for(size_t row = 0; row < m_grid.size(); row++) {
+      for(size_t col = 0; col < m_grid.at(row).size(); col++) {
+         if(m_grid.at(row).at(col) == 0) {
+            firstEmptyIndex = row * 9 + col;
+            row = m_grid.size(); // to break out of outer loop
+            break;
+         }
+      }
+   }
+
+   const size_t requiredCells = firstEmptyIndex + values.size();
+   const size_t requiredRows = std::max<size_t>(9, (requiredCells + 8) / 9);
+   m_grid.resize(requiredRows, NINE_ZEROES);
+
+   for(size_t index = 0; index < values.size(); index++) {
+      const size_t target = firstEmptyIndex + index;
+      GridCell& cell = m_grid[target / 9][target % 9];
+      cell.value = values[index];
+      cell.isHighlighted = false;
+      cell.setState(CellState::Rest);
+   }
+   resize();
 }
 
 bool Grid::hint() {
@@ -247,7 +255,7 @@ bool Grid::hint() {
          if(cell1.getState() == CellState::Matched)
             continue;
             
-         for(size_t row2 = row1 + 1; row2 < m_grid.size() - 1; row2++) {
+         for(size_t row2 = row1 + 1; row2 < m_grid.size(); row2++) {
             GridCell& cell2 = m_grid[row2][col];
             if(cell2 == 0)
                break;
@@ -288,7 +296,7 @@ bool Grid::hint() {
             
          for(int colStep = -1; colStep <= 1; colStep += 2) { // -1 for -ve diagonal, and vice versa
             for(size_t row2 = row1 + 1, col2 = col1 + colStep;
-                  col2 < 9 && col2 >= 0 && row2 < m_grid.size(); row2++, col2 += colStep) {
+                  col2 >= 0 && col2 < 9 && row2 < m_grid.size(); row2++, col2 += colStep) {
 
                GridCell& cell2 = m_grid[row2][col2];
                if(cell2 == 0)
@@ -385,11 +393,17 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
       return;
    }
 
-   m_focusedCell->setState(CellState::Matched);
+   GridCell* focusedCell = m_focusedCell ? getCellAt(*m_focusedCell) : nullptr;
+   if(!focusedCell) {
+      TraceLog(LOG_ERROR, "Tried to handle a match without a focused cell!");
+      return;
+   }
+
+   focusedCell->setState(CellState::Matched);
    cell->setState(CellState::Matched);
    Storage::game.currentScore += static_cast<int>(match) * Storage::game.stage;
    
-   int num1 = m_focusedCell->value;
+   int num1 = focusedCell->value;
    int num2 = cell->value;
    
    // check if either cell's number is clear
@@ -404,8 +418,11 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
    }
 
    // check if either cell's row is clear
-   int row1 = getCellPos(m_focusedCell).first;
+   int row1 = getCellPos(focusedCell).first;
    int row2 = getCellPos(cell).first;
+   const bool sameRow = row1 == row2;
+   m_focusedCell.reset();
+   m_hoveredCell.reset();
 
    if(isRowClear(row1)) {
       clearRow(row1);
@@ -415,7 +432,7 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
          row2--;
    }
    
-   if(isRowClear(row2)) {
+   if(!sameRow && isRowClear(row2)) {
       clearRow(row2);
       Storage::game.currentScore += static_cast<int>(MatchType::ClearedRow) * Storage::game.stage;
    }
@@ -426,7 +443,6 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
       init();
    }
 
-   m_focusedCell = nullptr;
 }
 
 #pragma endregion
@@ -438,7 +454,10 @@ int calculateNumber() {
 }
 
 void Grid::init() {
-   m_grid.assign(9, NINE_ZEROES),  // 9 rows of all blank cells
+   m_focusedCell.reset();
+   m_hoveredCell.reset();
+   m_hint = {};
+   m_grid.assign(9, NINE_ZEROES);  // 9 rows of all blank cells
    Storage::game.numbersCleared.fill(true);
    int value;
 
@@ -474,15 +493,16 @@ MatchType Grid::getMatchType(GridCell* cell2, GridCell* cell1, Hint hint) const 
    if(!cell1) {
       if(!m_focusedCell)
          return MatchType::NoMatch;
-      else
-         cell1 = m_focusedCell;
+      cell1 = const_cast<GridCell*>(getCellAt(*m_focusedCell));
+      if(!cell1)
+         return MatchType::NoMatch;
    }
 
    if(cell1->getState() == CellState::Matched || cell2->getState() == CellState::Matched)
       return MatchType::NoMatch;
 
-   std::pair<int, int> pos1 = getCellPos(cell1);
-   std::pair<int, int> pos2 = getCellPos(cell2);
+   CellPosition pos1 = getCellPos(cell1);
+   CellPosition pos2 = getCellPos(cell2);
 
    // 1. Value Compatibility
    // cells sum to 10 or are equal but are not empty.
@@ -561,7 +581,7 @@ bool Grid::isRowClear(int row, int startCol, int endCol) const {
 
 bool Grid::isColClear(int col, int rowStart, int rowEnd) const {
    for(int row = rowStart; row <= rowEnd; row++)
-      if(m_grid.at(row).at(col).getState() != CellState::Matched)
+      if(m_grid.at(row).at(col) != 0)
          return false;
 
    return true;
@@ -581,10 +601,12 @@ bool Grid::isNumClear(int num) const {
 }
 
 void Grid::clearRow(int row) {
+   m_focusedCell.reset();
+   m_hoveredCell.reset();
    m_grid.erase(m_grid.begin() + row);
 
    if(m_grid.size() < 9) { // maintain at least 9 rows
-      m_grid.push_back({ 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+      m_grid.push_back(NINE_ZEROES);
       for(GridCell& cell : m_grid.back())
          setCellBounds(&cell);
    }
@@ -594,7 +616,7 @@ void Grid::clearRow(int row) {
 
 #pragma region Finders
 
-std::pair<int, int> Grid::getCellPos(GridCell* cell) const {
+Grid::CellPosition Grid::getCellPos(GridCell* cell) const {
    for(size_t row = 0; row < m_grid.size(); row++) {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          if(&m_grid.at(row).at(col) == cell)
@@ -607,14 +629,25 @@ std::pair<int, int> Grid::getCellPos(GridCell* cell) const {
    return { -1, -1 };
 }
 
-std::vector<GridCell*> Grid::getValidCells() {
-   std::vector<GridCell*> validCells{};
-   for(auto& row : m_grid)  // Not const because we want to return a non-const pointer
-      for(GridCell& cell : row)
-         if(cell != 0)
-            validCells.push_back(&cell);
+GridCell* Grid::getCellAt(CellPosition position) {
+   return const_cast<GridCell*>(std::as_const(*this).getCellAt(position));
+}
 
-   return validCells;
+const GridCell* Grid::getCellAt(CellPosition position) const {
+   const auto& [row, col] = position;
+   if(row < 0 || col < 0 || static_cast<size_t>(row) >= m_grid.size() || col >= 9)
+      return nullptr;
+   return &m_grid[row][col];
+}
+
+std::vector<int> Grid::getValidValues() const {
+   std::vector<int> validValues;
+   for(const auto& row : m_grid)
+      for(const GridCell& cell : row)
+         if(cell != 0)
+            validValues.push_back(cell.value);
+
+   return validValues;
 }
 
 GridCell* Grid::findHoveredCell() {
@@ -626,42 +659,27 @@ GridCell* Grid::findHoveredCell() {
    return nullptr;
 }
 
-std::string Grid::getFormattedSave() {
-   std::stringstream save;
-   save << "[\n";
-   for(size_t row = 0; row < m_grid.size(); row++) {
-      save << "         [";
-
-      for(size_t col = 0; col < 9; col++) {
-         if(col % 3 == 0)
-            save << "\n            ";
-         else
-            save << " ";
-
-         save << std::format(
-            "[ {}, \"{}\" ]",
-            m_grid.at(row).at(col).value,
-            m_grid.at(row).at(col).getState() == CellState::Matched ? "Matched" : "Rest"
-         );
-
-         if(col != 8)
-            save << ",";
+Storage::SavedGrid Grid::getSaveData() const {
+   Storage::SavedGrid savedGrid;
+   savedGrid.reserve(m_grid.size());
+   for(const auto& row : m_grid) {
+      Storage::SavedRow savedRow;
+      for(size_t col = 0; col < row.size(); col++) {
+         const GridCell& cell = row[col];
+         savedRow[col] = {
+            cell.value,
+            cell.getState() == CellState::Matched ? "Matched" : "Rest"
+         };
       }
-
-      save << "\n         ]";
-      if(row != m_grid.size() - 1)
-         save << ",";
-      save << "\n";
+      savedGrid.push_back(std::move(savedRow));
    }
-   save << "      ]";
-
-   return save.str();
+   return savedGrid;
 }
 
 #pragma endregion
 
 void GridCell::setState(CellState newState) {
-   if(m_state == CellState::Matched)
+   if(m_state == CellState::Matched && newState != CellState::Matched)
       return;
 
    m_state = newState;

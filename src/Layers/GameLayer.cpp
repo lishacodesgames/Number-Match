@@ -39,7 +39,7 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"), m_grid(reset),
 GameLayer::~GameLayer() {
    UnloadTexture(m_trophyTexture);
    UnloadTexture(m_tickTexture);
-   Storage::save(m_grid.getFormattedSave());
+   Storage::save(m_grid.getSaveData());
 }
 
 #pragma region Methods
