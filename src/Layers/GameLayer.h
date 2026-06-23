@@ -24,11 +24,8 @@ public:
    }
 
 private:
-   // --- gameplay ---
-   Grid m_grid;
-   void handleMatch(GridCell* cell);  /// handles matching with focused cell
-
    // --- game info ---
+   Grid m_grid;
    const Texture m_trophyTexture, m_tickTexture;
    float m_trophyScale, m_tickScale;
 

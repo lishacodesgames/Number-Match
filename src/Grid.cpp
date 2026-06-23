@@ -428,6 +428,9 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
       init();
    }
 
+   // update best score
+   if(Storage::game.bestScore < Storage::game.currentScore)
+      Storage::game.bestScore = Storage::game.currentScore;
 }
 
 #pragma endregion

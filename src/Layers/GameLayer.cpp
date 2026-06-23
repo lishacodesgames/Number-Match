@@ -155,11 +155,13 @@ void GameLayer::OnRender() {
          - m_trophyScale * m_trophyTexture.width * 1.0005f;
 
    DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, spacing, Palette::game_info_color);
-   DrawTextureEx(m_trophyTexture, { scoreInfoX, infoY }, 0.0f, m_trophyScale, Palette::game_info_color);
    DrawTextEx(
       App::font_semibold, Storage::format(Storage::game.bestScore).c_str(),
       { scoreInfoX + m_trophyScale * m_trophyTexture.width * 1.0005f, infoY },
       infoFontSize, spacing, Palette::game_info_color);
+
+   if(Storage::game.bestScore == Storage::game.currentScore) // only draw if current is the best 
+      DrawTextureEx(m_trophyTexture, { scoreInfoX, infoY }, 0.0f, m_trophyScale, Palette::game_info_color);
 
    // Numbers Cleared
    float numbersTagX =
