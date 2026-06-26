@@ -7,10 +7,11 @@ target_sources(Engine PRIVATE
    Core/Logging.cpp
 
    # GUI
+   GUI/Animation.cpp
    GUI/Button.cpp
+   GUI/ConfirmPanel.cpp
    GUI/ScrollBar.cpp
    GUI/Toggle.cpp
-   GUI/Animation.cpp
 )
 
 target_include_directories(Engine PUBLIC

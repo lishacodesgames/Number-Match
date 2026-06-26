@@ -2,6 +2,8 @@
 #include <string>
 #include "Core/Event.h"
 
+/// @bug resizing when suspended should be turned on regardless of which suspended flags are allowed (event/update/render)
+
 namespace Core {
    class Layer {
    public:
@@ -35,10 +37,9 @@ namespace Core {
       bool renderSuspended = false;
 
       // ---- Getters ----
-      const std::string& GetName() const;
+      const std::string& GetName() const { return m_name; }
 
    protected:
-      // ---- Protected Members ----
       std::string m_name;
    };
 }

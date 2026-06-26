@@ -1,6 +1,7 @@
 #include <pch/Precompiled.h>
 #include "HomeLayer.h"
 
+#include "QuestionLayer.h"
 #include "PanelLayer.h"
 #include "DailyLayer.h"
 #include "GameLayer.h"
@@ -32,14 +33,29 @@ void HomeLayer::OnEvent(Core::Event& e) {
       if(!activeButton)
          return;
 
-      App::QueueLayerPop(App::GetLayerByName("Panel Layer"));
-      App::QueueLayerPop(this);
-
       Core::Layer* game = App::GetLayerByName("Game Layer");
+      Core::Layer* panel = App::GetLayerByName("Panel Layer");
 
       if(activeButton == &m_newButton) {
-         App::QueueLayerPush(new GameLayer(true));
+         if(panel)
+            panel->OnSuspend(true);
+         else
+            throw std::runtime_error("Home Layer exists but Panel Layer doesn't!");
+
+         App::QueueLayerPush(new QuestionLayer("Start a new game?\nYour previous game progress will be lost.",
+            [this, panel](bool yes) {
+               if(!yes) {
+                  panel->OnResume();
+                  return;
+               }
+
+               App::QueueLayerPop(panel);
+               App::QueueLayerSwap(this, new GameLayer(true));
+            }, this));
       } else { // continue button was pressed
+         App::QueueLayerPop(panel);
+         App::QueueLayerPop(this);
+
          if(game)
             game->OnResume();
          else  // game layer doesn't exist but we mustn't reset player progress

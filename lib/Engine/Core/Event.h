@@ -9,9 +9,9 @@ namespace Core {
    };
 
    struct KeyPressedEvent : Event {
-      char key;
+      int key;
 
-      KeyPressedEvent(char keycode);
+      KeyPressedEvent(int keycode);
       EventType GetEventType() const override;
    };
 

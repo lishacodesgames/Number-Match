@@ -103,8 +103,12 @@ void App::Run() {
       // (eg. pause menu can override gameplay input)
       // ---------------------------
       
-      for(Core::Layer* layer : m_layerStack)
+      for(Core::Layer* layer : m_layerStack) {
+         if(layer->isSuspended && !layer->updateSuspended)
+            continue;
+
          layer->OnUpdate();
+      }
       
       // ---------------------------
       // 4. render: bottom layer -> top layer
@@ -114,8 +118,12 @@ void App::Run() {
       BeginDrawing();
       ClearBackground(Palette::off_bright_bg);
 
-      for(Core::Layer* layer : m_layerStack)
+      for(Core::Layer* layer : m_layerStack) {
+         if(layer->isSuspended && !layer->renderSuspended)
+            continue;
+
          layer->OnRender();
+      }
 
       EndDrawing();
    }
@@ -148,6 +156,9 @@ Core::Layer* App::GetLayerByName(const std::string& name) {
 void App::OnEvent(Core::Event& e) {
    // TOPMOST (last) layer must get the event FIRST
    for(auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it) {
+      if((*it)->isSuspended && !(*it)->eventSuspended)
+         continue;
+
       (*it)->OnEvent(e);
       if(e.Handled) 
          break; // stop propagating if event was handled

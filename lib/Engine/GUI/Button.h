@@ -70,7 +70,7 @@ namespace GUI {
       void setFontSize(int fontSize);
       void setRoundness(Roundness roundness) { m_roundness = roundness; }
 
-      /// @param recalculateLayout TRUE: will resize contents to stay in same ratio as before -- FALSE: will resize only rectangle
+      /// @param resizeContent TRUE: will resize contents to stay in same ratio as before -- FALSE: will resize only rectangle
       void setBounds(Vector2 bounds, bool resizeContent);
       void setOrigin(Vector2 origin) { m_bounds.x = origin.x; m_bounds.y = origin.y; }
       void setOrigin(int x, int y) { m_bounds.x = x; m_bounds.y = y; }
@@ -78,7 +78,9 @@ namespace GUI {
       /// horizontal = {left, right}, vertical = {top, bottom}
       void setPadding(Vector2 horizPadding, Vector2 vertPadding);
       /// horizontal = left & right padding, vertical = top & bottom
-      void setPadding(float horizPadding, float vertPadding) { setPadding({ horizPadding, horizPadding }, { vertPadding, vertPadding }); }
+      void setPadding(float horizPadding, float vertPadding) {
+         setPadding({ horizPadding, horizPadding }, { vertPadding, vertPadding });
+      }
       /// even padding
       void setPadding(float padding) { setPadding({ padding, padding }, { padding, padding }); }
 
@@ -95,13 +97,13 @@ namespace GUI {
       Roundness getRoundness() const { return m_roundness; }
          
       Rectangle getBounds() const { return m_bounds; }
+      Vector2 getOrigin() const { return { m_bounds.x, m_bounds.y }; }           /// @return origin of the button's bounds
+      Vector2 getSize() const { return { m_bounds.width, m_bounds.height }; }    /// @return size of button's bounds
       Vector2 getHorizontalPadding() const { return m_horizontalPadding; }
       Vector2 getVerticalPadding() const { return m_verticalPadding; }
 
       Vector2 getIconOrigin() const;
       Vector2 getTextOrigin() const;
-      Vector2 getOrigin() const { return { m_bounds.x, m_bounds.y }; }           /// @return origin of the button's bounds
-      Vector2 getSize() const { return { m_bounds.width, m_bounds.height }; }    /// @return size of button's bounds
       
    public:
       // ---------------

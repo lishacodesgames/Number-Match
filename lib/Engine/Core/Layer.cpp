@@ -21,9 +21,9 @@ namespace Core {
    }
    
    void Layer::OnResume() {
+      if(!isSuspended)
+         TraceLog(LOG_ERROR, "Tried to resume a layer that wasn't suspended! Layer: %s", m_name.c_str());
       isSuspended = false;
       LOG_LAYER("%s RESUMED", m_name.c_str());
    }
-
-   const std::string& Layer::GetName() const { return m_name; }
 }

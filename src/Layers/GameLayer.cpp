@@ -44,9 +44,6 @@ GameLayer::~GameLayer() {
 
 #pragma region Methods
 void GameLayer::OnEvent(Core::Event& e) {
-   if(isSuspended && !eventSuspended)
-      return;
-
    if(e.GetEventType() == Core::EventType::KeyPressed) {
       char key = static_cast<Core::KeyPressedEvent&>(e).key;
       if(key == 'q' || key == 'Q') {
@@ -88,9 +85,6 @@ void GameLayer::OnUpdate() {
    if(IsWindowResized())
       resize();
 
-   if(isSuspended && !updateSuspended)
-      return;
-
    m_gobackButton.Update();
    m_settingsButton.Update();
    m_plusButton.Update();
@@ -105,9 +99,6 @@ void GameLayer::OnUpdate() {
 }
 
 void GameLayer::OnRender() {
-   if(isSuspended && !renderSuspended)
-      return;
-
    m_gobackButton.Draw();
    m_settingsButton.Draw();
 

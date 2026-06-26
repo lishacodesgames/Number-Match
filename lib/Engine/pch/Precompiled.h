@@ -1,43 +1,59 @@
-// ---- INTERNAL? ----
-#include "Core/Event.h"
-#include "Core/Layer.h"
-#include "Core/LayerStack.h"
-#include "Core/Logging.h"
-// no gui stuff cuz I change that quite often
+#pragma once
+// ============================================================================
+// 1. STANDARD TEMPLATE LIBRARY (STL)
+// ============================================================================
 
-// ---- EXTERNAL ----
-#include <nlohmann/json.hpp>
-#include <raymath.h>
-#include <raylib.h>
-
-// ---- STL ----
-#include <unordered_map>
+// Core Types & Utilities
+#include <typeinfo>
+#include <stdarg.h>
+#include <cstdint>
+#include <memory>
 #include <utility>
-#include <string>
-#include <vector>
-#include <array>
 #include <tuple>
 
-// ---- LOGGING ----
-#include <filesystem>
+// Functional & Logic
+#include <functional>
+#include <algorithm>
+#include <optional>
+
+// Data Containers
+#include <array>
+#include <vector>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+
+// Streams & I/O
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <iomanip>
 #include <format>
 #include <cstdio>
 
-// ---- TYPES AND...STUFF ----
-#include <stdarg.h>
-#include <typeinfo>
-#include <cstdint>
-
-// ---- THREADS, TIME, RANDOM ----
+// System, Time & Concurrency
+#include <filesystem>
+#include <stdexcept>
+#include <chrono>
 #include <random>
 #include <thread>
-#include <chrono>
 #include <ctime>
 
-// ---- OTHER ----
-#include <algorithm>
-#include <optional>
-#include <memory>
+// ============================================================================
+// 2. THIRD-PARTY / EXTERNAL LIBRARIES
+// ============================================================================
+
+#include <raylib.h>
+#include <raymath.h>
+
+#include <nlohmann/json.hpp>
+
+// ============================================================================
+// 3. INTERNAL ENGINE CORE
+// ============================================================================
+
+#include "Core/Logging.h" 
+
+#include "Core/Event.h"
+#include "Core/Layer.h"
+#include "Core/LayerStack.h"
