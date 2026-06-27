@@ -137,7 +137,7 @@ void App::QueueLayerSwap(Core::Layer* pop, Core::Layer* push) {
 void App::QueueLayerPush(Core::Layer* layer) {
    for(Core::Layer* existing : s_instance->m_layerStack)
       if(existing->GetName() == layer->GetName()) { // duplicate layers
-         QueueLayerPop(layer);
+         QueueLayerPop(existing);
          break;
       }
 
@@ -149,7 +149,8 @@ Core::Layer* App::GetLayerByName(const std::string& name) {
    for(Core::Layer* layer : s_instance->m_layerStack)
       if(layer->GetName() == name)
          return layer;
-   
+
+   LOG_LAYER("Layer \"%s\" doesn't exist.", name.c_str());
    return nullptr;
 }
 

@@ -21,8 +21,13 @@ namespace Core {
          m_layers.erase(it);
          m_layerInsertIndex--;
          delete layer;
-      } else throw std::runtime_error(
-         std::format("Tried to pop a layer that doesn't exist!\nLayer: {}", layer->GetName()));
+      } else {
+         TraceLog(LOG_FATAL, "\n%s", formatLayerAddresses().c_str());
+         throw std::runtime_error(
+            std::format("Tried to pop a layer that doesn't exist!\nLayer: {}, Address: {}",
+               layer->GetName(), static_cast<const void*>(layer))
+         );
+      }
    }
 
    void LayerStack::PushOverlay(Layer* overlay) {
@@ -37,15 +42,22 @@ namespace Core {
          overlay->OnDetach();
          m_layers.erase(it);
          delete overlay;
-      } else throw std::runtime_error(
-         std::format("Tried to pop an overlay layer that doesn't exist!\nLayer: {}", overlay->GetName()));
+      } else {
+         TraceLog(LOG_FATAL, "\n%s", formatLayerAddresses().c_str());
+         throw std::runtime_error(
+            std::format("Tried to pop an overlay layer that doesn't exist!\nLayer: {}, Address: {}",
+               overlay->GetName(), static_cast<const void*>(overlay))
+         );
+      }
    }
 
-   std::vector<Layer*>::iterator LayerStack::begin() { return m_layers.begin(); }
-   std::vector<Layer*>::iterator LayerStack::end() { return m_layers.end(); }
-   std::vector<Layer*>::reverse_iterator LayerStack::rbegin() { return m_layers.rbegin(); }
-   std::vector<Layer*>::reverse_iterator LayerStack::rend() { return m_layers.rend(); }
-   bool LayerStack::empty() const { return m_layers.empty(); }
+   std::string LayerStack::formatLayerAddresses() const {
+      std::string layers = std::format("Layers in LayerStack: {}\n", m_layers.size());
+      for(size_t i = 0; i < m_layers.size(); i++)
+         layers += std::format("\tLayerStack[{}]: {}, {}\n", i, m_layers.at(i)->GetName(), static_cast<const void*>(m_layers.at(i)));
+
+      return layers;
+   }
 
    void LayerStack::Delete() {
       for(Layer* layer : m_layers)

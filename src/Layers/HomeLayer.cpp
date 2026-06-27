@@ -35,12 +35,11 @@ void HomeLayer::OnEvent(Core::Event& e) {
 
       Core::Layer* game = App::GetLayerByName("Game Layer");
       Core::Layer* panel = App::GetLayerByName("Panel Layer");
+      if(!panel)
+         throw std::runtime_error("Home Layer exists but Panel Layer doesn't!");
 
       if(activeButton == &m_newButton) {
-         if(panel)
-            panel->OnSuspend(true);
-         else
-            throw std::runtime_error("Home Layer exists but Panel Layer doesn't!");
+         panel->OnSuspend(true);
 
          App::QueueLayerPush(new QuestionLayer("Start a new game?\nYour previous game progress will be lost.",
             [this, panel](bool yes) {

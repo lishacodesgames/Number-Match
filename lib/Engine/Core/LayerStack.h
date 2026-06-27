@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 #include "Core/Layer.h"
 
 namespace Core {
@@ -22,16 +23,19 @@ namespace Core {
       void PopOverlay(Layer* overlay);
 
       // to allow range based forloops over the layerstack object itself
-      std::vector<Layer*>::iterator begin();
-      std::vector<Layer*>::iterator end();
-      std::vector<Layer*>::reverse_iterator rbegin();
-      std::vector<Layer*>::reverse_iterator rend();
-      bool empty() const;
+      std::vector<Layer*>::iterator begin() { return m_layers.begin(); }
+      std::vector<Layer*>::iterator end() { return m_layers.end(); }
+      std::vector<Layer*>::reverse_iterator rbegin() { return m_layers.rbegin(); }
+      std::vector<Layer*>::reverse_iterator rend() { return m_layers.rend(); }
+      bool empty() const { return m_layers.empty(); }
 
    private:
       std::vector<Layer*> m_layers{};
 
       /// makes sure standard layers get placed before overlay layers
       size_t m_layerInsertIndex = 0;
+
+   private:
+      std::string formatLayerAddresses() const;
    };
 }

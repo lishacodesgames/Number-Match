@@ -38,8 +38,10 @@ Grid::Grid(bool reset)
 #pragma region Methods
 
 bool Grid::OnClick() {
-   if(m_hint.isHighlighted)
+   static float timeSinceLastCall = 0.0f;
+   if(m_hint.isHighlighted && timeSinceLastCall >= 60 * GetFrameTime())
       m_hint.reset(m_grid);
+   timeSinceLastCall = 0.0f;
 
    GridCell* activeCell = findHoveredCell();
    GridCell* focusedCell = m_focusedCell ? getCellAt(*m_focusedCell) : nullptr;

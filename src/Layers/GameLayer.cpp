@@ -73,11 +73,10 @@ void GameLayer::OnEvent(Core::Event& e) {
                m_plusButton.bgColor = Palette::grid_hint;
 
          e.Handled = true;
-         return;
       }
 
       // check and handle if a grid cell has been clicked
-      e.Handled = m_grid.OnClick();
+      e.Handled = m_grid.OnClick() || e.Handled;
    }
 }
 

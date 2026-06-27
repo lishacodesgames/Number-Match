@@ -7,7 +7,6 @@
 #define INIT_BUTTON_TEXT 20, { 0.8f, 8 }, App::font_semibold
 #define NO_REC { 0, 0, 0, 0 }
 
-/// @bug when making a new game when a game layer already exists, then going back home and pressing Continue takes us to the previous layer's game, instead of the new one we just created
 QuestionLayer::QuestionLayer(std::string_view question, std::function<void(bool)> onAnswer, Core::Layer* caller)
       : Core::Layer("Question Layer", true),
       m_panel(
@@ -83,7 +82,8 @@ void QuestionLayer::answer(bool yes) {
 
 void QuestionLayer::resize() {
    float width = std::clamp(GetScreenWidth() * 0.78f, 320.0f, 520.0f);
-   float height = std::clamp(width * 0.52f, 190.0f, GetScreenHeight() * 0.48f);
+   float maxHeight = std::max(GetScreenHeight() * 0.48f, 190.0f);
+   float height = std::clamp(width * 0.52f, 190.0f, maxHeight);
 
    m_panel.setBounds({ width, height }, false);
    m_panel.setOrigin({

@@ -17,7 +17,7 @@ public:
 
 private:
    const Texture m_backgroundTexture, m_trophyTexture;
-   float m_bgScale, m_trophyScale;
+   float m_bgScale = 1.0f, m_trophyScale = 1.0f;
 
    GUI::Button m_newButton;
    GUI::Button m_continueButton;
