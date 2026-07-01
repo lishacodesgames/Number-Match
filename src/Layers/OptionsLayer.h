@@ -32,16 +32,15 @@ private:
    GUI::Button m_doneButton;
    Page currentPage = Page::Options;
 
+private:
    GUI::Button m_gobackButton;
 
-private:
    // options page
-   const Texture m_rightArrowTexture;
+   const Texture2D m_rightArrowTexture;
    std::array<Rectangle, 8> m_banners;
    const std::array<Texture, 8> m_bannerIcons;
    const std::array<std::string, 8> m_bannerNames;
 
-private:
    // settings page members
    GUI::Toggle m_darkModeToggle;
 

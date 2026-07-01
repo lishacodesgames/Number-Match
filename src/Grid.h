@@ -1,11 +1,12 @@
 #pragma once
-#include <utility>
-#include <vector>
-#include <array>
-#include <optional>
 #include "GUI/ScrollBar.h"
 #include "Colors.h"
 #include "Storage.h"
+
+#include <optional>
+#include <utility>
+#include <vector>
+#include <array>
 
 enum class HintType { Idk, SameRow, SameColumn, SameDiagonal, VisionWrap };
 enum class CellState { Rest, Hovered, Focused, Matched };
@@ -30,19 +31,20 @@ struct GridCell {
    void setState(CellState newState);
    CellState getState() const { return m_state; }
 
-private:
-   CellState m_state = CellState::Rest;
-
 public:
    friend bool operator==(const GridCell& a, int b);
    friend bool operator!=(const GridCell& a, int b);
    friend bool operator==(const GridCell& a, const GridCell& b);
+
+private:
+   CellState m_state = CellState::Rest;
 };
 
 class Grid {
 public:
    Rectangle box;
 
+public:
    Grid(bool reset);
 
    // --- methods ---
@@ -60,6 +62,11 @@ public:
    void resize();
    void plus();
    bool hint(); /// @return if match exists in grid
+
+public:
+   GridCell* findHoveredCell();
+   Storage::SavedGrid getSaveData() const;
+
 private:
    struct CellPosition { int row = -1, col = -1; };
    friend bool operator==(const Grid::CellPosition& a, const Grid::CellPosition& b);
@@ -80,7 +87,8 @@ private:
    std::optional<CellPosition> m_hoveredCell;
 
    float m_scrollOffset = 0.0f;
-   ScrollBar m_scrollBar;
+   GUI::ScrollBar m_scrollBar;
+
 private:
    // --- setup ---
    void init(); /// initialises the VALUES of cells and numbersCleared
@@ -113,9 +121,6 @@ private:
    // --- finders ---
    CellPosition getCellPos(GridCell* cell) const;  /// @return {row, col} of cell in m_grid
    std::vector<int> getValidValues() const; /// @return values of all unmatched cells
-public:
-   GridCell* findHoveredCell();
-   Storage::SavedGrid getSaveData() const;
 };
 
 inline bool operator==(const Grid::CellPosition& a, const Grid::CellPosition& b) {

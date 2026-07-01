@@ -11,8 +11,10 @@ public:
       std::string_view question,
       std::function<void(bool)> onAnswer,
       Core::Layer* caller = nullptr);
+   ~QuestionLayer() override = default;
 
    void OnAttach() override;
+
    void OnEvent(Core::Event& e) override;
    void OnUpdate() override;
    void OnRender() override;

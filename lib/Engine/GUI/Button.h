@@ -1,8 +1,9 @@
 #pragma once
+#include "Roundness.h"
+
 #include <raylib.h>
 #include <utility>
 #include <string>
-#include "Roundness.h"
 
 namespace GUI {
    /** Constructor parameters' organisation
@@ -19,8 +20,12 @@ namespace GUI {
     */
    class Button {
    public:
+      Color bgColor = BLACK, contentColor = WHITE;
+
+   public:
       void Update();
       void Draw() const;
+
    public:
       // ----------------------
       // ---- CONSTRUCTORS ----
@@ -34,8 +39,7 @@ namespace GUI {
          const char* text, 
          Color bgColor, Color contentColor,
          int fontSize = 20, Roundness roundness = {0.8f, 8},
-         Font font = GetFontDefault()
-      );
+         Font font = GetFontDefault());
 
       /// Evenly spaced padding
       Button(
@@ -44,8 +48,7 @@ namespace GUI {
          const char* text, 
          Color bgColor, Color contentColor,
          int fontSize = 20, Roundness roundness = {0.8f, 8},
-         Font font = GetFontDefault()
-      );
+         Font font = GetFontDefault());
 
       /// Custom padding
       Button(
@@ -54,8 +57,7 @@ namespace GUI {
          const char* text, 
          Color bgColor, Color contentColor,
          int fontSize = 20, Roundness roundness = {0.8f, 8},
-         Font font = GetFontDefault()
-      );
+         Font font = GetFontDefault());
 
    public:
       // -----------------
@@ -85,11 +87,12 @@ namespace GUI {
       void setPadding(float padding) { setPadding({ padding, padding }, { padding, padding }); }
 
       void setFocus(bool isFocused, Color bgColor, Color contentColor);
+
    public:
       // -----------------
       // ---- GETTERS ----
       // -----------------
-      Texture getIcon() const { return m_iconTexture; }
+      Texture2D getIcon() const { return m_iconTexture; }
       std::string getText() const { return m_text; }
 
       Font getFont() const { return m_font; }
@@ -120,7 +123,7 @@ namespace GUI {
       // -----------------
 
       Image m_iconImage = { 0 };
-      Texture m_iconTexture = { 0 };   // optional
+      Texture2D m_iconTexture = { 0 };   // optional
       std::string m_text;              // compulsory
 
       Font m_font;
@@ -130,12 +133,8 @@ namespace GUI {
       Rectangle m_bounds;
       Vector2 m_horizontalPadding;  /// {left, right}
       Vector2 m_verticalPadding;    /// {top, bottom}
-   public:
-      Color bgColor = BLACK, contentColor = WHITE;
+
    private:
-      // -----------------
-      // ---- HELPERS ----
-      // -----------------
       void recalculateLayout();
       friend bool operator==(const Button& first, const Button& second);
    };

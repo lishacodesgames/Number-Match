@@ -1,24 +1,23 @@
 #include <pch/Precompiled.h>
 #include "Grid.h"
 
-#include "Layers/CoinLayer.h"
 #include "Storage.h"
 #include "Colors.h"
 #include "App.h"
 
-float GridCell::cellSize = 45.0f;
-float GridCell::numHeight = 0;
-
 #define NINE_ZEROES { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 
-Grid::Grid(bool reset)
-   :  m_scrollBar({ 0, 0, 0, 0 }, 10.0f, Palette::grid_scroll_thumb, Palette::grid_scroll_track)
+float GridCell::cellSize = 45.0f;
+float GridCell::numHeight = 0.0f;
+
+Grid::Grid(bool reset) :
+      m_scrollBar({ 0, 0, 0, 0 }, 10.0f, Palette::grid_scroll_thumb, Palette::grid_scroll_track)
 {
    srand(time(0));
 
-   if(reset) {
+   if(reset)
       init();
-   } else {
+   else {
       const auto savedGrid = Storage::getSavedGrid();
       m_grid.assign(savedGrid.size(), NINE_ZEROES);
       for(size_t row = 0; row < savedGrid.size(); row++) {
@@ -31,6 +30,7 @@ Grid::Grid(bool reset)
          }
       }
    }
+
    resize();
    m_scrollBar.setTrackBounds({ box.x + box.width + 25, box.y, 2, box.height });
 }

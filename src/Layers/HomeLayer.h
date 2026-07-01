@@ -1,7 +1,8 @@
 #pragma once
-#include <raylib.h>
 #include "Core/Layer.h"
 #include "GUI/Button.h"
+
+#include <raylib.h>
 
 class HomeLayer : public Core::Layer {
 public:
@@ -11,12 +12,17 @@ public:
       UnloadTexture(m_backgroundTexture);
    }
 
+   void OnDetach() override {
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+      Core::Layer::OnDetach();
+   }
+
    void OnEvent(Core::Event& e) override;
    void OnUpdate() override;
    void OnRender() override;
 
 private:
-   const Texture m_backgroundTexture, m_trophyTexture;
+   const Texture2D m_backgroundTexture, m_trophyTexture;
    float m_bgScale = 1.0f, m_trophyScale = 1.0f;
 
    GUI::Button m_newButton;
@@ -25,15 +31,9 @@ private:
 private:
    void resize();
 
-   /// @return new or continue button members
-   GUI::Button* findHoveredButton() {
-      if(m_newButton.isHovered)
-         return &m_newButton;
-      else if(m_continueButton.isHovered)
-         return &m_continueButton;
-      else
-         return nullptr;
-   }
+   /// @return new or continue button members OR nullptr
+   GUI::Button* findHoveredButton();
 };
 
+/// @todo should be in raymath.h but move to Engine/
 inline Vector2 operator+(Vector2 vec, float fl) { return { vec.x + fl, vec.y + fl }; }

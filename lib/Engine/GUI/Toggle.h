@@ -1,6 +1,7 @@
 #pragma once
-#include <raylib.h>
 #include "Roundness.h"
+
+#include <raylib.h>
 
 namespace GUI {
    /// @todo add separate (almost)everything based on state
@@ -11,6 +12,7 @@ namespace GUI {
       Roundness roundness;
       bool isHovered;  /// true IF knob is hovered
 
+   public:
       void Update();
       void Draw() const;
 
@@ -23,10 +25,8 @@ namespace GUI {
 
       Toggle() = default;
       Toggle(
-         const Rectangle& bounds, Roundness roundness, float padding,
-         Color bg = LIGHTGRAY, Color knob = RED
-      ) : bgColor(bg), knobColor(knob), roundness(roundness), m_bounds(bounds), m_padding(padding)
-         { setKnob(); }
+         const Rectangle& bounds, Roundness roundness,
+         float padding, Color bg = LIGHTGRAY, Color knob = RED);
 
    public:
       // -----------------
@@ -66,8 +66,6 @@ namespace GUI {
 
       /// @param padding the padding INSIDE knob AROUND texture
       void setKnobIcon(const char* filepath, float padding);
-   private:
-      void setKnob();
 
    public:
       // -----------------
@@ -80,20 +78,24 @@ namespace GUI {
       bool getState() const { return m_state; }  /// false = left, true = right
       float getPadding() const { return m_padding; }
 
-      Texture getKnobIcon() const { return m_knobTexture; }
+      Texture2D getKnobIcon() const { return m_knobTexture; }
       Vector2 getKnobSize() const {
          return { m_bounds.width / 2 - m_padding * 2, m_bounds.height - m_padding * 2 };
       }
 
    private:
       Rectangle m_bounds{}, m_knob{};
-
-      bool m_state = false, m_isSliding = false;
-      [[nodiscard]] float m_targetX() { return m_bounds.x + m_padding + (m_state ? m_bounds.width / 2.0f : 0.0f); }
       float m_padding = 0.0f;
 
+      bool m_state = false, m_isSliding = false;
+      [[nodiscard]] float m_targetX() {
+         return m_bounds.x + m_padding + (m_state ? m_bounds.width / 2.0f : 0.0f);
+      }
+
       Image m_knobImage = { 0 };
-      Texture m_knobTexture = { 0 };
+      Texture2D m_knobTexture = { 0 };
+   private:
+      void setKnob();
    };
 }  // namespace GUI
 

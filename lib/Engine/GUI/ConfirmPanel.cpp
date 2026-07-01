@@ -4,10 +4,12 @@
 namespace GUI
 {
    ConfirmPanel::ConfirmPanel(
-      Rectangle bounds, Roundness roundness, Color bgColor, std::string_view confirmationText, int fontSize,
-      const Button& yesButton, const Button& noButton, Font font
-   ) : yesButton(yesButton), noButton(noButton), bgColor(bgColor), roundness(roundness), m_bounds(bounds),
-         m_confirmationText(confirmationText), m_fontSize(fontSize), m_font(font)
+      Rectangle bounds, Roundness roundness, Color bgColor,
+      std::string_view confirmationText, int fontSize,
+      const Button& yesButton, const Button& noButton, Font font) :
+         yesButton(yesButton), noButton(noButton), bgColor(bgColor),
+         roundness(roundness), m_bounds(bounds),
+         m_confirmationText(confirmationText), m_fontSize(fontSize),m_font(font)
    { layoutContent(); }
 
    void ConfirmPanel::Update() {
@@ -24,16 +26,15 @@ namespace GUI
 
       DrawRectangleRounded(m_bounds, roundness.roundness, roundness.segments, bgColor);
 
-      const float spacing = 1.0f;
       const float lineGap = m_fontSize * 0.26f;
       float y = m_bounds.y + m_bounds.height * 0.22f;
 
       for(const std::string& line : m_lines) {
-         Vector2 lineSize = MeasureTextEx(m_font, line.c_str(), m_fontSize, spacing);
+         Vector2 lineSize = MeasureTextEx(m_font, line.c_str(), m_fontSize, 1.0f);
          DrawTextEx(
             m_font, line.c_str(),
             { m_bounds.x + (m_bounds.width - lineSize.x) / 2.0f, y },
-            m_fontSize, spacing, noButton.contentColor);
+            m_fontSize, 1.0f, noButton.contentColor);
          y += m_fontSize + lineGap;
       }
 
@@ -44,6 +45,7 @@ namespace GUI
    bool ConfirmPanel::Ask() {
       isAsking = true;
       Update();
+
       return yesButton.isHovered && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
    }
 
@@ -62,8 +64,11 @@ namespace GUI
 
       m_fontSize *= heightScale;
 
-      yesButton.setBounds({ yesButton.getSize().x * widthScale, yesButton.getSize().y * heightScale }, true);
-      noButton.setBounds({ noButton.getSize().x * widthScale, noButton.getSize().y * heightScale }, true);
+      yesButton.setBounds(
+         { yesButton.getSize().x * widthScale, yesButton.getSize().y * heightScale }, true);
+      noButton.setBounds(
+         { noButton.getSize().x * widthScale, noButton.getSize().y * heightScale }, true);
+
       layoutContent();
    }
 
@@ -73,10 +78,10 @@ namespace GUI
       m_lines = wrapText(maxTextWidth);
 
       float buttonWidth = (m_bounds.width - padding * 2.0f - m_bounds.width * 0.055f) / 2.0f;
-      float buttonHeight = std::max(m_bounds.height * 0.18f, (float)m_fontSize * 1.8f);
+      float buttonHeight = std::max(m_bounds.height * 0.18f, m_fontSize * 1.8f);
       float buttonY = m_bounds.y + m_bounds.height - padding - buttonHeight;
 
-      int fontSize = std::max(1, (int)(buttonHeight * 0.44f));
+      int fontSize = std::max<int>(1, buttonHeight * 0.44f);
       yesButton.setFontSize(fontSize);
       noButton.setFontSize(yesButton.getFontSize());
       yesButton.setBounds({ buttonWidth, buttonHeight }, false);

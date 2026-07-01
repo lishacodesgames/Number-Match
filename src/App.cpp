@@ -3,7 +3,6 @@
 
 #include "Layers/PanelLayer.h"
 #include "Layers/HomeLayer.h"
-#include "Layers/CoinLayer.h"
 #include "Storage.h"
 #include "Colors.h"
 
@@ -42,8 +41,6 @@ App::App(const std::string& name) {
    PanelLayer* panel = new PanelLayer();
    m_layerStack.PushOverlay(panel);
 
-   panel->currentLayer = home;
-   
    TraceLog(LISHA_SAYS, "App Loaded!");
 }
 
@@ -72,11 +69,11 @@ void App::Run() {
       // to avoid mid-frame changes that could cause bugs
       // ---------------------------
       for(Core::Layer* layer : m_pendingPops)
-         layer->isOverlay? m_layerStack.PopOverlay(layer) : m_layerStack.PopLayer(layer);
+         layer->isOverlay ? m_layerStack.PopOverlay(layer) : m_layerStack.PopLayer(layer);
       m_pendingPops.clear();
 
       for(Core::Layer* layer : m_pendingPushes)
-         layer->isOverlay? m_layerStack.PushOverlay(layer): m_layerStack.PushLayer(layer);
+         layer->isOverlay ? m_layerStack.PushOverlay(layer): m_layerStack.PushLayer(layer);
       m_pendingPushes.clear();
 
       // ---------------------------

@@ -1,5 +1,5 @@
 #include <pch/Precompiled.h>
-#include "GUI/Button.h"
+#include "Button.h"
 
 namespace GUI 
 {
@@ -180,7 +180,7 @@ namespace GUI
       Vector2 textSize = MeasureTextEx(m_font, m_text.c_str(), m_fontSize, 1);
       bool iconExists = IsTextureValid(m_iconTexture);
       float contentWidth = textSize.x + (iconExists ? m_iconTexture.width * (m_text.empty() ? 1 : ICON_PAD_MULTIPLIER) : 0);
-      float contentHeight = std::max(textSize.y, iconExists ? (float)m_iconTexture.height : 0.0f);
+      float contentHeight = std::max<float>(textSize.y, iconExists ? m_iconTexture.height : 0.0f);
 
       m_bounds.width = contentWidth + m_horizontalPadding.x + m_horizontalPadding.y;
       m_bounds.height = contentHeight + m_verticalPadding.x + m_verticalPadding.y;

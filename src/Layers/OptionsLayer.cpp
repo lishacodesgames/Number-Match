@@ -80,8 +80,6 @@ void OptionsLayer::OnEvent(Core::Event& e) {
       if(key == 'q' || key == 'Q') {
          if(currentPage == Page::Options) {
             App::GetLayerByName("Game Layer")->OnSuspend();
-
-            // Home Layer must be pushed first, because Panel Layer must assign its currentLayer pointer to it
             App::QueueLayerSwap(this, new HomeLayer());
             App::QueueLayerPush(new PanelLayer());
          } else

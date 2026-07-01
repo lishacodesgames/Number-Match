@@ -31,11 +31,13 @@ PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
 void PanelLayer::OnAttach() {
    currentLayer = App::GetLayerByName("Home Layer");
    if(!currentLayer)
-      TraceLog(LOG_FATAL, "Panel Layer has no current layer!");
+      throw std::runtime_error("Panel Layer has no current layer!");
 
    Core::Layer::OnAttach();
 }
 
+/// @bug When coming back home from a NEW game, clicking Me/Daily doesn't unfocus homeButton
+/// and clicking it doesn't take us back to home
 void PanelLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::MouseClicked) {
       GUI::Button* activeButton = findHoveredButton();
@@ -128,4 +130,15 @@ void PanelLayer::resize() {
    homeButton.setOrigin({ spaceUnit, GetScreenHeight() - height + verticalSpace / 2 });
    dailyButton.setOrigin(homeButton.getOrigin() + Vector2{ buttonSpacing + homeButton.getSize().x, 0 });
    meButton.setOrigin(dailyButton.getOrigin() + Vector2{ buttonSpacing + dailyButton.getSize().x, 0 });
+}
+
+GUI::Button* PanelLayer::findHoveredButton() {
+   if (homeButton.isHovered)
+      return &homeButton;
+   else if (dailyButton.isHovered)
+      return &dailyButton;
+   else if (meButton.isHovered)
+      return &meButton;
+   else
+      return nullptr;
 }

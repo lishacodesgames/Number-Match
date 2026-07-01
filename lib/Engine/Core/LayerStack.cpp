@@ -1,11 +1,8 @@
 #include <pch/Precompiled.h>
-#include "Core/LayerStack.h"
+#include "LayerStack.h"
 
-#include <algorithm>
-#include <vector>
-#include "Core/Layer.h"
-
-namespace Core {
+namespace Core
+{
    void LayerStack::PushLayer(Layer* layer) {
       m_layers.emplace(begin() + m_layerInsertIndex, layer);
       m_layerInsertIndex++;

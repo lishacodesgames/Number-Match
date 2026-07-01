@@ -2,8 +2,6 @@
 #include "Core/Layer.h"
 #include "GUI/Button.h"
 
-enum class Menu { None, Home, Daily, Me };
-
 class PanelLayer : public Core::Layer {
 public:
    PanelLayer();
@@ -24,17 +22,8 @@ public:
    GUI::Button homeButton;
    GUI::Button dailyButton;
    GUI::Button meButton;
-public:
-   void resize();
 
-   GUI::Button* findHoveredButton() {
-      if (homeButton.isHovered)
-         return &homeButton;
-      else if (dailyButton.isHovered)
-         return &dailyButton;
-      else if (meButton.isHovered)
-         return &meButton;
-      else
-         return nullptr;
-   }
+private:
+   void resize();
+   GUI::Button* findHoveredButton();
 };

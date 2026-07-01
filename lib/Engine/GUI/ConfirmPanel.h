@@ -1,9 +1,10 @@
 #pragma once
+#include "Button.h"
+
 #include <string_view>
 #include <raylib.h>
-#include <string>
 #include <vector>
-#include "Button.h"
+#include <string>
 
 namespace GUI
 {
@@ -15,12 +16,13 @@ namespace GUI
       Roundness roundness;
       bool isAsking = false;
 
+   public:
       ConfirmPanel(
          Rectangle bounds, Roundness roundness, Color bgColor,
          std::string_view confirmationText, int fontSize,
          const Button& yesButton, const Button& noButton,
-         Font font = GetFontDefault()
-      );
+         Font font = GetFontDefault());
+      ~ConfirmPanel() = default;
 
       void Update();
       void Draw() const; /// only renders if isAsking
@@ -33,7 +35,10 @@ namespace GUI
       // -----------------
 
       void setBounds(Vector2 bounds, bool resizeContent);
-      void setOrigin(Vector2 origin) { m_bounds.x = origin.x; m_bounds.y = origin.y; layoutContent(); }
+      void setOrigin(Vector2 origin) {
+         m_bounds.x = origin.x; m_bounds.y = origin.y;
+         layoutContent();
+      }
 
       void setText(std::string_view text) { m_confirmationText = text; layoutContent(); }
       void setFont(Font font) { m_font = font; layoutContent(); }

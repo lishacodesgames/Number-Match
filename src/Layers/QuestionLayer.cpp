@@ -1,8 +1,8 @@
 #include <pch/Precompiled.h>
 #include "QuestionLayer.h"
 
-#include "App.h"
 #include "Colors.h"
+#include "App.h"
 
 #define INIT_BUTTON_TEXT 20, { 0.8f, 8 }, App::font_semibold
 #define NO_REC { 0, 0, 0, 0 }
@@ -90,5 +90,5 @@ void QuestionLayer::resize() {
       (GetScreenWidth() - width) / 2.0f,
       (GetScreenHeight() - height) / 2.0f
    });
-   m_panel.setFontSize(std::max(20, (int)(height * 0.13f)));
+   m_panel.setFontSize(std::max<int>(20, height * 0.13f));
 }

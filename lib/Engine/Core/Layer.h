@@ -1,22 +1,15 @@
 #pragma once
+#include "Event.h"
+
 #include <string>
-#include "Core/Event.h"
 
-/// @bug resizing when suspended should be turned on regardless of which suspended flags are allowed (event/update/render)
-
-namespace Core {
+namespace Core
+{
    class Layer {
    public:
-      /** @brief
-       * @if true, then layer will always be pushed to the top of layerstack
-       * @else layer will be push at the layer insert index (above layers but below overlays)
-       */
-      bool isOverlay = false;
-
       Layer( /// called when new layer pointer made with "new"
          const std::string& name, bool isOverlay = false, 
-         bool renderSuspended = false, bool updateSuspended = false, bool eventSuspended = false
-      );
+         bool renderSuspended = false, bool updateSuspended = false, bool eventSuspended = false);
       virtual ~Layer() = default; /// called with "delete" keyword
 
       // ---- Virtual functions with default implementations ----
@@ -31,13 +24,21 @@ namespace Core {
       // ---- layer pause/resume (suspension) ----
       virtual void OnSuspend(bool render = false, bool update = false, bool event = false);
       virtual void OnResume();
+
+      // ---- Getters ----
+      const std::string& GetName() const { return m_name; }
+
+   public:
+      /** @brief
+       * @if true, then layer will always be pushed to the top of layerstack
+       * @else layer will be push at the layer insert index (above layers but below overlays)
+       */
+      bool isOverlay = false;
+
       bool isSuspended = false;
       bool eventSuspended = false;
       bool updateSuspended = false;
       bool renderSuspended = false;
-
-      // ---- Getters ----
-      const std::string& GetName() const { return m_name; }
 
    protected:
       std::string m_name;

@@ -1,9 +1,8 @@
 #include <pch/Precompiled.h>
-#include "Core/Event.h"
+#include "Event.h"
 
-namespace Core {
-   EventType Event::GetEventType() const { return EventType::None; }
-
+namespace Core
+{
    KeyPressedEvent::KeyPressedEvent(int keycode) : key(keycode) {}
    EventType KeyPressedEvent::GetEventType() const { return EventType::KeyPressed; }
 

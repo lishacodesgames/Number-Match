@@ -1,7 +1,6 @@
 #include <pch/Precompiled.h>
 #include "CoinLayer.h"
 
-#include "PanelLayer.h"
 #include "Storage.h"
 #include "Colors.h"
 #include "App.h"
@@ -45,7 +44,7 @@ void CoinLayer::resize() {
 
    old = m_textureScale;
    m_textureScale = std::clamp(GetScreenHeight() / 650.0f, 1.0f, 2.5f);
-   float texDim = 20 * m_textureScale;
+   float texDim = 20.0f * m_textureScale;
    if(std::abs(m_textureScale - old) > 0.5f)
       LOG_RESIZE("Coin icon resized to: %f x %f", texDim, texDim);
 

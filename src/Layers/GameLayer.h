@@ -1,18 +1,14 @@
 #pragma once
-#include <raylib.h>
 #include "Core/Layer.h"
 #include "GUI/Button.h"
 #include "Grid.h"
+
+#include <raylib.h>
 
 class GameLayer : public Core::Layer {
 public:
    GameLayer(bool reset); /// @param reset reset Storage game values or not (load them from Storage)
    ~GameLayer() override;
-
-   void OnAttach() override {
-      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-      Core::Layer::OnAttach();
-   }
 
    void OnUpdate() override;
    void OnEvent(Core::Event& e) override;
@@ -20,14 +16,14 @@ public:
 
    void OnResume() override {
       resize();
-      Layer::OnResume();
+      Core::Layer::OnResume();
    }
 
 private:
    // --- game info ---
    Grid m_grid;
-   const Texture m_trophyTexture, m_tickTexture;
-   float m_trophyScale, m_tickScale;
+   const Texture2D m_trophyTexture, m_tickTexture;
+   float m_trophyScale = 1.0f, m_tickScale = 1.0f;
 
    // --- buttons ---
    GUI::Button m_gobackButton;

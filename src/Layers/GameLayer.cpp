@@ -43,6 +43,7 @@ GameLayer::~GameLayer() {
 }
 
 #pragma region Methods
+
 void GameLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::KeyPressed) {
       char key = static_cast<Core::KeyPressedEvent&>(e).key;

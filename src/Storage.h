@@ -1,14 +1,13 @@
 #pragma once
 #include <filesystem>
+#include <utility>
 #include <cstdint>
 #include <string>
-#include <array>
-#include <utility>
 #include <vector>
+#include <array>
 
 namespace Storage {
-   using SavedCell = std::pair<int, std::string>;
-   using SavedRow = std::array<SavedCell, 9>;
+   using SavedRow = std::array<std::pair<int, std::string>, 9>;
    using SavedGrid = std::vector<SavedRow>;
 
    struct Game {

@@ -1,9 +1,7 @@
 #pragma once
-#include <raylib.h>
-#include "Core/Event.h"
 #include "Core/Layer.h"
-#include <string>
-#include <utility>
+
+#include <raylib.h>
 
 class CoinLayer : public Core::Layer {
 public:
@@ -16,8 +14,9 @@ public:
 
    static Rectangle box;
 private:
-   const Texture m_coinTexture;
+   const Texture2D m_coinTexture;
    float m_fontSize, m_textureScale;
 
+private:
    void resize();
 };

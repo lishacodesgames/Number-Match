@@ -3,10 +3,8 @@
 
 #include "QuestionLayer.h"
 #include "PanelLayer.h"
-#include "DailyLayer.h"
 #include "GameLayer.h"
 #include "CoinLayer.h"
-#include "MeLayer.h"
 #include "Storage.h"
 #include "Colors.h"
 #include "App.h"
@@ -26,6 +24,8 @@ HomeLayer::HomeLayer() : Layer("Home Layer"),
    if(!App::GetLayerByName("Coin Layer"))
       App::QueueLayerPush(new CoinLayer());
 }
+
+#pragma region Methods
 
 void HomeLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::MouseClicked) {
@@ -132,7 +132,11 @@ void HomeLayer::OnRender() {
    m_continueButton.Draw();
 }
 
-void resizeThis(GUI::Button& button) {
+#pragma endregion
+
+#pragma region Helpers
+
+static void resizeThis(GUI::Button& button) {
    float buttonWidth = std::max(GetScreenWidth() / 2.0f, 400.0f);
    float buttonHeight = std::max(GetScreenHeight() / 20.0f, 40.0f);
 
@@ -171,3 +175,14 @@ void HomeLayer::resize() {
    if(m_trophyScale * m_trophyTexture.height != oldHeight)
       LOG_RESIZE("Best score icon resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
 }
+
+GUI::Button* HomeLayer::findHoveredButton() {
+   if(m_newButton.isHovered)
+      return &m_newButton;
+   else if(m_continueButton.isHovered)
+      return &m_continueButton;
+   else
+      return nullptr;
+}
+
+#pragma endregion

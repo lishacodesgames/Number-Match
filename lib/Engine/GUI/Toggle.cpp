@@ -5,7 +5,14 @@
 
 namespace GUI
 {
+   Toggle::Toggle(
+      const Rectangle& bounds, Roundness roundness,
+      float padding, Color bg, Color knob) :
+         bgColor(bg), knobColor(knob), roundness(roundness), m_bounds(bounds), m_padding(padding)
+   { setKnob(); }
+
 #pragma region Methods
+
    void Toggle::Update() {
       if(m_isSliding) {
          isHovered = false;
@@ -40,9 +47,11 @@ namespace GUI
          );
       }
    }
+
 #pragma endregion
 
 #pragma region Setters
+
    void Toggle::setKnobIcon(const char* filepath, float padding) {
       m_knobImage = LoadImage(filepath);
       float aspect = (float)m_knobImage.width / m_knobImage.height;
@@ -72,5 +81,7 @@ namespace GUI
          m_bounds.y + m_padding, getKnobSize().x, getKnobSize().y
       };
    }
+  
 #pragma endregion
+
 }  // namespace GUI
