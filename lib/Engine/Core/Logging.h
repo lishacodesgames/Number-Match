@@ -30,4 +30,4 @@ namespace Core
 #define LOG_RESIZE(log, ...) Core::ConsoleLog(LISHA_TRACE, std::string("\033[92mRESIZE: ") + std::format(log __VA_OPT__(,) __VA_ARGS__) + "\033[0m" );
 
 /// logs in italic underline
-#define LOG_LAYER(log, ...) Core::ConsoleLog(LISHA_TRACE, std::string("\033[92mLAYER: ") + std::format(log __VA_OPT__(,) __VA_ARGS__) + "\033[0m" );
+#define LOG_LAYER(log, ...) Core::ConsoleLog(LISHA_TRACE, std::string("\033[3;4mLAYER: ") + std::format(log __VA_OPT__(,) __VA_ARGS__) + "\033[0m" );
