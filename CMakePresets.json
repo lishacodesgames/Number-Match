@@ -21,7 +21,7 @@
          "inherits": "base",
          "cacheVariables": {
             "CMAKE_BUILD_TYPE": "Debug",
-            "CMAKE_CXX_FLAGS": "-D_DEBUGGING="
+            "CMAKE_CXX_FLAGS": "-D_DEBUGGING -D_LOG_INFO"
          }
       },
       {
@@ -29,7 +29,7 @@
          "inherits": "base",
          "cacheVariables": {
             "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-            "CMAKE_CXX_FLAGS": "-D_DEBUGGING="
+            "CMAKE_CXX_FLAGS": "-D_DEBUGGING"
          }
       },
       {

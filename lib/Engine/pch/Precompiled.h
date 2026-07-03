@@ -24,7 +24,7 @@
 #include <array>
 
 // Streams & I/O
-#include <iostream>
+// #include <iostream> raylib uses printf which must not mix with std::cout
 #include <fstream>
 #include <sstream>
 #include <iomanip>
@@ -32,6 +32,7 @@
 #include <cstdio>
 
 // System, Time & Concurrency
+#include <source_location>
 #include <filesystem>
 #include <stdexcept>
 #include <chrono>
