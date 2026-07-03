@@ -7,7 +7,7 @@ namespace Palette
 {
    void SetLightMode() {
       Storage::ui.isDarkMode = false;
-      TraceLog(LISHA_SAYS, "THEME: Light Mode set");
+      Core::ConsoleLog(LISHA_SAYS, "THEME: Light Mode set");
 
       bright_bg = WHITE;
       shadow_for_bright = LIGHTGRAY;
@@ -53,7 +53,7 @@ namespace Palette
 
    void SetDarkMode() {
       Storage::ui.isDarkMode = true;
-      TraceLog(LISHA_SAYS, "THEME: Dark Mode set");
+      Core::ConsoleLog(LISHA_SAYS, "THEME: Dark Mode set");
 
       bright_bg = Color{ 28, 32, 40, 255 };
       shadow_for_bright = Color{ 70, 75, 90, 255 };

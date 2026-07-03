@@ -154,7 +154,7 @@ void Grid::resize() {
    GridCell::numHeight = GridCell::cellSize * 0.75f;
 
    if(std::abs(old - GridCell::cellSize) > 0.5f)
-      LOG_RESIZE("Grid resized: cellSize = %f", GridCell::cellSize);
+      LOG_RESIZE("Grid cellSize -> {}", GridCell::cellSize);
 
    box.width = box.height = GridCell::cellSize * 9;
    box.x = (GetScreenWidth() - box.width) / 2.0f;
@@ -171,7 +171,7 @@ void Grid::resize() {
 void Grid::plus() {
    const std::vector<int> values = getValidValues();
    if(values.empty()) {
-      TraceLog(LOG_ERROR, "There are no cells in the grid!");
+      Core::ConsoleLog(LOG_ERROR, "There are no cells in the grid!");
       return;
    }
 
@@ -376,13 +376,13 @@ bool Grid::hint() {
 
 void Grid::handleMatch(GridCell* cell, MatchType match) {
    if(!static_cast<bool>(match)) {
-      TraceLog(LOG_ERROR, "Tried to handle a NoMatch!");
+      Core::ConsoleLog(LOG_ERROR, "Tried to handle a NoMatch!");
       return;
    }
 
    GridCell* focusedCell = m_focusedCell ? getCellAt(*m_focusedCell) : nullptr;
    if(!focusedCell) {
-      TraceLog(LOG_ERROR, "Tried to handle a match without a focused cell!");
+      Core::ConsoleLog(LOG_ERROR, "Tried to handle a match without a focused cell!");
       return;
    }
 
@@ -425,6 +425,7 @@ void Grid::handleMatch(GridCell* cell, MatchType match) {
    }
 
    if(m_grid.at(0).at(0) == 0) { // grid is empty
+      Core::ConsoleLog(LISHA_SAYS, std::format("Stage {} COMPLETED!", Storage::game.stage));
       Storage::game.currentScore += static_cast<int>(MatchType::ClearedStage) * Storage::game.stage;
       Storage::game.stage++;
       init();
@@ -588,7 +589,7 @@ bool Grid::isNumClear(int num) const {
          if(cell == num) // operator also checks if both are unmatched
             return false;
 
-   TraceLog(LISHA_SAYS, "%d CLEARED!", num);
+   Core::ConsoleLog(LISHA_SAYS, std::format("{} CLEARED!", num));
    return true;
 }
 
@@ -602,6 +603,8 @@ void Grid::clearRow(int row) {
       for(GridCell& cell : m_grid.back())
          setCellBounds(&cell);
    }
+   
+   Core::ConsoleLog(LISHA_SAYS, std::format("Row {} CLEARED!", ++row));
 }
 
 #pragma endregion
@@ -616,8 +619,7 @@ Grid::CellPosition Grid::getCellPos(GridCell* cell) const {
       }
    }
 
-   TraceLog(LOG_ERROR,
-      "Tried to find position of a cell that doesn't exist!\n\tParam address: %p", (void*)cell);
+   Core::ConsoleLog(LOG_ERROR, std::format("Tried to find position of a cell that doesn't exist!\n\tParam address: {}", static_cast<const void*>(cell)));
    return { -1, -1 };
 }
 

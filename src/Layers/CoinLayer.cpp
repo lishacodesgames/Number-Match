@@ -40,13 +40,13 @@ void CoinLayer::resize() {
    float old = m_fontSize;
    m_fontSize = std::max(GetScreenHeight() / 23.809f, 20.0f);
    if(std::abs(m_fontSize - old) > 0.5f)  // to avoid polluting the terminal with unnecssary logs
-      LOG_RESIZE("Coin font resized to: %f", m_fontSize);
+      LOG_RESIZE("Coin font -> {}", m_fontSize);
 
    old = m_textureScale;
    m_textureScale = std::clamp(GetScreenHeight() / 650.0f, 1.0f, 2.5f);
    float texDim = 20.0f * m_textureScale;
    if(std::abs(m_textureScale - old) > 0.5f)
-      LOG_RESIZE("Coin icon resized to: %f x %f", texDim, texDim);
+      LOG_RESIZE("Coin icon -> {} x {}", texDim, texDim);
 
    Vector2 coinAmtSize = MeasureTextEx(App::font_semibold, Storage::format(Storage::game.coins).c_str(), m_fontSize, 1.5f);
    float boxWidth = coinAmtSize.x + texDim * 1.9f;

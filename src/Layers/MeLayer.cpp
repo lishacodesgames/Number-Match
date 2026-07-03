@@ -6,9 +6,9 @@
 
 void MeLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::KeyPressed)
-      TraceLog(LISHA_SAYS, "The '%c' key was pressed", static_cast<Core::KeyPressedEvent&>(e).key);
+      Core::ConsoleLog(LISHA_SAYS, std::format("The {} key was pressed", static_cast<Core::KeyPressedEvent&>(e).key));
    else if(e.GetEventType() == Core::EventType::MouseClicked)
-      TraceLog(LISHA_SAYS, "Mouse was clicked");
+      Core::ConsoleLog(LISHA_SAYS, "Mouse was clicked");
 }
 
 void MeLayer::OnUpdate() {}

@@ -10,8 +10,8 @@ namespace Core
          updateSuspended(updateSuspended), eventSuspended(eventSuspended)
    {}
 
-   void Layer::OnAttach() { LOG_LAYER("%s ATTACHED", m_name.c_str()); }
-   void Layer::OnDetach() { LOG_LAYER("%s DETACHED", m_name.c_str()); }
+   void Layer::OnAttach() { LOG_LAYER("{} ATTACHED", m_name); }
+   void Layer::OnDetach() { LOG_LAYER("{} DETACHED", m_name); }
 
    void Layer::OnSuspend(bool render, bool update, bool event) {
       isSuspended = true;
@@ -19,14 +19,13 @@ namespace Core
       updateSuspended = update;
       eventSuspended = event;
 
-      LOG_LAYER("%s SUSPENDED", m_name.c_str()); 
+      LOG_LAYER("{} SUSPENDED", m_name); 
    }
    
    void Layer::OnResume() {
       if(!isSuspended)
-         TraceLog(LOG_ERROR,
-            "Tried to resume a layer that wasn't suspended! Layer: %s", m_name.c_str());
+         Core::ConsoleLog(LOG_WARNING, std::format("Tried to resume {} but it wasn't suspended!", m_name));
       isSuspended = false;
-      LOG_LAYER("%s RESUMED", m_name.c_str());
+      LOG_LAYER("{} RESUMED", m_name);
    }
 }

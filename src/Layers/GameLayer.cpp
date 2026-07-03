@@ -19,7 +19,7 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"), m_grid(reset),
       m_hintButton(
          { 0, 0 }, { 12, 10 }, "", Palette::game_button_bg, Palette::game_button_text, 25, { 1.0f, 8 }) 
 {
-   TraceLog(LISHA_SAYS, "Loading a new game...");
+   Core::ConsoleLog(LISHA_SAYS, "Loading a new game...");
 
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
    m_settingsButton.setIcon("assets/icons/game/settings_30x30.png");
@@ -33,7 +33,7 @@ GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"), m_grid(reset),
       Storage::game.currentScore = 0;
    } // numbersCleared initalisation is handled by Grid constructor
 
-   TraceLog(LISHA_SAYS, "New game loaded!");
+   Core::ConsoleLog(LISHA_SAYS, "New game loaded!");
 }
 
 GameLayer::~GameLayer() {
@@ -204,11 +204,11 @@ void GameLayer::resize() {
    float infoFontSize = GridCell::numHeight * 0.55f * 0.9f;
    m_trophyScale = std::max(infoFontSize / m_trophyTexture.height, 1.0f);
    if(m_trophyScale > 1.25f || m_trophyScale < 0.75f)
-      LOG_RESIZE("Best Score Trophy resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
+      LOG_RESIZE("Best Score Trophy -> {} x {}", m_trophyTexture.width, m_trophyTexture.height);
 
    m_tickScale = std::max(infoFontSize / m_tickTexture.height, 1.0f);
    if(m_tickScale > 1.25f || m_tickScale < 0.75f)
-      LOG_RESIZE("Tick resized to: %d, %d", m_tickTexture.width, m_tickTexture.height);
+      LOG_RESIZE("Tick -> {} x {}", m_tickTexture.width, m_tickTexture.height);
 
    // navigation buttons
    m_gobackButton.setFontSize(GridCell::numHeight);

@@ -13,10 +13,13 @@ static bool shouldTrace(int msgType) {
 namespace Core
 {
    void ConsoleLog(int msgType, const std::string& log, std::source_location src) {
-      if(shouldTrace(msgType))
-         printf(std::format("file: {}, line: {}\n", src.file_name(), src.line()).c_str());
+      bool shouldTrace = ::shouldTrace(msgType);
+      if(shouldTrace)
+         printf("%s", std::format("\nfile: {}, line: {}\n", src.file_name(), src.line()).c_str());
 
       TraceLog(msgType, "%s", log.c_str());
+      if(shouldTrace)
+         printf("\n");
    }
 
    void LishaLogger(int msgType, const char* text, va_list args) {

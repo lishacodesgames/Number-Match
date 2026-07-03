@@ -147,7 +147,7 @@ void HomeLayer::resize() {
    // Buttons
    resizeThis(m_newButton);
    if(m_newButton.getFontSize() != m_continueButton.getFontSize())
-      LOG_RESIZE("Play buttons' font resized to: %d", m_newButton.getFontSize());
+      LOG_RESIZE("Play button font -> {}", m_newButton.getFontSize());
    resizeThis(m_continueButton);
 
    Vector2 buttonOrigin = {
@@ -165,15 +165,13 @@ void HomeLayer::resize() {
       m_bgScale = (float)GetScreenHeight() / m_backgroundTexture.height;
 
    if(old.x != m_bgScale * m_backgroundTexture.width || old.y != m_bgScale * m_backgroundTexture.height)
-      LOG_RESIZE(
-         "Home background resized to: %d, %d",
-         m_backgroundTexture.width, m_backgroundTexture.height);
+      LOG_RESIZE("Home background -> {} x {}", m_backgroundTexture.width, m_backgroundTexture.height);
 
    // Best Score's Trophy Icon
    float oldHeight = m_trophyScale * m_trophyTexture.height; 
    m_trophyScale = std::clamp(GetScreenHeight() / 800.0f, 1.0f, 2.5f);
    if(m_trophyScale * m_trophyTexture.height != oldHeight)
-      LOG_RESIZE("Best score icon resized to: %d, %d", m_trophyTexture.width, m_trophyTexture.height);
+      LOG_RESIZE("Best score icon -> {} x {}", m_trophyTexture.width, m_trophyTexture.height);
 }
 
 GUI::Button* HomeLayer::findHoveredButton() {

@@ -168,7 +168,7 @@ void OptionsLayer::resize(float boundsY) {
    m_bounds = { (GetScreenWidth() - width) / 2, boundsY, width, height };
 
    if(absDiff(oldSize, { m_bounds.width, m_bounds.height }) >= 0.5f)
-      LOG_RESIZE("Options panel resized to: %f, %f", m_bounds.width, m_bounds.height);
+      LOG_RESIZE("Options panel -> {} x {}", m_bounds.width, m_bounds.height);
 
    // panel buttons
    const float panelHeight = m_bounds.height * PANEL_PROPORTION;
@@ -190,7 +190,7 @@ void OptionsLayer::resize(float boundsY) {
    m_darkModeToggle.setPadding(std::min(newToggleSize.x, newToggleSize.y) * 0.075f);
 
    if(absDiff(oldToggleSize, newToggleSize) >= 0.5f)
-      LOG_RESIZE("Dark mode toggle resized to: %f, %f", newToggleSize.x, newToggleSize.y);
+      LOG_RESIZE("Dark mode toggle -> {} x {}", newToggleSize.x, newToggleSize.y);
 
    m_darkModeToggle.setOrigin({
       m_bounds.x + (m_bounds.width - newToggleSize.x) / 2.0f,

@@ -15,7 +15,7 @@ App* App::s_instance = nullptr;
 
 App::App(const std::string& name) {
    s_instance = this;
-   TraceLog(LISHA_SAYS, "Loading App...");
+   Core::ConsoleLog(LISHA_SAYS, std::format("Loading {}...", name));
 
    Storage::load();
 
@@ -41,18 +41,18 @@ App::App(const std::string& name) {
    PanelLayer* panel = new PanelLayer();
    m_layerStack.PushOverlay(panel);
 
-   TraceLog(LISHA_SAYS, "App Loaded!");
+   Core::ConsoleLog(LISHA_SAYS, std::format("{} Loaded!", name));
 }
 
 App::~App() {
    m_layerStack.Delete(); /// Must be done before CloseWindow()
    CloseWindow();
    s_instance = nullptr;
-   TraceLog(LISHA_SAYS, "GOODBYE!\n");
+   Core::ConsoleLog(LISHA_SAYS, "GOODBYE!\n");
 }
 
 void App::Run() {
-   TraceLog(LISHA_SAYS, "Working Directory: %s", GetWorkingDirectory());
+   Core::ConsoleLog(LISHA_SAYS, std::format("Working Directory: {}", GetWorkingDirectory()));
    int width = GetScreenWidth(), height = GetScreenHeight();
 
    while(!WindowShouldClose()) {
@@ -61,7 +61,7 @@ void App::Run() {
       ) {
          width = GetScreenWidth();
          height = GetScreenHeight();
-         LOG_RESIZE("Window Resized: %d x %d", width, height);
+         LOG_RESIZE("Window -> {} x {}", width, height);
       }
 
       // ---------------------------
@@ -147,7 +147,7 @@ Core::Layer* App::GetLayerByName(const std::string& name) {
       if(layer->GetName() == name)
          return layer;
 
-   LOG_LAYER("Layer \"%s\" doesn't exist.", name.c_str());
+   LOG_LAYER("Layer \"{}\" doesn't exist.", name);
    return nullptr;
 }
 

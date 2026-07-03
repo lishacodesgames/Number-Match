@@ -19,11 +19,9 @@ namespace Core
          m_layerInsertIndex--;
          delete layer;
       } else {
-         TraceLog(LOG_FATAL, "\n%s", formatLayerAddresses().c_str());
+         Core::ConsoleLog(LOG_FATAL, std::format("\n{}", formatLayerAddresses()));
          throw std::runtime_error(
-            std::format("Tried to pop a layer that doesn't exist!\nLayer: {}, Address: {}",
-               layer->GetName(), static_cast<const void*>(layer))
-         );
+            std::format("Tried to pop a layer that doesn't exist!\nLayer: {}, Address: {}", layer->GetName(), static_cast<const void*>(layer)));
       }
    }
 
@@ -40,7 +38,7 @@ namespace Core
          m_layers.erase(it);
          delete overlay;
       } else {
-         TraceLog(LOG_FATAL, "\n%s", formatLayerAddresses().c_str());
+         Core::ConsoleLog(LOG_FATAL, std::format("\n{}", formatLayerAddresses()));
          throw std::runtime_error(
             std::format("Tried to pop an overlay layer that doesn't exist!\nLayer: {}, Address: {}",
                overlay->GetName(), static_cast<const void*>(overlay))
