@@ -65,7 +65,7 @@ namespace GUI {
       void setText(const std::string& text) { m_text = text; recalculateLayout(); }
 
       void setFont(Font font) { m_font = font; recalculateLayout(); }
-      void setFontSize(int fontSize);
+      void setFontSize(float fontSize);
       void setRoundness(Roundness roundness) { m_roundness = roundness; }
 
       /// @param resizeContent TRUE: will resize contents to stay in same ratio as before -- FALSE: will resize only rectangle
@@ -92,7 +92,7 @@ namespace GUI {
       std::string getText() const { return m_text; }
 
       Font getFont() const { return m_font; }
-      int getFontSize() const { return m_fontSize; }
+      float getFontSize() const { return m_fontSize; }
       Roundness getRoundness() const { return m_roundness; }
          
       Rectangle getBounds() const { return m_bounds; }
@@ -118,12 +118,11 @@ namespace GUI {
       // ---- MEMBERS ----
       // -----------------
 
-      Image m_iconImage = { 0 };
       std::optional<Texture2D> m_iconTexture;
       std::string m_text;
 
       Font m_font;
-      int m_fontSize = 20;
+      float m_fontSize = 20.0f;
       Roundness m_roundness = { 0.8f, 8 };
 
       Rectangle m_bounds;

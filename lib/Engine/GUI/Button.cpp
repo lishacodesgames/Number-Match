@@ -43,8 +43,9 @@ namespace GUI
       Vector2 textSize = MeasureTextEx(m_font, m_text.c_str(), m_fontSize, 1);
       Vector2 iconOrigin = getIconOrigin();
 
+      /// @bug fix button icon rendering
       if(m_iconTexture)
-         DrawTexture(*m_iconTexture, iconOrigin.x, iconOrigin.y, contentColor);
+         DrawTextureEx(*m_iconTexture, iconOrigin, 0.0f, m_fontSize / m_iconTexture->height, contentColor);
 
       // center text
       float remTextSpaceY = m_bounds.height - m_verticalPadding.x - m_verticalPadding.y - textSize.y;
@@ -59,8 +60,6 @@ namespace GUI
    Button::~Button() {
       if(m_iconTexture)
          UnloadTexture(*m_iconTexture);
-      if(IsImageValid(m_iconImage))
-         UnloadImage(m_iconImage);
    }
 
    Button::Button(
@@ -107,37 +106,25 @@ namespace GUI
 
 #pragma region Setters
    void Button::setIcon(const char* filepath, Vector2 dimensions) {  // dimensions = {0, 0} as default args
-      m_iconImage = LoadImage(filepath);
+      Image img = LoadImage(filepath);
       if(!dimensions.x || !dimensions.y) {  // any are 0
-         dimensions.x = m_iconImage.width;
-         dimensions.y = m_iconImage.height;
+         dimensions.x = img.width;
+         dimensions.y = img.height;
+      } else {
+         ImageResize(&img, dimensions.x, dimensions.y);
       }
 
-      Image resized = ImageCopy(m_iconImage);
-      ImageResize(&resized, dimensions.x, dimensions.y);
 
       if(m_iconTexture)
          UnloadTexture(*m_iconTexture);
-      m_iconTexture = LoadTextureFromImage(resized);
-      UnloadImage(resized);
+      m_iconTexture = LoadTextureFromImage(img);
+      UnloadImage(img);
 
       recalculateLayout();
    }
 
-   void Button::setFontSize(int fontSize) {
-      int old = m_fontSize;
+   void Button::setFontSize(float fontSize) {
       m_fontSize = fontSize;
-
-      if(std::abs(old - m_fontSize) >= 5 && m_iconTexture) {
-         float aspect = (float)m_iconImage.width / m_iconImage.height;
-         Image newIcon = ImageCopy(m_iconImage);
-         ImageResize(&newIcon, m_fontSize * aspect, m_fontSize);
-
-         UnloadTexture(*m_iconTexture);
-         m_iconTexture = LoadTextureFromImage(newIcon);
-         UnloadImage(newIcon);
-      }
-
       recalculateLayout();
    }
 
@@ -156,16 +143,6 @@ namespace GUI
       m_verticalPadding *= heightScale;
 
       m_fontSize *= m_text.empty() ? 1 : heightScale;
-      if(m_iconTexture) {
-         float aspect = (float)m_iconImage.width / m_iconImage.height;
-         Image newIcon = ImageCopy(m_iconImage);
-         float newHeight = m_iconTexture->height * heightScale;
-         ImageResize(&newIcon, newHeight * aspect, newHeight);
-
-         UnloadTexture(*m_iconTexture);
-         m_iconTexture = LoadTextureFromImage(newIcon);
-         UnloadImage(newIcon);
-      }
    }
 
    void Button::setPadding(Vector2 horizPadding, Vector2 vertPadding) {
@@ -192,7 +169,7 @@ namespace GUI
 #pragma endregion
 
 #pragma region Getters
-   Vector2 Button::getIconOrigin() const {
+   Vector2 Button::getIconOrigin() const { 
       Vector2 textSize = MeasureTextEx(m_font, m_text.c_str(), m_fontSize, 1);
       float contentWidth = textSize.x + m_iconTexture->width * (m_text.empty() ? 1 : ICON_PAD_MULTIPLIER);
 
