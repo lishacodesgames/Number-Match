@@ -3,10 +3,6 @@
 #include "GUI/Button.h"
 #include "GUI/Toggle.h"
 
-#include <raylib.h>
-#include <string>
-#include <array>
-
 class OptionsLayer : public Core::Layer {
 public:
    OptionsLayer();

@@ -12,7 +12,7 @@ namespace
 
    std::optional<json> cachedSave;
 
-   json readAndValidate(const fs::path& path) {
+   json read(const fs::path& path) {
       std::ifstream stream(path);
       if(!stream.is_open())
          throw fs::filesystem_error(
@@ -48,7 +48,7 @@ namespace
       return true;
    }
 
-   bool loadSaveDocument() {
+   bool loadSaveToCache() {
       if(!fs::exists(Storage::savefile)) {
          Core::ConsoleLog(LISHA_SAYS, "Game save file not found! Using default values...");
          if(!installDefaultSave())
@@ -56,7 +56,7 @@ namespace
       }
 
       try {
-         cachedSave = readAndValidate(Storage::savefile);
+         cachedSave = read(Storage::savefile);
          return true;
       } catch(const std::exception& e) {
          Core::ConsoleLog(LOG_ERROR, std::format("Invalid save file: {}", e.what()));
@@ -75,7 +75,7 @@ namespace
          return false;
 
       try {
-         cachedSave = readAndValidate(Storage::savefile);
+         cachedSave = read(Storage::savefile);
          return true;
       } catch(const std::exception& e) {
          Core::ConsoleLog(LOG_ERROR, std::format("Default save is invalid: {}", e.what()));
@@ -84,7 +84,7 @@ namespace
    }
 
    const json* getSaveDocument() {
-      if(!cachedSave && !loadSaveDocument())
+      if(!cachedSave && !loadSaveToCache())
          return nullptr;
       return &*cachedSave;
    }
@@ -100,8 +100,10 @@ namespace Storage
 {
    void load() {
       const json* document = getSaveDocument();
-      if(!document)
+      if(!document) {
+         Core::ConsoleLog(LOG_ERROR, "Could not load save file!");
          return;
+      }
 
       const json& savedGame = document->at("game");
       game.stage = savedGame.at("stage").get<uint16_t>();

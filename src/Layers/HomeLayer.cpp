@@ -1,6 +1,7 @@
 #include <pch/Precompiled.h>
 #include "HomeLayer.h"
 
+#include "Core/Application.h"
 #include "Utils/Numbers.h"
 #include "QuestionLayer.h"
 #include "PanelLayer.h"
@@ -8,22 +9,21 @@
 #include "CoinLayer.h"
 #include "Storage.h"
 #include "Colors.h"
-#include "App.h"
 
 HomeLayer::HomeLayer() : Layer("Home Layer"),
       m_backgroundTexture(LoadTexture("assets/backgrounds/home_background_800x1417.png")),
       m_trophyTexture(LoadTexture("assets/icons/menus/trophy_30x30.png")),
       m_newButton(
          { 0, 0, 533, 40 }, "New Game", Palette::home_button_1,
-         Palette::home_button_2, 30, { 0.8f, 8 }, App::font_semibold),
+         Palette::home_button_2, 30, { 0.8f, 8 }, Storage::ui.font_semibold),
       m_continueButton(
          { 0, 0, 533, 40 }, "Continue Game", Palette::home_button_2,
-         Palette::home_button_1, 30, { 0.8f, 8 }, App::font_semibold)
+         Palette::home_button_1, 30, { 0.8f, 8 }, Storage::ui.font_semibold)
 {
    resize();
 
-   if(!App::GetLayerByName("Coin Layer"))
-      App::QueueLayerPush(new CoinLayer());
+   if(!Core::Application::GetLayerByName("Coin Layer"))
+      Core::Application::QueueLayerPush(new CoinLayer());
 }
 
 #pragma region Methods
@@ -34,32 +34,32 @@ void HomeLayer::OnEvent(Core::Event& e) {
       if(!activeButton)
          return;
 
-      Core::Layer* game = App::GetLayerByName("Game Layer");
-      Core::Layer* panel = App::GetLayerByName("Panel Layer");
+      Core::Layer* game = Core::Application::GetLayerByName("Game Layer");
+      Core::Layer* panel = Core::Application::GetLayerByName("Panel Layer");
       if(!panel)
          throw std::runtime_error("Home Layer exists but Panel Layer doesn't!");
 
       if(activeButton == &m_newButton) {
          panel->OnSuspend(true);
 
-         App::QueueLayerPush(new QuestionLayer("Start a new game?\nYour previous game progress will be lost.",
+         Core::Application::QueueLayerPush(new QuestionLayer("Start a new game?\nYour previous game progress will be lost.",
             [this, panel](bool yes) {
                if(!yes) {
                   panel->OnResume();
                   return;
                }
 
-               App::QueueLayerPop(panel);
-               App::QueueLayerSwap(this, new GameLayer(true));
+               Core::Application::QueueLayerPop(panel);
+               Core::Application::QueueLayerSwap(this, new GameLayer(true));
             }, this));
       } else { // continue button was pressed
-         App::QueueLayerPop(panel);
-         App::QueueLayerPop(this);
+         Core::Application::QueueLayerPop(panel);
+         Core::Application::QueueLayerPop(this);
 
          if(game)
             game->OnResume();
          else  // game layer doesn't exist but we mustn't reset player progress
-            App::QueueLayerPush(new GameLayer(false));
+            Core::Application::QueueLayerPush(new GameLayer(false));
       }
 
       e.Handled = true;
@@ -84,29 +84,29 @@ void HomeLayer::OnRender() {
    const char* gameName = "Number Match";
    float titleFontSize =
       std::max(std::min(GetScreenHeight(), GetScreenWidth()) / 10.0f, 45.0f);
-   Vector2 titleSize = MeasureTextEx(App::font_black, gameName, titleFontSize, 3);
+   Vector2 titleSize = MeasureTextEx(Storage::ui.font_black, gameName, titleFontSize, 3);
    Vector2 titleOrigin = { (GetScreenWidth() - titleSize.x) / 2.0f, GetScreenHeight() / 4.0f };
 
    DrawTextEx(
-      App::font_black, gameName, titleOrigin + titleFontSize / 15.0f,
+      Storage::ui.font_black, gameName, titleOrigin + titleFontSize / 15.0f,
       titleFontSize, 3.0f, Palette::title_shadow);
    DrawTextEx(
-      App::font_black, gameName, titleOrigin,
+      Storage::ui.font_black, gameName, titleOrigin,
       titleFontSize, 3.0f, Palette::title_color);
 
    // score
    const char* scoreTag = "All-Time Best Score";
-   Vector2 scoreTagSize = MeasureTextEx(App::font_semibold, scoreTag, titleFontSize / 2.0f, 1.5f);
+   Vector2 scoreTagSize = MeasureTextEx(Storage::ui.font_semibold, scoreTag, titleFontSize / 2.0f, 1.5f);
    Vector2 scoreTagOrigin = {
       titleOrigin.x + (titleSize.x - scoreTagSize.x) / 1.6f, 
       titleOrigin.y + titleFontSize * 1.05f };
    
    DrawTextEx(
-      App::font_semibold, scoreTag, scoreTagOrigin,
+      Storage::ui.font_semibold, scoreTag, scoreTagOrigin,
       titleFontSize / 2.0f, 1.5f, Palette::game_info_color);
 
    float bestScoreFontSize = titleFontSize * 0.7f;
-   Vector2 bestScoreSize = MeasureTextEx(App::font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(), bestScoreFontSize, 2.0f);
+   Vector2 bestScoreSize = MeasureTextEx(Storage::ui.font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(), bestScoreFontSize, 2.0f);
 
    Vector2 scoreSize = {
       bestScoreSize.x + m_trophyScale * m_trophyTexture.width * 1.5f, // half a trophy's width for padding
@@ -123,7 +123,7 @@ void HomeLayer::OnRender() {
 
    DrawTextureEx(m_trophyTexture, trophyOrigin, 0.0f, m_trophyScale, WHITE);
    DrawTextEx(
-      App::font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(),
+      Storage::ui.font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(),
       bestScoreOrigin, bestScoreFontSize, 2.0f, Palette::text_for_bright);
 
    // game buttons

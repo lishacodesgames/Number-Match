@@ -1,12 +1,6 @@
 #pragma once
-#include <filesystem>
-#include <utility>
-#include <cstdint>
-#include <string>
-#include <vector>
-#include <array>
 
-/// @bug save.json is not being moved to repo/assets
+/// @bug save.json is not being saved to repo/assets, it's being saved to bin/assets. Check working directory, it might be set to bin/ instead of repo
 
 namespace Storage {
    using SavedRow = std::array<std::pair<int, std::string>, 9>;
@@ -21,15 +15,18 @@ namespace Storage {
    };
 
    struct UI {
-      // more to come like scroll direction preferences, etc
       bool isDarkMode = true;
+      Font font_retro = GetFontDefault();
+      Font font_semibold = GetFontDefault();
+      Font font_black = GetFontDefault();
    };
 
    inline Game game;
    inline UI ui;
    inline const std::filesystem::path savefile = "assets/save.json";
 
-   void load();  /// update storage variables from file
+   
+   void load(); /// update storage variables from file
    void save(const SavedGrid& grid);  /// update file with storage variables
 
    std::pair<int, int> getSavedWindowSize(); /// only for App constructor to call

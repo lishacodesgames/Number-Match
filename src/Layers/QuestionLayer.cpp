@@ -1,10 +1,11 @@
 #include <pch/Precompiled.h>
 #include "QuestionLayer.h"
 
+#include "Core/Application.h"
+#include "Storage.h"
 #include "Colors.h"
-#include "App.h"
 
-#define INIT_BUTTON_TEXT 20, { 0.8f, 8 }, App::font_semibold
+#define INIT_BUTTON_TEXT 20, { 0.8f, 8 }, Storage::ui.font_semibold
 #define NO_REC { 0, 0, 0, 0 }
 
 QuestionLayer::QuestionLayer(std::string_view question, std::function<void(bool)> onAnswer, Core::Layer* caller)
@@ -14,7 +15,7 @@ QuestionLayer::QuestionLayer(std::string_view question, std::function<void(bool)
          question, 24,
          GUI::Button(NO_REC, "Yes", Palette::home_button_2, Palette::home_button_1, INIT_BUTTON_TEXT),
          GUI::Button(NO_REC, "No", Palette::home_button_1, Palette::home_button_2, INIT_BUTTON_TEXT),
-         App::font_semibold),
+         Storage::ui.font_semibold),
       m_onAnswer(std::move(onAnswer)),
       m_caller(caller)
 {
@@ -72,10 +73,10 @@ void QuestionLayer::answer(bool yes) {
 
    m_answered = true;
    m_onAnswer(yes);
-   if(m_caller && App::GetLayerByName(m_caller->GetName()))
+   if(m_caller && Core::Application::GetLayerByName(m_caller->GetName()))
       m_caller->OnResume();
 
-   App::QueueLayerPop(this);
+   Core::Application::QueueLayerPop(this);
 }
 
 void QuestionLayer::resize() {

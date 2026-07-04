@@ -1,6 +1,7 @@
 add_library(Engine STATIC)
 target_sources(Engine PRIVATE
    # Core
+   Core/Application.cpp
    Core/Event.cpp
    Core/Layer.cpp
    Core/LayerStack.cpp

@@ -1,23 +1,24 @@
 #include <pch/Precompiled.h>
 #include "PanelLayer.h"
 
+#include "Core/Application.h"
 #include "DailyLayer.h"
 #include "GUI/Button.h"
 #include "HomeLayer.h"
 #include "MeLayer.h"
+#include "Storage.h"
 #include "Colors.h"
-#include "App.h"
 
 float PanelLayer::buttonSpacing = 0.0f;
 int PanelLayer::height = 50;
 
 PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
       homeButton(
-         { 0, 0 }, { 0, 0 }, "Main", BLANK, Palette::panel_active, 30, { 0.0f, 0 }, App::font_semibold),
+         { 0, 0 }, { 0, 0 }, "Main", BLANK, Palette::panel_active, 30, { 0.0f, 0 }, Storage::ui.font_semibold),
       dailyButton(
-         { 0, 0 }, { 0, 0 }, "Daily Challenges", BLANK, Palette::panel_rest, 30, { 0.0f, 0 }, App::font_semibold),
+         { 0, 0 }, { 0, 0 }, "Daily Challenges", BLANK, Palette::panel_rest, 30, { 0.0f, 0 }, Storage::ui.font_semibold),
       meButton(
-         { 0, 0 }, { 0, 0 }, "Me", BLANK, Palette::panel_rest, 30, { 0.0f, 0 }, App::font_semibold)
+         { 0, 0 }, { 0, 0 }, "Me", BLANK, Palette::panel_rest, 30, { 0.0f, 0 }, Storage::ui.font_semibold)
 {
    homeButton.isFocused = true;
 
@@ -29,15 +30,13 @@ PanelLayer::PanelLayer() : Core::Layer("Panel Layer", true),
 }
 
 void PanelLayer::OnAttach() {
-   currentLayer = App::GetLayerByName("Home Layer");
+   currentLayer = Core::Application::GetLayerByName("Home Layer");
    if(!currentLayer)
       throw std::runtime_error("Panel Layer has no current layer!");
 
    Core::Layer::OnAttach();
 }
 
-/// @bug When coming back home from a NEW game, clicking Me/Daily doesn't unfocus homeButton
-/// and clicking it doesn't take us back to home
 void PanelLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::MouseClicked) {
       GUI::Button* activeButton = findHoveredButton();
@@ -57,7 +56,7 @@ void PanelLayer::OnEvent(Core::Event& e) {
       if(newLayer) {
          previousButton->setFocus(false, BLANK, Palette::panel_rest);
          activeButton->setFocus(true, BLANK, Palette::panel_active);
-         App::QueueLayerSwap(currentLayer, newLayer);
+         Core::Application::QueueLayerSwap(currentLayer, newLayer);
          currentLayer = newLayer;
          previousButton = activeButton;
       }

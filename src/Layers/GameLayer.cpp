@@ -1,6 +1,7 @@
 #include <pch/Precompiled.h>
 #include "GameLayer.h"
 
+#include "Core/Application.h"
 #include "Utils/Numbers.h"
 #include "OptionsLayer.h"
 #include "PanelLayer.h"
@@ -8,7 +9,6 @@
 #include "CoinLayer.h"
 #include "Storage.h"
 #include "Colors.h"
-#include "App.h"
 
 GameLayer::GameLayer(bool reset) : Core::Layer("Game Layer"), m_grid(reset),
       m_trophyTexture(LoadTexture("assets/icons/game/trophy_16x16.png")),
@@ -50,8 +50,8 @@ void GameLayer::OnEvent(Core::Event& e) {
       char key = static_cast<Core::KeyPressedEvent&>(e).key;
       if(key == 'q' || key == 'Q') {
          OnSuspend();
-         App::QueueLayerPush(new HomeLayer());
-         App::QueueLayerPush(new PanelLayer());
+         Core::Application::QueueLayerPush(new HomeLayer());
+         Core::Application::QueueLayerPush(new PanelLayer());
          e.Handled = true;
          return;
       }
@@ -61,11 +61,11 @@ void GameLayer::OnEvent(Core::Event& e) {
       if(activeButton) {
          if(activeButton == &m_gobackButton) {
             OnSuspend();
-            App::QueueLayerPush(new HomeLayer());
-            App::QueueLayerPush(new PanelLayer());
+            Core::Application::QueueLayerPush(new HomeLayer());
+            Core::Application::QueueLayerPush(new PanelLayer());
          } else if(activeButton == &m_settingsButton) {
             OnSuspend(true);  // suspend but render
-            App::QueueLayerPush(new OptionsLayer());
+            Core::Application::QueueLayerPush(new OptionsLayer());
          } else if(activeButton == &m_plusButton) {
             if(m_plusButton.bgColor == Palette::grid_hint)
                m_plusButton.bgColor = Palette::game_button_bg;
@@ -129,24 +129,24 @@ void GameLayer::OnRender() {
 
    // Stage
    DrawTextEx(
-      App::font_retro, "Stage", { m_grid.box.x, tagY },
+      Storage::ui.font_retro, "Stage", { m_grid.box.x, tagY },
       tagFontSize, spacing, Palette::game_info_color);
    DrawTextEx(
-      App::font_semibold, Utils::formatNumber(Storage::game.stage).c_str(), { m_grid.box.x + 5, infoY },
+      Storage::ui.font_semibold, Utils::formatNumber(Storage::game.stage).c_str(), { m_grid.box.x + 5, infoY },
       infoFontSize + 3, spacing, Palette::game_info_color);
 
    // Best Score
    float scoreTagX =
       m_grid.box.x + m_grid.box.width
-         - MeasureTextEx(App::font_retro, "Best Score", tagFontSize, spacing).x;
+         - MeasureTextEx(Storage::ui.font_retro, "Best Score", tagFontSize, spacing).x;
    float scoreInfoX =
       m_grid.box.x + m_grid.box.width
-         - MeasureTextEx(App::font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(), infoFontSize, spacing).x
+         - MeasureTextEx(Storage::ui.font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(), infoFontSize, spacing).x
          - m_trophyScale * m_trophyTexture.width * 1.0005f;
 
-   DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, spacing, Palette::game_info_color);
+   DrawTextEx(Storage::ui.font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, spacing, Palette::game_info_color);
    DrawTextEx(
-      App::font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(),
+      Storage::ui.font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(),
       { scoreInfoX + m_trophyScale * m_trophyTexture.width * 1.0005f, infoY },
       infoFontSize, spacing, Palette::game_info_color);
 
@@ -156,9 +156,9 @@ void GameLayer::OnRender() {
    // Numbers Cleared
    float numbersTagX =
       m_grid.box.x + m_grid.box.width / 2.0f
-         - MeasureTextEx(App::font_retro, "Numbers Cleared", tagFontSize, spacing).x / 2.0f;
+         - MeasureTextEx(Storage::ui.font_retro, "Numbers Cleared", tagFontSize, spacing).x / 2.0f;
    DrawTextEx(
-      App::font_retro, "Numbers Cleared", { numbersTagX, tagY },
+      Storage::ui.font_retro, "Numbers Cleared", { numbersTagX, tagY },
       tagFontSize, spacing, Palette::game_info_color);
 
    float numAndPadWidth = m_tickScale * m_tickTexture.width * 1.15f; // 50% width for padding per num
@@ -171,9 +171,9 @@ void GameLayer::OnRender() {
       if(Storage::game.numbersCleared.at(i))
          DrawTextureEx(m_tickTexture, { numX, infoY }, 0.0f, m_tickScale, Palette::game_info_color);
       else {
-         Vector2 numSize = MeasureTextEx(App::font_semibold, num.c_str(), infoFontSize, spacing);
+         Vector2 numSize = MeasureTextEx(Storage::ui.font_semibold, num.c_str(), infoFontSize, spacing);
          DrawTextEx(
-            App::font_semibold, num.c_str(),
+            Storage::ui.font_semibold, num.c_str(),
             {  numX + (m_tickScale * m_tickTexture.width - numSize.x) / 2.0f,
                infoY + (m_tickScale * m_tickTexture.height - numSize.y) / 2.0f },
             infoFontSize, spacing, Palette::game_info_color);
@@ -185,9 +185,9 @@ void GameLayer::OnRender() {
    // Current Score
    float remSpaceY = tagY - (CoinLayer::box.y + CoinLayer::box.height);
    float currentScoreFontSize = std::min(GridCell::numHeight, remSpaceY * 0.8f);
-   Vector2 currentScoreSize = MeasureTextEx(App::font_black, Utils::formatNumber(Storage::game.currentScore).c_str(), currentScoreFontSize, 1);
+   Vector2 currentScoreSize = MeasureTextEx(Storage::ui.font_black, Utils::formatNumber(Storage::game.currentScore).c_str(), currentScoreFontSize, 1);
    DrawTextEx(
-      App::font_black, Utils::formatNumber(Storage::game.currentScore).c_str(),
+      Storage::ui.font_black, Utils::formatNumber(Storage::game.currentScore).c_str(),
       { (float)GetScreenWidth() / 2 - currentScoreSize.x / 2, tagY - currentScoreSize.y * 1.2f },
       currentScoreFontSize, 1, Palette::text_for_off_bright);
 }

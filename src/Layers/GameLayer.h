@@ -3,8 +3,6 @@
 #include "GUI/Button.h"
 #include "Grid.h"
 
-#include <raylib.h>
-
 class GameLayer : public Core::Layer {
 public:
    GameLayer(bool reset); /// @param reset reset Storage game values or not (load them from Storage)

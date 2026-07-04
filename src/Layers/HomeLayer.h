@@ -2,8 +2,6 @@
 #include "Core/Layer.h"
 #include "GUI/Button.h"
 
-#include <raylib.h>
-
 class HomeLayer : public Core::Layer {
 public:
    HomeLayer();

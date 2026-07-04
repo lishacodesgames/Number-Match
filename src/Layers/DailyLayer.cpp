@@ -1,8 +1,8 @@
 #include <pch/Precompiled.h>
 #include "DailyLayer.h"
 
+#include "Storage.h"
 #include "Colors.h"
-#include "App.h"
 
 void DailyLayer::OnEvent(Core::Event& e) {
    if(e.GetEventType() == Core::EventType::KeyPressed)
@@ -15,7 +15,7 @@ void DailyLayer::OnUpdate() {}
 
 void DailyLayer::OnRender() {
    DrawTextEx(
-      App::font_semibold, "Coming soon...",
+      Storage::ui.font_semibold, "Coming soon...",
       { GetScreenWidth() / 2.0f - 150, GetScreenHeight() / 2.0f - 100 },
       35, 2.5f, Palette::text_for_off_bright);
 }

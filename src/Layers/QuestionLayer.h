@@ -2,9 +2,8 @@
 #include "Core/Layer.h"
 #include "GUI/ConfirmPanel.h"
 
-#include <functional>
-#include <string>
-
+/// @bug When clicking home immediately after closing QuestionLayer, clicking Me/Daily doesn't unfocus homeButton
+/// and clicking it doesn't take us back to home
 class QuestionLayer : public Core::Layer {
 public:
    QuestionLayer(

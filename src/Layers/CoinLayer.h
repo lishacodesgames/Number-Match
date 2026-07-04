@@ -1,8 +1,6 @@
 #pragma once
 #include "Core/Layer.h"
 
-#include <raylib.h>
-
 class CoinLayer : public Core::Layer {
 public:
    CoinLayer();

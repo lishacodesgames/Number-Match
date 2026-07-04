@@ -1,20 +1,20 @@
 #include <pch/Precompiled.h>
 #include "OptionsLayer.h"
 
+#include "Core/Application.h"
 #include "GUI/Animation.h"
 #include "Utils/Numbers.h"
 #include "PanelLayer.h"
 #include "HomeLayer.h"
 #include "Storage.h"
 #include "Colors.h"
-#include "App.h"
 
 static constexpr float PANEL_PROPORTION = 0.085f;
 static constexpr float BANNER_PROPORTION = 0.075f;
 
 OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
       m_doneButton(
-         { 0, 0 }, { 2, 2 }, "Done", BLANK, Palette::game_nav_color, 20, { 0, 0 }, App::font_semibold),
+         { 0, 0 }, { 2, 2 }, "Done", BLANK, Palette::game_nav_color, 20, { 0, 0 }, Storage::ui.font_semibold),
       m_gobackButton({ 0, 0 }, { 2, 2 }, "", BLANK, Palette::game_nav_color),
       m_rightArrowTexture(LoadTexture("assets/icons/options/rightarrow_10x13.png")),
       m_bannerIcons({
@@ -49,10 +49,10 @@ void OptionsLayer::OnEvent(Core::Event& e) {
    e.Handled = true;  // don't want any events to pass through to gamelayer
    if(e.GetEventType() == Core::EventType::MouseClicked) {
       if(m_doneButton.isHovered) {
-         App::QueueLayerPop(this);
+         Core::Application::QueueLayerPop(this);
 
          // we're sure that game exists bc OptionsLayer only exists in its context
-         App::GetLayerByName("Game Layer")->OnResume();
+         Core::Application::GetLayerByName("Game Layer")->OnResume();
          e.Handled = true;
          return;
       } else if(CheckCollisionPointRec(GetMousePosition(), m_banners.at(SETTINGS))) {
@@ -79,9 +79,9 @@ void OptionsLayer::OnEvent(Core::Event& e) {
       char key = static_cast<Core::KeyPressedEvent&>(e).key;
       if(key == 'q' || key == 'Q') {
          if(currentPage == Page::Options) {
-            App::GetLayerByName("Game Layer")->OnSuspend();
-            App::QueueLayerSwap(this, new HomeLayer());
-            App::QueueLayerPush(new PanelLayer());
+            Core::Application::GetLayerByName("Game Layer")->OnSuspend();
+            Core::Application::QueueLayerSwap(this, new HomeLayer());
+            Core::Application::QueueLayerPush(new PanelLayer());
          } else
             currentPage = Page::Options;
          e.Handled = true;
@@ -128,9 +128,9 @@ void OptionsLayer::OnRender() {
    DrawRectangleRec(panelSharpBottom, Palette::bright_bg);
 
    float titleFontSize = m_doneButton.getFontSize() * 1.3f;
-   Vector2 titleSize = MeasureTextEx(App::font_semibold, "Options", titleFontSize, 1);
+   Vector2 titleSize = MeasureTextEx(Storage::ui.font_semibold, "Options", titleFontSize, 1);
    DrawTextEx(
-      App::font_semibold, "Options",
+      Storage::ui.font_semibold, "Options",
       {  panel.x + (panel.width - titleSize.x) / 2,
          panel.y + (panel.height - titleSize.y) / 2 },
       titleFontSize, 1.2f, Palette::options_title_color);
@@ -259,7 +259,7 @@ void OptionsLayer::renderBannerContent() const {
       Vector2 iconPos = { banner.x + padding * 1.5f, banner.y + padding };
       DrawTextureEx(icon, iconPos, 0, 0.98f, WHITE);  // new scaled height = 23.52
       DrawTextEx(
-         App::font_semibold, name.c_str(),
+         Storage::ui.font_semibold, name.c_str(),
          { iconPos.x + icon.width + 15, iconPos.y + 2 },
          20, 1, Palette::options_text_color);
    }

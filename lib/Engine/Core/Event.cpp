@@ -3,7 +3,7 @@
 
 namespace Core
 {
-   KeyPressedEvent::KeyPressedEvent(int keycode) : key(keycode) {}
+   KeyPressedEvent::KeyPressedEvent(char keycode) : key(keycode) {}
    EventType KeyPressedEvent::GetEventType() const { return EventType::KeyPressed; }
 
    MouseClickedEvent::MouseClickedEvent(bool isClickLeft) : isClickLeft(isClickLeft) {}
@@ -11,4 +11,4 @@ namespace Core
 
    WindowResizeEvent::WindowResizeEvent(int width, int height) : width(width), height(height) {}
    EventType WindowResizeEvent::GetEventType() const { return EventType::WindowResize; }
-}  // namespace Core
+}

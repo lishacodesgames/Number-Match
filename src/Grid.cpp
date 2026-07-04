@@ -3,7 +3,6 @@
 
 #include "Storage.h"
 #include "Colors.h"
-#include "App.h"
 
 #define NINE_ZEROES { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 
@@ -121,7 +120,7 @@ void Grid::Draw() {
       for(size_t col = 0; col < m_grid.at(row).size(); col++) {
          GridCell& cell = m_grid[row][col];
          const std::string value = cell.value ? std::to_string(cell.value) : "";  // empty string if value is 0 (empty cell)
-         const Vector2 numSize = MeasureTextEx(App::font_semibold, value.c_str(), GridCell::numHeight, 1);
+         const Vector2 numSize = MeasureTextEx(Storage::ui.font_semibold, value.c_str(), GridCell::numHeight, 1);
 
          if(previous != Storage::ui.isDarkMode)
             cell.setState(cell.getState());
@@ -129,7 +128,7 @@ void Grid::Draw() {
          DrawRectangleRec(cell.bounds, cell.bgColor);
          DrawRectangleLinesEx(cell.bounds, 1, Palette::shadow_for_off_bright);
          DrawTextEx(
-            App::font_semibold, value.c_str(),
+            Storage::ui.font_semibold, value.c_str(),
             {  cell.bounds.x + (cell.bounds.width - numSize.x) / 2, 
                cell.bounds.y + (cell.bounds.height - numSize.y) / 2 },
             GridCell::numHeight, 1, cell.numColor
