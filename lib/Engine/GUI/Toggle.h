@@ -1,8 +1,6 @@
 #pragma once
 #include "Roundness.h"
 
-#include <raylib.h>
-
 namespace GUI {
    /// @todo add separate (almost)everything based on state
    /// @todo add dragability (maybe make a flag for it? m_draggable)

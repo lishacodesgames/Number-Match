@@ -1,5 +1,4 @@
 #pragma once
-#include <raylib.h>
 
 /// Only visual, no mouse dragging. Can only scroll vertically.
 namespace GUI

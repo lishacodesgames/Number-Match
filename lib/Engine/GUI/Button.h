@@ -1,10 +1,6 @@
 #pragma once
 #include "Roundness.h"
 
-#include <raylib.h>
-#include <utility>
-#include <string>
-
 namespace GUI {
    /** Constructor parameters' organisation
     *
@@ -92,7 +88,7 @@ namespace GUI {
       // -----------------
       // ---- GETTERS ----
       // -----------------
-      Texture2D getIcon() const { return m_iconTexture; }
+      std::optional<Texture2D> getIcon() const { return m_iconTexture; }
       std::string getText() const { return m_text; }
 
       Font getFont() const { return m_font; }
@@ -123,8 +119,8 @@ namespace GUI {
       // -----------------
 
       Image m_iconImage = { 0 };
-      Texture2D m_iconTexture = { 0 };   // optional
-      std::string m_text;              // compulsory
+      std::optional<Texture2D> m_iconTexture;
+      std::string m_text;
 
       Font m_font;
       int m_fontSize = 20;

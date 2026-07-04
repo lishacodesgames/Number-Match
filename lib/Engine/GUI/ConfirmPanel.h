@@ -1,11 +1,6 @@
 #pragma once
 #include "Button.h"
 
-#include <string_view>
-#include <raylib.h>
-#include <vector>
-#include <string>
-
 namespace GUI
 {
    class ConfirmPanel {
