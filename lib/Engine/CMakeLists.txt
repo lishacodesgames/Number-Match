@@ -12,6 +12,9 @@ target_sources(Engine PRIVATE
    GUI/ConfirmPanel.cpp
    GUI/ScrollBar.cpp
    GUI/Toggle.cpp
+
+   # Utils
+   Utils/Numbers.cpp
 )
 
 target_include_directories(Engine PUBLIC

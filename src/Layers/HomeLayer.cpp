@@ -1,6 +1,7 @@
 #include <pch/Precompiled.h>
 #include "HomeLayer.h"
 
+#include "Utils/Numbers.h"
 #include "QuestionLayer.h"
 #include "PanelLayer.h"
 #include "GameLayer.h"
@@ -105,7 +106,7 @@ void HomeLayer::OnRender() {
       titleFontSize / 2.0f, 1.5f, Palette::game_info_color);
 
    float bestScoreFontSize = titleFontSize * 0.7f;
-   Vector2 bestScoreSize = MeasureTextEx(App::font_semibold, Storage::format(Storage::game.bestScore).c_str(), bestScoreFontSize, 2.0f);
+   Vector2 bestScoreSize = MeasureTextEx(App::font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(), bestScoreFontSize, 2.0f);
 
    Vector2 scoreSize = {
       bestScoreSize.x + m_trophyScale * m_trophyTexture.width * 1.5f, // half a trophy's width for padding
@@ -122,7 +123,7 @@ void HomeLayer::OnRender() {
 
    DrawTextureEx(m_trophyTexture, trophyOrigin, 0.0f, m_trophyScale, WHITE);
    DrawTextEx(
-      App::font_semibold, Storage::format(Storage::game.bestScore).c_str(),
+      App::font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(),
       bestScoreOrigin, bestScoreFontSize, 2.0f, Palette::text_for_bright);
 
    // game buttons

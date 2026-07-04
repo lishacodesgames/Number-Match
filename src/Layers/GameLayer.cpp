@@ -1,6 +1,7 @@
 #include <pch/Precompiled.h>
 #include "GameLayer.h"
 
+#include "Utils/Numbers.h"
 #include "OptionsLayer.h"
 #include "PanelLayer.h"
 #include "HomeLayer.h"
@@ -131,7 +132,7 @@ void GameLayer::OnRender() {
       App::font_retro, "Stage", { m_grid.box.x, tagY },
       tagFontSize, spacing, Palette::game_info_color);
    DrawTextEx(
-      App::font_semibold, Storage::format(Storage::game.stage).c_str(), { m_grid.box.x + 5, infoY },
+      App::font_semibold, Utils::formatNumber(Storage::game.stage).c_str(), { m_grid.box.x + 5, infoY },
       infoFontSize + 3, spacing, Palette::game_info_color);
 
    // Best Score
@@ -140,12 +141,12 @@ void GameLayer::OnRender() {
          - MeasureTextEx(App::font_retro, "Best Score", tagFontSize, spacing).x;
    float scoreInfoX =
       m_grid.box.x + m_grid.box.width
-         - MeasureTextEx(App::font_semibold, Storage::format(Storage::game.bestScore).c_str(), infoFontSize, spacing).x
+         - MeasureTextEx(App::font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(), infoFontSize, spacing).x
          - m_trophyScale * m_trophyTexture.width * 1.0005f;
 
    DrawTextEx(App::font_retro, "Best Score", { scoreTagX, tagY }, tagFontSize, spacing, Palette::game_info_color);
    DrawTextEx(
-      App::font_semibold, Storage::format(Storage::game.bestScore).c_str(),
+      App::font_semibold, Utils::formatNumber(Storage::game.bestScore).c_str(),
       { scoreInfoX + m_trophyScale * m_trophyTexture.width * 1.0005f, infoY },
       infoFontSize, spacing, Palette::game_info_color);
 
@@ -184,9 +185,9 @@ void GameLayer::OnRender() {
    // Current Score
    float remSpaceY = tagY - (CoinLayer::box.y + CoinLayer::box.height);
    float currentScoreFontSize = std::min(GridCell::numHeight, remSpaceY * 0.8f);
-   Vector2 currentScoreSize = MeasureTextEx(App::font_black, Storage::format(Storage::game.currentScore).c_str(), currentScoreFontSize, 1);
+   Vector2 currentScoreSize = MeasureTextEx(App::font_black, Utils::formatNumber(Storage::game.currentScore).c_str(), currentScoreFontSize, 1);
    DrawTextEx(
-      App::font_black, Storage::format(Storage::game.currentScore).c_str(),
+      App::font_black, Utils::formatNumber(Storage::game.currentScore).c_str(),
       { (float)GetScreenWidth() / 2 - currentScoreSize.x / 2, tagY - currentScoreSize.y * 1.2f },
       currentScoreFontSize, 1, Palette::text_for_off_bright);
 }

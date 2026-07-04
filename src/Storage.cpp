@@ -184,12 +184,4 @@ namespace Storage
          return makeEmptyGrid();
       return document->at("game").at("grid").get<SavedGrid>();
    }
-
-   std::string format(uint32_t num) {
-      std::string result = std::to_string(num);
-      for(std::ptrdiff_t position = static_cast<std::ptrdiff_t>(result.size()) - 3;
-            position > 0; position -= 3)
-         result.insert(static_cast<size_t>(position), ",");
-      return result;
-   }
 } // namespace Storage

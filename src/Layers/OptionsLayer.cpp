@@ -2,6 +2,7 @@
 #include "OptionsLayer.h"
 
 #include "GUI/Animation.h"
+#include "Utils/Numbers.h"
 #include "PanelLayer.h"
 #include "HomeLayer.h"
 #include "Storage.h"
@@ -147,10 +148,6 @@ void OptionsLayer::OnRender() {
 
 #pragma region Helpers
 
-float avg_absDiff(Vector2 first, Vector2 second) {
-   return (std::abs(first.x - second.x) + std::abs(first.y - second.y)) / 2.0f;
-}
-
 /// @bug fix fontSize resizing
 void OptionsLayer::resize(float boundsY) {
    // panel
@@ -163,7 +160,7 @@ void OptionsLayer::resize(float boundsY) {
    float width = height * aspect;
    m_bounds = { (GetScreenWidth() - width) / 2, boundsY, width, height };
 
-   if(avg_absDiff(oldSize, { m_bounds.width, m_bounds.height }) >= 0.5f)
+   if(Utils::avgAbsDiff(oldSize, { m_bounds.width, m_bounds.height }) >= 0.5f)
       LOG_RESIZE("Options panel -> {} x {}", m_bounds.width, m_bounds.height);
 
    // panel buttons
@@ -186,7 +183,7 @@ void OptionsLayer::resize(float boundsY) {
    m_themeToggle.setSize(newToggleSize);
    m_themeToggle.setPadding(std::min(newToggleSize.x, newToggleSize.y) * 0.075f);
 
-   if(avg_absDiff(oldToggleSize, newToggleSize) >= 0.5f)
+   if(Utils::avgAbsDiff(oldToggleSize, newToggleSize) >= 0.5f)
       LOG_RESIZE("Dark mode toggle -> {} x {}", newToggleSize.x, newToggleSize.y);
 
    m_themeToggle.setOrigin({

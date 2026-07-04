@@ -34,7 +34,4 @@ namespace Storage {
 
    std::pair<int, int> getSavedWindowSize(); /// only for App constructor to call
    SavedGrid getSavedGrid(); /// only for Grid constructor to call
-
-   /// @todo extract into Engine/Utils/Strings.h
-   std::string format(uint32_t num);  /// perfectly formats big numbers with commas
 }
