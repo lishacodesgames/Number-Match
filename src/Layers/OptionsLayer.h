@@ -42,11 +42,10 @@ private:
    const std::array<std::string, 8> m_bannerNames;
 
    // settings page members
-   GUI::Toggle m_darkModeToggle;
+   GUI::Toggle m_themeToggle;
 
 private:
    void resize(float boundsY);
-   void setBannerPositions();
 
    void renderBlankBanners() const;
    void renderBannerContent() const;

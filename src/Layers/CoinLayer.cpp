@@ -11,10 +11,12 @@ CoinLayer::CoinLayer() : Core::Layer("Coin Layer", true),
       m_coinTexture(LoadTexture("assets/icons/game/coin_20x20.png"))
 { resize(); }
 
-void CoinLayer::OnUpdate() {
-   if(IsWindowResized())
+void CoinLayer::OnEvent(Core::Event& e) {
+   if(e.GetEventType() == Core::EventType::WindowResize)
       resize();
 }
+
+void CoinLayer::OnUpdate() {}
 
 void CoinLayer::OnRender() {
    int rs = 5; // Roundsness & Segments

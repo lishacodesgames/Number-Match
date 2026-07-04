@@ -1,11 +1,8 @@
 #pragma once
 
-/// @todo resizing when suspended should be turned on regardless of which suspended flags are allowed (event/update/render)
-/// @todo WindowResizeEvent. It should hold a function pointer for dispatching resizing
-
 namespace Core
 {
-   enum class EventType {None /* should never be returned */, KeyPressed, MouseClicked};
+   enum class EventType {None /* should never be returned */, KeyPressed, MouseClicked, WindowResize};
 
    struct Event {
       bool Handled = false;
@@ -23,6 +20,13 @@ namespace Core
       bool isClickLeft = true; /// false for right click, might implement other clicks later
       
       MouseClickedEvent(bool isClickLeft);
+      EventType GetEventType() const override;
+   };
+
+   struct WindowResizeEvent : Event {
+      int width, height;
+
+      WindowResizeEvent(int width, int height);
       EventType GetEventType() const override;
    };
 }

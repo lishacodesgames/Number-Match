@@ -37,12 +37,11 @@ OptionsLayer::OptionsLayer() : Core::Layer("Options Layer", true),
 {
    m_gobackButton.setIcon("assets/icons/game/goback_18x24.png");
 
-   m_darkModeToggle.bgColor = Palette::off_bright_bg;
-   m_darkModeToggle.knobColor = Palette::shadow_for_off_bright;
-   m_darkModeToggle.setState(Storage::ui.isDarkMode);
+   m_themeToggle.bgColor = Palette::off_bright_bg;
+   m_themeToggle.knobColor = Palette::shadow_for_off_bright;
+   m_themeToggle.setState(Storage::ui.isDarkMode);
 
    resize(GetScreenHeight());
-   setBannerPositions();
 }
 
 void OptionsLayer::OnEvent(Core::Event& e) {
@@ -63,15 +62,15 @@ void OptionsLayer::OnEvent(Core::Event& e) {
          currentPage = Page::Options;
          e.Handled = true;
          return;
-      } else if(m_darkModeToggle.isHovered) {
+      } else if(m_themeToggle.isHovered) {
          if(Storage::ui.isDarkMode)
             Palette::SetLightMode();
          else
             Palette::SetDarkMode();
 
          /// @todo fix. Shouldn't have to do this every time
-         m_darkModeToggle.bgColor = Palette::off_bright_bg;
-         m_darkModeToggle.knobColor = Palette::shadow_for_off_bright;
+         m_themeToggle.bgColor = Palette::off_bright_bg;
+         m_themeToggle.knobColor = Palette::shadow_for_off_bright;
          e.Handled = true;
          return;
       }
@@ -86,33 +85,28 @@ void OptionsLayer::OnEvent(Core::Event& e) {
             currentPage = Page::Options;
          e.Handled = true;
       }
-   }
+   } else if(e.GetEventType() == Core::EventType::WindowResize)
+      resize(m_targetY);
 }
 
 void OptionsLayer::OnUpdate() {
-   if(IsWindowResized()) {
-      resize(m_targetY);
-      setBannerPositions();
-   }
-
    if(m_bounds.y > m_targetY) {
       resize(GUI::LERP(m_bounds.y, m_targetY, 160.0f, 2.0f));   
-      setBannerPositions();
       return;
    }
 
    m_doneButton.Update();
    if(currentPage == Page::Settings) {
       m_gobackButton.Update();
-      m_darkModeToggle.Update();
+      m_themeToggle.Update();
    }
 
-   bool mouseIsHovered =
+   bool ismouseHovering =
          m_doneButton.isHovered 
          || (currentPage == Page::Options && getHoveredBannerIndex() != -1)
-         || (currentPage == Page::Settings && (m_gobackButton.isHovered || m_darkModeToggle.isHovered));
+         || (currentPage == Page::Settings && (m_gobackButton.isHovered || m_themeToggle.isHovered));
 
-   if(mouseIsHovered)
+   if(ismouseHovering)
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
    else
       SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -147,17 +141,19 @@ void OptionsLayer::OnRender() {
       renderBannerContent();
    } else if(currentPage == Page::Settings) {
       m_gobackButton.Draw();
-      m_darkModeToggle.Draw();
+      m_themeToggle.Draw();
    }
 }
 
 #pragma region Helpers
 
-float absDiff(Vector2 first, Vector2 second) {
+float avg_absDiff(Vector2 first, Vector2 second) {
    return (std::abs(first.x - second.x) + std::abs(first.y - second.y)) / 2.0f;
 }
 
+/// @bug fix fontSize resizing
 void OptionsLayer::resize(float boundsY) {
+   // panel
    m_targetY = GetScreenHeight() / 6.0f;
    Vector2 oldSize = { m_bounds.width, m_bounds.height };
 
@@ -167,7 +163,7 @@ void OptionsLayer::resize(float boundsY) {
    float width = height * aspect;
    m_bounds = { (GetScreenWidth() - width) / 2, boundsY, width, height };
 
-   if(absDiff(oldSize, { m_bounds.width, m_bounds.height }) >= 0.5f)
+   if(avg_absDiff(oldSize, { m_bounds.width, m_bounds.height }) >= 0.5f)
       LOG_RESIZE("Options panel -> {} x {}", m_bounds.width, m_bounds.height);
 
    // panel buttons
@@ -183,37 +179,38 @@ void OptionsLayer::resize(float boundsY) {
       m_bounds.x + m_gobackButton.getSize().x * 0.75f,
       m_bounds.y + (panelHeight - m_gobackButton.getSize().y) / 2.0f });
 
-   Vector2 newToggleSize, oldToggleSize = m_darkModeToggle.getSize();
+   // theme toggle
+   Vector2 newToggleSize, oldToggleSize = m_themeToggle.getSize();
    newToggleSize.x = std::max(m_bounds.width / 2.5f, 200.0f);
    newToggleSize.y = std::min(m_bounds.height / 4.0f, newToggleSize.x / 2.1f);
-   m_darkModeToggle.setSize(newToggleSize);
-   m_darkModeToggle.setPadding(std::min(newToggleSize.x, newToggleSize.y) * 0.075f);
+   m_themeToggle.setSize(newToggleSize);
+   m_themeToggle.setPadding(std::min(newToggleSize.x, newToggleSize.y) * 0.075f);
 
-   if(absDiff(oldToggleSize, newToggleSize) >= 0.5f)
+   if(avg_absDiff(oldToggleSize, newToggleSize) >= 0.5f)
       LOG_RESIZE("Dark mode toggle -> {} x {}", newToggleSize.x, newToggleSize.y);
 
-   m_darkModeToggle.setOrigin({
+   m_themeToggle.setOrigin({
       m_bounds.x + (m_bounds.width - newToggleSize.x) / 2.0f,
       m_bounds.y + (m_bounds.height - newToggleSize.y) / 2.0f });
-}
 
-void OptionsLayer::setBannerPositions() {
+   // banners
    float originX = m_bounds.x + m_bounds.width * 0.16f / 2;  // half of 16%
-   float originY = m_bounds.y + m_bounds.height * PANEL_PROPORTION * 1.5f;
-   Vector2 size = { m_bounds.width * 0.85f, m_bounds.height * BANNER_PROPORTION };  // 85% of popup
+   float originY = m_bounds.y + panelHeight * 1.5f;
+   float bannerHeight = m_bounds.height * BANNER_PROPORTION;
+   Vector2 size = { m_bounds.width * 0.85f, bannerHeight };  // 85% of popup
 
-   const float spacing = m_bounds.height * BANNER_PROPORTION + 23;  // Space between the top and 2 bottom banners (ref: settings.jpg)
+   const float spacing = bannerHeight * 1.75f;  // Space between the top and 2 bottom banners (ref: settings.jpg)
 
    m_banners[SETTINGS] = { originX, originY, size.x, size.y };
 
    m_banners[HOW_TO] = { originX, originY + spacing, size.x, size.y };
-   m_banners[HELP] = { originX, originY + spacing + m_bounds.height * BANNER_PROPORTION, size.x, size.y };
-   m_banners[ABOUT] = { originX, originY + spacing + m_bounds.height * BANNER_PROPORTION * 2, size.x, size.y };
-   m_banners[PRIVACY] = { originX, originY + spacing + m_bounds.height * BANNER_PROPORTION * 3, size.x, size.y };
-   m_banners[PREFS] = { originX, originY + spacing + m_bounds.height * BANNER_PROPORTION * 4, size.x, size.y };
+   m_banners[HELP] = { originX, originY + spacing + bannerHeight, size.x, size.y };
+   m_banners[ABOUT] = { originX, originY + spacing + bannerHeight * 2, size.x, size.y };
+   m_banners[PRIVACY] = { originX, originY + spacing + bannerHeight * 3, size.x, size.y };
+   m_banners[PREFS] = { originX, originY + spacing + bannerHeight * 4, size.x, size.y };
 
-   m_banners[MATH] = { originX, originY + spacing * 2 + m_bounds.height * BANNER_PROPORTION * 4, size.x, size.y };
-   m_banners[NO_ADS] = { originX, originY + spacing * 3 + m_bounds.height * BANNER_PROPORTION * 4, size.x, size.y };
+   m_banners[MATH] = { originX, originY + spacing * 2 + bannerHeight * 4, size.x, size.y };
+   m_banners[NO_ADS] = { originX, originY + spacing * 3 + bannerHeight * 4, size.x, size.y };
 }
 
 void OptionsLayer::renderBlankBanners() const {

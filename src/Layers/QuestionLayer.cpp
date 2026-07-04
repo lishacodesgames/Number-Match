@@ -48,13 +48,11 @@ void QuestionLayer::OnEvent(Core::Event& e) {
          answer(false);
       else
          e.Handled = false;
-   }
+   } else if(e.GetEventType() == Core::EventType::WindowResize)
+      resize();
 }
 
 void QuestionLayer::OnUpdate() {
-   if(IsWindowResized())
-      resize();
-
    m_panel.Update();
 
    if(m_panel.yesButton.isHovered || m_panel.noButton.isHovered)

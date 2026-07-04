@@ -8,7 +8,7 @@ public:
    CoinLayer();
    ~CoinLayer() override { UnloadTexture(m_coinTexture); }
 
-   void OnEvent([[maybe_unused]] Core::Event& e) override {}
+   void OnEvent(Core::Event& e) override;
    void OnUpdate() override;
    void OnRender() override;
 

@@ -61,13 +61,11 @@ void PanelLayer::OnEvent(Core::Event& e) {
          currentLayer = newLayer;
          previousButton = activeButton;
       }
-   }
+   } else if(e.GetEventType() == Core::EventType::WindowResize)
+      resize();
 }
 
 void PanelLayer::OnUpdate() {
-   if(IsWindowResized())
-      resize();
-
    homeButton.Update();
    dailyButton.Update();
    meButton.Update();

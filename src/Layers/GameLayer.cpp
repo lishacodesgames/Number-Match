@@ -78,13 +78,11 @@ void GameLayer::OnEvent(Core::Event& e) {
 
       // check and handle if a grid cell has been clicked
       e.Handled = m_grid.OnClick() || e.Handled;
-   }
+   } else if(e.GetEventType() == Core::EventType::WindowResize)
+      resize();
 }
 
 void GameLayer::OnUpdate() {
-   if(IsWindowResized())
-      resize();
-
    m_gobackButton.Update();
    m_settingsButton.Update();
    m_plusButton.Update();

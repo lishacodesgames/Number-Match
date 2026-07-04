@@ -15,6 +15,7 @@
 #include <functional>
 #include <algorithm>
 #include <optional>
+#include <ranges>
 
 // Data Containers
 #include <unordered_map>

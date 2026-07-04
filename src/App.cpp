@@ -53,17 +53,8 @@ App::~App() {
 
 void App::Run() {
    Core::ConsoleLog(LISHA_SAYS, std::format("Working Directory: {}", GetWorkingDirectory()));
-   int width = GetScreenWidth(), height = GetScreenHeight();
 
    while(!WindowShouldClose()) {
-      if(IsWindowResized() && (std::abs(width - GetScreenWidth()) > 10
-         || std::abs(height - GetScreenHeight()) > 10)
-      ) {
-         width = GetScreenWidth();
-         height = GetScreenHeight();
-         LOG_RESIZE("Window -> {} x {}", width, height);
-      }
-
       // ---------------------------
       // 1. apply pending layer changes at the start of the current frame
       // to avoid mid-frame changes that could cause bugs
@@ -91,6 +82,12 @@ void App::Run() {
       // mouse event
       if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
          Core::MouseClickedEvent e(true);
+         OnEvent(e);
+      }
+
+      // resize event
+      if(IsWindowResized()) {
+         Core::WindowResizeEvent e(GetScreenWidth(), GetScreenHeight());
          OnEvent(e);
       }
 
@@ -152,13 +149,25 @@ Core::Layer* App::GetLayerByName(const std::string& name) {
 }
 
 void App::OnEvent(Core::Event& e) {
-   // TOPMOST (last) layer must get the event FIRST
-   for(auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it) {
-      if((*it)->isSuspended && !(*it)->eventSuspended)
-         continue;
+   if(e.GetEventType() == Core::EventType::WindowResize) {
+      LOG_RESIZE("Window -> {} x {}", GetScreenWidth(), GetScreenHeight());
 
-      (*it)->OnEvent(e);
-      if(e.Handled) 
-         break; // stop propagating if event was handled
+      // separate bcz WindowResizeEvent must not be stopped be e.Handled
+      for(Core::Layer* layer : m_layerStack) {
+         layer->OnEvent(e);
+         if(layer->isSuspended && layer->renderSuspended) // otherwise the usual OnRender() will handle it
+            layer->OnRender();
+      }
+   } else {
+      // TOPMOST (last) layer must get the event FIRST
+      // Hence we iterate backwards
+      for(Core::Layer* layer : std::views::reverse(m_layerStack)) {
+         if(layer->isSuspended && !layer->eventSuspended)
+            continue;
+   
+         layer->OnEvent(e);
+         if(e.Handled) 
+            break; // stop propagating if event was handled
+      }
    }
 }

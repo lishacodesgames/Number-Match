@@ -62,13 +62,11 @@ void HomeLayer::OnEvent(Core::Event& e) {
       }
 
       e.Handled = true;
-   }
+   } else if(e.GetEventType() == Core::EventType::WindowResize)
+      resize();
 }
 
 void HomeLayer::OnUpdate() {
-   if(IsWindowResized())
-      resize();
-
    m_newButton.Update();
    m_continueButton.Update();
 

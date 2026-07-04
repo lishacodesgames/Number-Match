@@ -8,4 +8,7 @@ namespace Core
 
    MouseClickedEvent::MouseClickedEvent(bool isClickLeft) : isClickLeft(isClickLeft) {}
    EventType MouseClickedEvent::GetEventType() const { return EventType::MouseClicked; }
-}
+
+   WindowResizeEvent::WindowResizeEvent(int width, int height) : width(width), height(height) {}
+   EventType WindowResizeEvent::GetEventType() const { return EventType::WindowResize; }
+}  // namespace Core
