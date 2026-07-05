@@ -36,6 +36,7 @@ Core::Application* Core::CreateApplication(const std::string& name) {
    app->m_layerStack.PushOverlay(panel);
 
    Core::ConsoleLog(LISHA_SAYS, std::format("{} Loaded!", name));
+   Core::ConsoleLog(LISHA_SAYS, std::format("Save path: {}", std::filesystem::absolute(Storage::savefile).string()));
    return app;
 }
 

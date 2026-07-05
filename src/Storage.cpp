@@ -18,6 +18,7 @@ namespace
          throw fs::filesystem_error(
             "Could not open save file", path, std::make_error_code(std::errc::no_such_file_or_directory));
 
+      Core::ConsoleLog(LISHA_SAYS, std::format("Reading {}...", fs::absolute(path).string()));
       json document;
       stream >> document;
       stream.close();
@@ -49,6 +50,7 @@ namespace
    }
 
    bool loadSaveToCache() {
+      Core::ConsoleLog(LISHA_SAYS, std::format("exists: {}", fs::exists(Storage::savefile)));
       if(!fs::exists(Storage::savefile)) {
          Core::ConsoleLog(LISHA_SAYS, "Game save file not found! Using default values...");
          if(!installDefaultSave())
@@ -167,6 +169,7 @@ namespace Storage
 
       cachedSave = std::move(j);
       Core::ConsoleLog(LISHA_SAYS, "Game saved successfully");
+      Core::ConsoleLog(LISHA_SAYS, fs::absolute(savefile).string());
    }
 
    std::pair<int, int> getSavedWindowSize() {
