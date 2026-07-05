@@ -103,6 +103,9 @@ namespace GUI {
 
       Vector2 getIconOrigin() const;
       Vector2 getTextOrigin() const;
+
+      Vector2 getIconSize() const;
+      Vector2 getTextSize() const;
       
    public:
       // ---------------

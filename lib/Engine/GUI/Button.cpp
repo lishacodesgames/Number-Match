@@ -40,18 +40,18 @@ namespace GUI
       }
 
       // helper variables for calculation
-      Vector2 textSize = MeasureTextEx(m_font, m_text.c_str(), m_fontSize, 1);
       Vector2 iconOrigin = getIconOrigin();
+      Vector2 iconSize = getIconSize();
 
       /// @bug fix button icon rendering
       if(m_iconTexture)
-         DrawTextureEx(*m_iconTexture, iconOrigin, 0.0f, m_fontSize / m_iconTexture->height, contentColor);
+         DrawTextureEx(*m_iconTexture, iconOrigin, 0.0f, iconSize.y / m_iconTexture->height, contentColor);
 
       // center text
-      float remTextSpaceY = m_bounds.height - m_verticalPadding.x - m_verticalPadding.y - textSize.y;
+      float remTextSpaceY = m_bounds.height - m_verticalPadding.x - m_verticalPadding.y - getTextSize().y;
       float textOriginY = m_bounds.y + m_verticalPadding.x + remTextSpaceY / 2;
 
-      DrawTextEx(m_font, m_text.c_str(), { iconOrigin.x + m_iconTexture->width * ICON_PAD_MULTIPLIER, textOriginY }, m_fontSize, 1, contentColor);
+      DrawTextEx(m_font, m_text.c_str(), getTextOrigin(), m_fontSize, 1, contentColor);
    }
 
 #pragma endregion
@@ -70,7 +70,7 @@ namespace GUI
       Font font
    ) : m_bounds(exactBounds), m_roundness(roundness), m_text(text), m_fontSize(fontSize), bgColor(bgColor), contentColor(contentColor), m_font(font)
    {
-      Vector2 textSize = MeasureTextEx(m_font, text, m_fontSize, 1);
+      Vector2 textSize = getTextSize();
       float x = (m_bounds.width - textSize.x) / 2;
       float y = (m_bounds.height - textSize.y) / 2;
 
@@ -141,8 +141,7 @@ namespace GUI
       // resize relatively
       m_horizontalPadding *= widthScale;
       m_verticalPadding *= heightScale;
-
-      m_fontSize *= m_text.empty() ? 1 : heightScale;
+      m_fontSize *= heightScale;
    }
 
    void Button::setPadding(Vector2 horizPadding, Vector2 vertPadding) {
@@ -159,9 +158,10 @@ namespace GUI
    }
 
    void Button::recalculateLayout() {
-      Vector2 textSize = MeasureTextEx(m_font, m_text.c_str(), m_fontSize, 1);
-      float contentWidth = textSize.x + (m_iconTexture ? m_iconTexture->width * (m_text.empty() ? 1 : ICON_PAD_MULTIPLIER) : 0);
-      float contentHeight = std::max<float>(textSize.y, m_iconTexture ? m_iconTexture->height : 0.0f);
+      Vector2 iconSize = getIconSize();
+      Vector2 textSize = getTextSize();
+      float contentWidth = textSize.x + (m_iconTexture ? iconSize.x * (m_text.empty() ? 1 : ICON_PAD_MULTIPLIER) : 0);
+      float contentHeight = std::max(textSize.y, iconSize.y);
 
       m_bounds.width = contentWidth + m_horizontalPadding.x + m_horizontalPadding.y;
       m_bounds.height = contentHeight + m_verticalPadding.x + m_verticalPadding.y;
@@ -170,15 +170,18 @@ namespace GUI
 
 #pragma region Getters
    Vector2 Button::getIconOrigin() const { 
-      Vector2 textSize = MeasureTextEx(m_font, m_text.c_str(), m_fontSize, 1);
-      float contentWidth = textSize.x + m_iconTexture->width * (m_text.empty() ? 1 : ICON_PAD_MULTIPLIER);
+      if(!m_iconTexture)
+         return { -1, -1 };
+
+      Vector2 iconSize = getIconSize();
+      float contentWidth = getTextSize().x + iconSize.x * (m_text.empty() ? 1 : ICON_PAD_MULTIPLIER);
 
       // center X
       float remSpaceX = m_bounds.width - m_horizontalPadding.x - m_horizontalPadding.y - contentWidth;
       float originX = m_bounds.x + m_horizontalPadding.x + remSpaceX / 2;  // centered horizontally
 
       // center Y
-      float remSpaceY = m_bounds.height - m_verticalPadding.x - m_verticalPadding.y - m_iconTexture->height;
+      float remSpaceY = m_bounds.height - m_verticalPadding.x - m_verticalPadding.y - iconSize.y;
       float originY = m_bounds.y + m_verticalPadding.x + remSpaceY / 2;
 
       return { originX, originY };
@@ -187,19 +190,33 @@ namespace GUI
    Vector2 Button::getTextOrigin() const {
       if(m_text.empty())
          return { -1, -1 };  // invalid origin since no text to draw
-      
-      Vector2 textSize = MeasureTextEx(m_font, m_text.c_str(), m_fontSize, 1);
-      float contentWidth = textSize.x + m_iconTexture->width * ICON_PAD_MULTIPLIER;
+
+      Vector2 textSize = getTextSize();
+      float iconWidth = getIconSize().x;
+      float gap = m_iconTexture ? iconWidth * (ICON_PAD_MULTIPLIER - 1.0f) : 0.0f; // between icon and text
+      float contentWidth = textSize.x + iconWidth * ICON_PAD_MULTIPLIER;
 
       // center X
       float remSpaceX = m_bounds.width - m_horizontalPadding.x - m_horizontalPadding.y - contentWidth;
-      float originX = m_bounds.x + m_horizontalPadding.x + remSpaceX / 2 + m_iconTexture->width * ICON_PAD_MULTIPLIER;  // centered horizontally
+      float originX = m_bounds.x + m_horizontalPadding.x + remSpaceX / 2 + iconWidth * ICON_PAD_MULTIPLIER;  // centered horizontally
 
       // center Y
       float remSpaceY = m_bounds.height - m_verticalPadding.x - m_verticalPadding.y - textSize.y;
       float originY = m_bounds.y + m_verticalPadding.x + remSpaceY / 2;
 
       return { originX, originY };
+   }
+
+   Vector2 Button::getIconSize() const {
+      if (!m_iconTexture)
+         return { 0, 0 };
+
+      float scale = m_fontSize / m_iconTexture->height;
+      return { m_iconTexture->width * scale, m_fontSize };
+   }
+
+   Vector2 Button::getTextSize() const {
+      return MeasureTextEx(m_font, m_text.c_str(), m_fontSize, 1.0f);
    }
 #pragma endregion
 }  // namespace GUI
