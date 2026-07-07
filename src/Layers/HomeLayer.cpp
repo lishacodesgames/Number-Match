@@ -4,7 +4,6 @@
 #include "Core/Application.h"
 #include "Utils/Numbers.h"
 #include "QuestionLayer.h"
-#include "PanelLayer.h"
 #include "GameLayer.h"
 #include "CoinLayer.h"
 #include "Storage.h"
@@ -35,25 +34,15 @@ void HomeLayer::OnEvent(Core::Event& e) {
          return;
 
       Core::Layer* game = Core::Application::GetLayerByName("Game Layer");
-      Core::Layer* panel = Core::Application::GetLayerByName("Panel Layer");
-      if(!panel)
-         throw std::runtime_error("Home Layer exists but Panel Layer doesn't!");
-
       if(activeButton == &m_newButton) {
-         panel->OnSuspend(true);
-
          Core::Application::QueueLayerPush(new QuestionLayer("Start a new game?\nYour previous game progress will be lost.",
-            [this, panel](bool yes) {
-               if(!yes) {
-                  panel->OnResume();
+            [this](bool yes) {
+               if(!yes)
                   return;
-               }
 
-               Core::Application::QueueLayerPop(panel);
                Core::Application::QueueLayerSwap(this, new GameLayer(true));
             }, this));
       } else { // continue button was pressed
-         Core::Application::QueueLayerPop(panel);
          Core::Application::QueueLayerPop(this);
 
          if(game)
@@ -151,7 +140,7 @@ void HomeLayer::resize() {
 
    Vector2 buttonOrigin = {
       (GetScreenWidth() - m_newButton.getSize().x) / 2.0f,
-      GetScreenHeight() - PanelLayer::height - m_newButton.getSize().y * 3.0f };
+      GetScreenHeight() - std::max(40.0f, GetScreenHeight() / 15.0f) - m_newButton.getSize().y * 3.0f };
    m_continueButton.setOrigin(buttonOrigin);
    buttonOrigin.y += m_newButton.getSize().y * 1.2f;
    m_newButton.setOrigin(buttonOrigin);

@@ -1,7 +1,6 @@
 #include <pch/Precompiled.h>
 #include "Core/Application.h"
 
-#include "Layers/PanelLayer.h"
 #include "Layers/HomeLayer.h"
 #include "Storage.h"
 #include "Colors.h"
@@ -29,11 +28,7 @@ Core::Application* Core::CreateApplication(const std::string& name) {
    else
       Palette::SetLightMode();
    
-   HomeLayer* home = new HomeLayer();
-   app->m_layerStack.PushLayer(home);
-
-   PanelLayer* panel = new PanelLayer();
-   app->m_layerStack.PushOverlay(panel);
+   app->m_layerStack.PushLayer(new HomeLayer());
 
    Core::ConsoleLog(LISHA_SAYS, std::format("{} Loaded!", name));
    Core::ConsoleLog(LISHA_SAYS, std::format("Save path: {}", std::filesystem::absolute(Storage::savefile).string()));

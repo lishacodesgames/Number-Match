@@ -4,7 +4,6 @@
 #include "Core/Application.h"
 #include "Utils/Numbers.h"
 #include "OptionsLayer.h"
-#include "PanelLayer.h"
 #include "HomeLayer.h"
 #include "CoinLayer.h"
 #include "Storage.h"
@@ -51,7 +50,6 @@ void GameLayer::OnEvent(Core::Event& e) {
       if(key == 'q' || key == 'Q') {
          OnSuspend();
          Core::Application::QueueLayerPush(new HomeLayer());
-         Core::Application::QueueLayerPush(new PanelLayer());
          e.Handled = true;
          return;
       }
@@ -62,7 +60,6 @@ void GameLayer::OnEvent(Core::Event& e) {
          if(activeButton == &m_gobackButton) {
             OnSuspend();
             Core::Application::QueueLayerPush(new HomeLayer());
-            Core::Application::QueueLayerPush(new PanelLayer());
          } else if(activeButton == &m_settingsButton) {
             OnSuspend(true);  // suspend but render
             Core::Application::QueueLayerPush(new OptionsLayer());

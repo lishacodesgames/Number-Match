@@ -4,7 +4,6 @@
 #include "Core/Application.h"
 #include "GUI/Animation.h"
 #include "Utils/Numbers.h"
-#include "PanelLayer.h"
 #include "HomeLayer.h"
 #include "Storage.h"
 #include "Colors.h"
@@ -81,7 +80,6 @@ void OptionsLayer::OnEvent(Core::Event& e) {
          if(currentPage == Page::Options) {
             Core::Application::GetLayerByName("Game Layer")->OnSuspend();
             Core::Application::QueueLayerSwap(this, new HomeLayer());
-            Core::Application::QueueLayerPush(new PanelLayer());
          } else
             currentPage = Page::Options;
          e.Handled = true;
