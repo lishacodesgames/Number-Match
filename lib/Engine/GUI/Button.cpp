@@ -218,20 +218,11 @@ namespace GUI
    Vector2 Button::getTextSize() const {
       return MeasureTextEx(m_font, m_text.c_str(), m_fontSize, 1.0f);
    }
+
 #pragma endregion
 }  // namespace GUI
 
 #pragma region Operators
-bool operator==(const GUI::Button& first, const GUI::Button& second) {
-   return
-      first.m_text == second.m_text &&
-      first.m_fontSize == second.m_fontSize &&
-      first.bgColor == second.bgColor &&
-      first.contentColor == second.contentColor &&
-      first.m_bounds == second.m_bounds &&
-      first.m_horizontalPadding == second.m_horizontalPadding &&
-      first.m_verticalPadding == second.m_verticalPadding;
-}
 
 bool operator==(const Color& first, const Color& second) {
    return
@@ -248,4 +239,24 @@ bool operator==(const Rectangle& first, const Rectangle& second) {
       first.width == second.width &&
       first.height == second.height;
 }
+
+bool operator==(const Texture2D& first, const Texture2D& second) {
+   return
+      first.id == second.id &&
+      first.width == second.width &&
+      first.height == second.height &&
+      first.mipmaps == second.mipmaps &&
+      first.format == second.format;
+}
+
+bool operator==(const Font& first, const Font& second) {
+   return
+      first.baseSize == second.baseSize &&
+      first.glyphCount == second.glyphCount &&
+      first.glyphPadding == second.glyphPadding &&
+      first.texture == second.texture &&
+      first.recs == second.recs &&
+      first.glyphs == second.glyphs;
+}
+
 #pragma endregion

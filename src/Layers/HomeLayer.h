@@ -33,5 +33,4 @@ private:
    GUI::Button* findHoveredButton();
 };
 
-/// @todo should be in raymath.h but move to Engine/
 inline Vector2 operator+(Vector2 vec, float fl) { return { vec.x + fl, vec.y + fl }; }

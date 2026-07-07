@@ -27,9 +27,16 @@ struct GridCell {
    CellState getState() const { return m_state; }
 
 public:
-   friend bool operator==(const GridCell& a, int b);
-   friend bool operator!=(const GridCell& a, int b);
-   friend bool operator==(const GridCell& a, const GridCell& b);
+   int operator+(const GridCell& other) const { return this->value + other.value; }
+
+   bool operator==(const GridCell& other) const {
+      return this->value == other.value &&
+      this->m_state != CellState::Matched &&
+      other.m_state != CellState::Matched;
+   }
+
+   bool operator==(int i) const { return this->value == i && m_state != CellState::Matched; }
+   bool operator!=(int i) const { return this->value != i && m_state != CellState::Matched; }
 
 private:
    CellState m_state = CellState::Rest;
@@ -63,8 +70,10 @@ public:
    Storage::SavedGrid getSaveData() const;
 
 private:
-   struct CellPosition { int row = -1, col = -1; };
-   friend bool operator==(const Grid::CellPosition& a, const Grid::CellPosition& b);
+   struct CellPosition {
+      int row = -1, col = -1;
+      bool operator==(const CellPosition& other) const = default;
+   };
 
    struct Hint {
       bool isHighlighted = false;
@@ -118,26 +127,5 @@ private:
    std::vector<int> getValidValues() const; /// @return values of all unmatched cells
 };
 
-inline bool operator==(const Grid::CellPosition& a, const Grid::CellPosition& b) {
-   return a.row == b.row && a.col == b.col;
-}
-
 /// @return true IF both are same or either is HintType::Idk
-inline bool operator==(HintType a, HintType b) {
-   return
-      static_cast<int>(a) == static_cast<int>(b) ||
-      static_cast<int>(a) == static_cast<int>(HintType::Idk) ||
-      static_cast<int>(b) == static_cast<int>(HintType::Idk);
-}
-
-inline int operator+(const GridCell& a, const GridCell& b) { return a.value + b.value; }
-
-inline bool operator==(const GridCell& a, int b) { return a.value == b && a.m_state != CellState::Matched; }
-inline bool operator!=(const GridCell& a, int b) { return a.value != b && a.m_state != CellState::Matched; }
-
-inline bool operator==(const GridCell& a, const GridCell& b) {
-   return
-      a.value == b.value &&
-      a.m_state != CellState::Matched &&
-      b.m_state != CellState::Matched;
-}
+inline bool operator==(HintType a, HintType b);

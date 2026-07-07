@@ -1,6 +1,11 @@
 #pragma once
 #include "Roundness.h"
 
+bool operator==(const Color& first, const Color& second);
+bool operator==(const Rectangle& first, const Rectangle& second);
+bool operator==(const Texture2D& first, const Texture2D& second);
+bool operator==(const Font& first, const Font& second); 
+
 namespace GUI {
    /** Constructor parameters' organisation
     *
@@ -134,9 +139,6 @@ namespace GUI {
 
    private:
       void recalculateLayout();
-      friend bool operator==(const Button& first, const Button& second);
+      bool operator==(const Button& other) const = default;
    };
 }  // namespace GUI
-
-bool operator==(const Color& first, const Color& second);
-bool operator==(const Rectangle& first, const Rectangle& second);

@@ -711,3 +711,10 @@ void Grid::Hint::reset(std::vector<std::array<GridCell, 9>>& grid) {
    }
    second = { -1, -1 };
 }
+
+inline bool operator==(HintType a, HintType b) {
+   return
+      static_cast<int>(a) == static_cast<int>(b) ||
+      static_cast<int>(a) == static_cast<int>(HintType::Idk) ||
+      static_cast<int>(b) == static_cast<int>(HintType::Idk);
+}

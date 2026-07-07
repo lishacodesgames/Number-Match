@@ -50,7 +50,6 @@ namespace
    }
 
    bool loadSaveToCache() {
-      Core::ConsoleLog(LISHA_SAYS, std::format("exists: {}", fs::exists(Storage::savefile)));
       if(!fs::exists(Storage::savefile)) {
          Core::ConsoleLog(LISHA_SAYS, "Game save file not found! Using default values...");
          if(!installDefaultSave())
@@ -169,7 +168,7 @@ namespace Storage
 
       cachedSave = std::move(j);
       Core::ConsoleLog(LISHA_SAYS, "Game saved successfully");
-      Core::ConsoleLog(LISHA_SAYS, fs::absolute(savefile).string());
+      Core::ConsoleLog(LISHA_TRACE, std::format("Save location: {}", fs::absolute(savefile).string()));
    }
 
    std::pair<int, int> getSavedWindowSize() {
