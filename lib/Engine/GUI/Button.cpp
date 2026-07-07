@@ -222,7 +222,7 @@ namespace GUI
 }  // namespace GUI
 
 #pragma region Operators
-bool GUI::operator==(const GUI::Button& first, const GUI::Button& second) {
+bool operator==(const GUI::Button& first, const GUI::Button& second) {
    return
       first.m_text == second.m_text &&
       first.m_fontSize == second.m_fontSize &&
