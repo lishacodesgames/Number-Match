@@ -1,6 +1,6 @@
 # Number Match
 ![Latest Tag](https://img.shields.io/github/v/tag/lishacodesgames/Number-Match?color=%237DBA84)
-![Status Badge](https://img.shields.io/badge/Status-In_Development-yellow)
+![Status Badge](https://img.shields.io/badge/Status-Complete-green)
 
 ## Overview
 The original Number match is a fun mobile game where you match up pairs of numbers that are the same or that add up to 10. Clearing rows and levels, and winning points and coins.
