@@ -3,7 +3,7 @@
 ![Status Badge](https://img.shields.io/badge/Status-In_Development-yellow)
 
 ## Overview
-The original Number match is a fun mobile game where you match up pairs of numbers that are the same or that add up to 10. Clearing rows and levels, and winning points and coins. There's also tournaments you can participate in, though the game is entirely singleplayer.
+The original Number match is a fun mobile game where you match up pairs of numbers that are the same or that add up to 10. Clearing rows and levels, and winning points and coins.
 
 My version is desktop-friendly, has no ads, and is just as addicting.
 
@@ -18,17 +18,17 @@ The only keybinding is: `Q` to go back to the home page from the game, and `Esc`
 
 **Main Objective:** Match numbers that either sum to 10, or are the same.
 - Matches happen on the same row, column, or diagonal; as long as there are no unmatched cells in between.
+- There is also a special match case where the LAST unmatched cell of a row and the FIRST unmatched cell of the next row, if their values are compatible, can be matched.
 - Once all cells in a row have been matched, that row is cleared.
 - Once all rows in the grid have been cleared, you move onto the next stage.
 - If there are no more matches available, click the plus at the bottom of the grid.
 - If you need help, click the hint icon at the bottom of the grid.
-- For more settings, or a tutorial, click the gear icon at the top right of the grid.
 
 There is no end to the game, there can be as many stages as you like. 
 
 ### Some Additional Features
-- There are "tournament" games which feature an end goal of a certain amount of points.
-- Various Achievements to work towards.
+- A Toggle between Dark and Light Mode in the Settings Panel in GameLayer (made mahself :))
+- A save system, so you can restart from where you left off even after you close the application.
 
 ## How to use
 
