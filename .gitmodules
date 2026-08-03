@@ -1,3 +1,0 @@
-[submodule "raylib"]
-	path = lib/external/raylib
-	url = https://github.com/lishacodesgames/slim-raylib.git
